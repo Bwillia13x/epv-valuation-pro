@@ -2444,9 +2444,15 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
             {/* Run Simulation */}
             <Section title="Run Monte Carlo Analysis">
               <div className="flex justify-center mb-6">
-                <Btn onClick={runMonteCarlo} tone="primary" className="px-8 py-3 text-lg">
+                <button
+                  onClick={runMonteCarlo}
+                  className={cx(
+                    "px-8 py-3 text-lg rounded-lg font-medium transition-colors",
+                    theme === "dark" ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                  )}
+                >
                   Run {mcRuns.toLocaleString()} Simulations
-                </Btn>
+                </button>
               </div>
 
               {mcResults && (
