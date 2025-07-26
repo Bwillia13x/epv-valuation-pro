@@ -13,6 +13,11 @@ import {
   TransparencySummaryDashboard,
   ExportControls
 } from "./CalculationTransparencyComponents";
+import { FinancialDataInput } from "./FinancialDataComponents";
+import { 
+  CompanyFinancialData, 
+  AnalysisResults 
+} from "../lib/financialDataProcessor";
 
 // Medispa EPV Valuation Pro (Greenwald) — CLI/ClaudeCode Aesthetic
 // Next.js page with TypeScript + TailwindCSS (no extra deps)
@@ -247,6 +252,11 @@ export default function MedispaEPVProCliPage() {
 
   // JSON import/export
   const [jsonText, setJsonText] = useState("");
+
+  // Financial data from P&L input
+  const [financialData, setFinancialData] = useState<CompanyFinancialData | null>(null);
+  const [financialAnalysis, setFinancialAnalysis] = useState<AnalysisResults | null>(null);
+  const [useHistoricalData, setUseHistoricalData] = useState(false);
 
   // ========================= Init and defaults =========================
   useEffect(() => {
@@ -2799,7 +2809,58 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
 
         {activeTab === "data" && (
           <div className="space-y-6">
-            {/* Asset Reproduction Inputs */}
+            {/* Data Source Toggle */}
+            <div className={cx("border rounded-xl p-6", theme === "dark" ? "border-slate-700 bg-slate-900" : "border-slate-200 bg-white")}>
+              <h3 className="text-lg font-semibold mb-4">💾 Data Input Method</h3>
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="dataSource"
+                    checked={!useHistoricalData}
+                    onChange={() => setUseHistoricalData(false)}
+                    className="rounded"
+                  />
+                  <span>Service Line Builder (Manual)</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    name="dataSource"
+                    checked={useHistoricalData}
+                    onChange={() => setUseHistoricalData(true)}
+                    className="rounded"
+                  />
+                  <span>Historical P&L Data (Dealbook Input)</span>
+                </label>
+              </div>
+              
+              {useHistoricalData && (
+                <div className="mt-4 p-4 rounded bg-blue-500/10 border border-blue-500/20">
+                  <div className="text-sm text-blue-400 mb-2">📊 Historical Data Mode Active</div>
+                  <div className="text-xs text-slate-600">
+                    Input multi-year P&L data from dealbooks or financial statements. 
+                    The system will automatically normalize and calculate trends for EPV analysis.
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Conditional Rendering Based on Data Source */}
+            {useHistoricalData ? (
+              <FinancialDataInput 
+                theme={theme}
+                onDataChange={(data) => {
+                  setFinancialData(data);
+                }}
+                onAnalysisUpdate={(analysis) => {
+                  setFinancialAnalysis(analysis);
+                }}
+              />
+            ) : (
+              /* Original Service Line Data Inputs */
+              <div className="space-y-6">
+                {/* Asset Reproduction Inputs */}
             <Section title="Asset Reproduction Valuation">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
@@ -3213,6 +3274,62 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
                 </div>
               </div>
             </Section>
+              </div>
+            )}
+
+            {/* Historical Data Summary (shown when historical data is being used) */}
+            {useHistoricalData && financialAnalysis && (
+              <div className={cx("border rounded-xl p-6", theme === "dark" ? "border-slate-700 bg-slate-900" : "border-slate-200 bg-white")}>
+                <h3 className="text-lg font-semibold mb-4">🔗 EPV Integration Summary</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 rounded bg-emerald-500/10 border border-emerald-500/20">
+                    <div className="text-2xl font-bold text-emerald-400">
+                      {financialAnalysis ? fmt0.format(financialAnalysis.normalized.revenue) : '$0'}
+                    </div>
+                    <div className="text-sm text-slate-500">Normalized Revenue</div>
+                    <div className="text-xs text-slate-600 mt-1">
+                      {financialAnalysis ? pctFmt(financialAnalysis.trends.revenue.cagr) : '0.0%'} CAGR
+                    </div>
+                  </div>
+                  
+                  <div className="text-center p-4 rounded bg-blue-500/10 border border-blue-500/20">
+                    <div className="text-2xl font-bold text-blue-400">
+                      {financialAnalysis ? pctFmt(financialAnalysis.normalized.margins.ebitda) : '0.0%'}
+                    </div>
+                    <div className="text-sm text-slate-500">EBITDA Margin</div>
+                    <div className="text-xs text-slate-600 mt-1">
+                      Normalized from historical data
+                    </div>
+                  </div>
+                  
+                  <div className="text-center p-4 rounded bg-purple-500/10 border border-purple-500/20">
+                    <div className="text-2xl font-bold text-purple-400">
+                      {financialAnalysis ? pctFmt(financialAnalysis.quality.dataCompleteness) : '0.0%'}
+                    </div>
+                    <div className="text-sm text-slate-500">Data Quality</div>
+                    <div className="text-xs text-slate-600 mt-1">
+                      {financialAnalysis?.trends.revenue.trend === 'growing' ? '📈 Growing' : 
+                       financialAnalysis?.trends.revenue.trend === 'declining' ? '📉 Declining' : '➡️ Stable'}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-4 p-4 rounded bg-indigo-500/10 border border-indigo-500/20">
+                  <div className="text-sm font-medium text-indigo-400 mb-2">
+                    ✅ Historical Data Ready for EPV Analysis
+                  </div>
+                  <div className="text-xs text-slate-600">
+                    Normalized financial metrics from historical P&L data are ready to be used in EPV calculations. 
+                    {financialAnalysis && (
+                      <>
+                        Revenue volatility: {pctFmt(financialAnalysis.trends.revenue.volatility)} | 
+                        Trend: {financialAnalysis.trends.revenue.trend}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
