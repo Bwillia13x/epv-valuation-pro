@@ -1669,25 +1669,213 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
         )}
 
         {activeTab === "capacity" && (
-          <Section title="Capacity Model">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <h3 className="font-semibold mb-3">Provider Slots</h3>
-                <div className="text-xl font-semibold">{providerSlotsPerLoc.toLocaleString()}</div>
-                <div className="text-sm text-slate-500">Total provider slots per year</div>
+          <div className="space-y-6">
+            {/* Provider Management */}
+            <Section title="Provider & Staffing Model">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {providers.map((provider, i) => (
+                  <div key={provider.id} className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                    <div className="font-semibold mb-3">{provider.name}</div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">FTE per Location</label>
+                        <input
+                          type="number"
+                          value={provider.fte}
+                          onChange={(e) => {
+                            const newProviders = [...providers];
+                            newProviders[i] = { ...provider, fte: parseFloat(e.target.value) || 0 };
+                            setProviders(newProviders);
+                          }}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                          step="0.1"
+                          min="0"
+                          max="5"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">Hours per Week</label>
+                        <input
+                          type="number"
+                          value={provider.hoursPerWeek}
+                          onChange={(e) => {
+                            const newProviders = [...providers];
+                            newProviders[i] = { ...provider, hoursPerWeek: parseFloat(e.target.value) || 0 };
+                            setProviders(newProviders);
+                          }}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                          min="1"
+                          max="80"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">Appointments per Hour</label>
+                        <input
+                          type="number"
+                          value={provider.apptsPerHour}
+                          onChange={(e) => {
+                            const newProviders = [...providers];
+                            newProviders[i] = { ...provider, apptsPerHour: parseFloat(e.target.value) || 0 };
+                            setProviders(newProviders);
+                          }}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                          step="0.1"
+                          min="0.1"
+                          max="5"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">Utilization %</label>
+                        <input
+                          type="number"
+                          value={provider.utilization * 100}
+                          onChange={(e) => {
+                            const newProviders = [...providers];
+                            newProviders[i] = { ...provider, utilization: parseFloat(e.target.value) / 100 || 0 };
+                            setProviders(newProviders);
+                          }}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                          step="1"
+                          min="10"
+                          max="100"
+                        />
+                      </div>
+                      <div className="pt-2 text-xs text-slate-500 border-t">
+                        <div>Annual Slots: <span className="font-semibold">{(provider.fte * provider.hoursPerWeek * provider.apptsPerHour * provider.utilization * 52).toLocaleString()}</span></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <h3 className="font-semibold mb-3">Room Slots</h3>
-                <div className="text-xl font-semibold">{roomSlotsPerLoc.toLocaleString()}</div>
-                <div className="text-sm text-slate-500">Total room slots per year</div>
+              
+              {/* Add/Remove Providers */}
+              <div className="mt-4 flex gap-2">
+                <Btn onClick={() => {
+                  const newProvider: ProviderType = {
+                    id: `provider_${Date.now()}`,
+                    name: "New Provider",
+                    fte: 1.0,
+                    hoursPerWeek: 40,
+                    apptsPerHour: 1.0,
+                    utilization: 0.8
+                  };
+                  setProviders([...providers, newProvider]);
+                }} tone="primary">
+                  + Add Provider Type
+                </Btn>
+                {providers.length > 1 && (
+                  <Btn onClick={() => setProviders(providers.slice(0, -1))} tone="danger">
+                    Remove Last
+                  </Btn>
+                )}
               </div>
-              <div>
-                <h3 className="font-semibold mb-3">Capacity Slots</h3>
-                <div className="text-xl font-semibold">{capSlotsPerLoc.toLocaleString()}</div>
-                <div className="text-sm text-slate-500">Total capacity slots per year</div>
+            </Section>
+
+            {/* Facility Management */}
+            <Section title="Facility & Infrastructure">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Treatment Rooms</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Number of Rooms</label>
+                      <input
+                        type="number"
+                        value={numRooms}
+                        onChange={(e) => setNumRooms(parseInt(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="1"
+                        max="20"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Room Utilization %</label>
+                      <input
+                        type="number"
+                        value={roomUtilization * 100}
+                        onChange={(e) => setRoomUtilization(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1"
+                        min="10"
+                        max="100"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Operating Hours</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Hours per Day</label>
+                      <input
+                        type="number"
+                        value={hoursPerDay}
+                        onChange={(e) => setHoursPerDay(parseInt(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="4"
+                        max="24"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Days per Week</label>
+                      <input
+                        type="number"
+                        value={daysPerWeek}
+                        onChange={(e) => setDaysPerWeek(parseInt(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="1"
+                        max="7"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Capacity Controls</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="flex items-center space-x-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={enableCapacity}
+                          onChange={(e) => setEnableCapacity(e.target.checked)}
+                          className="rounded"
+                        />
+                        <span>Enable Capacity Constraints</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Capacity Summary</h4>
+                  <div className="space-y-2 text-xs">
+                    <div>Provider Slots: <span className="font-semibold">{providerSlotsPerLoc.toLocaleString()}</span></div>
+                    <div>Room Slots: <span className="font-semibold">{roomSlotsPerLoc.toLocaleString()}</span></div>
+                    <div>Bottleneck: <span className="font-semibold">{capSlotsPerLoc.toLocaleString()}</span></div>
+                    <div>Utilization: <span className="font-semibold">{(capUtilization * 100).toFixed(1)}%</span></div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </Section>
+            </Section>
+          </div>
         )}
 
         {activeTab === "model" && (
@@ -1999,25 +2187,266 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
 
         {activeTab === "montecarlo" && (
           <div className="space-y-6">
-            <Section title="Monte Carlo Simulation">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">Runs</label>
-                  <input
-                    type="number"
-                    value={mcRuns}
-                    onChange={(e) => setMcRuns(clamp(+e.target.value, 100, 5000))}
-                    className="w-full bg-gray-800 border border-green-500/30 rounded px-3 py-2 text-green-400 font-mono text-sm"
-                    min="100"
-                    max="5000"
-                    step="100"
-                  />
+            {/* Monte Carlo Parameters */}
+            <Section title="Monte Carlo Simulation Parameters">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Simulation Settings</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Number of Runs</label>
+                      <input
+                        type="number"
+                        value={mcRuns}
+                        onChange={(e) => setMcRuns(clamp(+e.target.value, 100, 5000))}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="100"
+                        max="5000"
+                        step="100"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Random Seed (for reproducibility)</label>
+                      <input
+                        type="number"
+                        defaultValue={42}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-end">
-                  <Btn onClick={runMonteCarlo} tone="primary">
-                    Run Simulation
-                  </Btn>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">WACC Distribution</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Min WACC %</label>
+                      <input
+                        type="number"
+                        defaultValue={9.5}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="1"
+                        max="25"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Mode WACC %</label>
+                      <input
+                        type="number"
+                        value={scenarioWacc * 100}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="1"
+                        max="25"
+                        readOnly
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Max WACC %</label>
+                      <input
+                        type="number"
+                        defaultValue={14.5}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="1"
+                        max="25"
+                      />
+                    </div>
+                  </div>
                 </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Revenue Growth Distribution</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Min Growth Multiple</label>
+                      <input
+                        type="number"
+                        defaultValue={0.85}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.05"
+                        min="0.1"
+                        max="3"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Mode Growth Multiple</label>
+                      <input
+                        type="number"
+                        defaultValue={1.05}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.05"
+                        min="0.1"
+                        max="3"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Max Growth Multiple</label>
+                      <input
+                        type="number"
+                        defaultValue={1.25}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.05"
+                        min="0.1"
+                        max="3"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Advanced Monte Carlo Parameters */}
+            <Section title="Advanced Distribution Parameters">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">EBITDA Margin Distribution</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Min Margin %</label>
+                      <input
+                        type="number"
+                        defaultValue={28}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.5"
+                        min="5"
+                        max="80"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Mode Margin %</label>
+                      <input
+                        type="number"
+                        value={(ebitdaNormalized / totalRevenueBase * 100).toFixed(1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.5"
+                        min="5"
+                        max="80"
+                        readOnly
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Max Margin %</label>
+                      <input
+                        type="number"
+                        defaultValue={38}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.5"
+                        min="5"
+                        max="80"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Exit Multiple Distribution</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Min Exit Multiple</label>
+                      <input
+                        type="number"
+                        defaultValue={8.0}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.5"
+                        min="3"
+                        max="30"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Mode Exit Multiple</label>
+                      <input
+                        type="number"
+                        defaultValue={11.5}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.5"
+                        min="3"
+                        max="30"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Max Exit Multiple</label>
+                      <input
+                        type="number"
+                        defaultValue={15.0}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.5"
+                        min="3"
+                        max="30"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Correlation Settings</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Revenue-Margin Correlation</label>
+                      <input
+                        type="number"
+                        defaultValue={0.3}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="-1"
+                        max="1"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">WACC-Multiple Correlation</label>
+                      <input
+                        type="number"
+                        defaultValue={-0.4}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="-1"
+                        max="1"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Run Simulation */}
+            <Section title="Run Monte Carlo Analysis">
+              <div className="flex justify-center mb-6">
+                <Btn onClick={runMonteCarlo} tone="primary" className="px-8 py-3 text-lg">
+                  Run {mcRuns.toLocaleString()} Simulations
+                </Btn>
               </div>
 
               {mcResults && (
@@ -2045,19 +2474,19 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
                     </div>
                   </div>
 
-                                     {mcResults?.rawResults?.evDist && mcResults.rawResults.evDist.length > 0 && (
-                     <DistributionChart
-                       values={mcResults.rawResults.evDist}
-                       percentiles={{
-                         p5: mcResults.p5,
-                         p25: mcResults.p25,
-                         p50: mcResults.median,
-                         p75: mcResults.p75,
-                         p95: mcResults.p95
-                       }}
-                       title="Enterprise Value Distribution"
-                     />
-                   )}
+                  {mcResults?.rawResults?.evDist && mcResults.rawResults.evDist.length > 0 && (
+                    <DistributionChart
+                      values={mcResults.rawResults.evDist}
+                      percentiles={{
+                        p5: mcResults.p5,
+                        p25: mcResults.p25,
+                        p50: mcResults.median,
+                        p75: mcResults.p75,
+                        p95: mcResults.p95
+                      }}
+                      title="Enterprise Value Distribution"
+                    />
+                  )}
 
                   <div className="bg-gray-900 border border-green-500/30 rounded p-4">
                     <h3 className="text-green-400 font-mono text-sm mb-4">Equity Value Statistics</h3>
@@ -2092,64 +2521,679 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
         )}
 
         {activeTab === "lbo" && (
-          <Section title="LBO Analysis">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
-                <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Entry</div>
-                <div className="flex justify-between"><span>EV (incl. costs)</span><span className="font-semibold">{fmt0.format(entryEV)}</span></div>
-                <div className="flex justify-between"><span>Debt</span><span className="font-semibold">{fmt0.format(entryDebt)}</span></div>
-                <div className="flex justify-between"><span>Equity</span><span className="font-semibold">{fmt0.format(entryEquity)}</span></div>
+          <div className="space-y-6">
+            {/* LBO Structure Inputs */}
+            <Section title="LBO Transaction Structure">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Entry Valuation</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Entry EV Override ($)</label>
+                      <input
+                        type="number"
+                        value={entryEvOverride || ''}
+                        onChange={(e) => setEntryEvOverride(parseFloat(e.target.value) || null)}
+                        placeholder={`Use calculated: ${fmt0.format(enterpriseEPV)}`}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="10000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Transaction Costs %</label>
+                      <input
+                        type="number"
+                        value={transCostsPct * 100}
+                        onChange={(e) => setTransCostsPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="10"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Debt Structure</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Entry Debt %</label>
+                      <input
+                        type="number"
+                        value={entryDebtPct * 100}
+                        onChange={(e) => setEntryDebtPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1"
+                        min="0"
+                        max="90"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Interest Rate %</label>
+                      <input
+                        type="number"
+                        value={costDebt * 100}
+                        onChange={(e) => setCostDebt(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="20"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Exit Parameters</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Hold Period (Years)</label>
+                      <input
+                        type="number"
+                        value={lboYears}
+                        onChange={(e) => setLboYears(parseInt(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="1"
+                        max="15"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Exit Multiple Mode</label>
+                      <select
+                        value={exitMultipleMode}
+                        onChange={(e) => setExitMultipleMode(e.target.value as typeof exitMultipleMode)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                      >
+                        <option value="EPV">EPV Method</option>
+                        <option value="Same EV">Same Entry EV</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Exit Costs %</label>
+                      <input
+                        type="number"
+                        value={exitCostsPct * 100}
+                        onChange={(e) => setExitCostsPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="5"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
-                <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Exit</div>
-                <div className="flex justify-between"><span>EV (net of costs)</span><span className="font-semibold">{fmt0.format(lboExitEV)}</span></div>
-                <div className="flex justify-between"><span>Debt</span><span className="font-semibold">{fmt0.format(lboSim.exitDebt)}</span></div>
-                <div className="flex justify-between"><span>Equity</span><span className="font-semibold">{fmt0.format(lboSim.exitEquity)}</span></div>
+            </Section>
+
+            {/* LBO Analysis Results */}
+            <Section title="LBO Analysis Results">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
+                  <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Entry</div>
+                  <div className="flex justify-between"><span>EV (incl. costs)</span><span className="font-semibold">{fmt0.format(entryEV)}</span></div>
+                  <div className="flex justify-between"><span>Debt</span><span className="font-semibold">{fmt0.format(entryDebt)}</span></div>
+                  <div className="flex justify-between"><span>Equity</span><span className="font-semibold">{fmt0.format(entryEquity)}</span></div>
+                </div>
+                <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
+                  <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Exit</div>
+                  <div className="flex justify-between"><span>EV (net of costs)</span><span className="font-semibold">{fmt0.format(lboExitEV)}</span></div>
+                  <div className="flex justify-between"><span>Debt</span><span className="font-semibold">{fmt0.format(lboSim.exitDebt)}</span></div>
+                  <div className="flex justify-between"><span>Equity</span><span className="font-semibold">{fmt0.format(lboSim.exitEquity)}</span></div>
+                </div>
+                <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
+                  <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Returns</div>
+                  <div className="flex justify-between"><span>MOIC</span><span className="font-semibold">{lboSim.moic.toFixed(2)}x</span></div>
+                  <div className="flex justify-between"><span>IRR</span><span className="font-semibold">{(lboSim.irr * 100).toFixed(1)}%</span></div>
+                </div>
               </div>
-              <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
-                <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Returns</div>
-                <div className="flex justify-between"><span>MOIC</span><span className="font-semibold">{lboSim.moic.toFixed(2)}x</span></div>
-                <div className="flex justify-between"><span>IRR</span><span className="font-semibold">{(lboSim.irr * 100).toFixed(1)}%</span></div>
+            </Section>
+
+            {/* Advanced LBO Parameters */}
+            <Section title="Advanced LBO Modeling">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Debt Paydown Parameters</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Cash Sweep % (to debt paydown)</label>
+                      <input
+                        type="number"
+                        value={75}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="5"
+                        min="0"
+                        max="100"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Minimum Cash Reserve ($)</label>
+                      <input
+                        type="number"
+                        value={50000}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="10000"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Value Creation Assumptions</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Revenue CAGR %</label>
+                      <input
+                        type="number"
+                        value={12}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1"
+                        min="-10"
+                        max="50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">EBITDA Margin Expansion (bps)</label>
+                      <input
+                        type="number"
+                        value={200}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="25"
+                        min="-500"
+                        max="1000"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </Section>
+            </Section>
+
+            {/* LBO Sensitivity Analysis */}
+            <Section title="LBO Returns Sensitivity">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold mb-3">IRR Sensitivity Matrix</h4>
+                  <div className="text-xs space-y-1">
+                    <div className="grid grid-cols-4 gap-2 font-semibold">
+                      <div>Entry Multiple</div>
+                      <div>Exit Multiple</div>
+                      <div>IRR</div>
+                      <div>MOIC</div>
+                    </div>
+                    {[0.8, 0.9, 1.0, 1.1, 1.2].map(entryMult => 
+                      [0.9, 1.0, 1.1, 1.2].map(exitMult => {
+                        const sensitivityIRR = Math.pow((exitMult / entryMult) * lboSim.moic, 1/lboYears) - 1;
+                        const sensitivityMOIC = (exitMult / entryMult) * lboSim.moic;
+                        return (
+                          <div key={`${entryMult}-${exitMult}`} className="grid grid-cols-4 gap-2">
+                            <div>{entryMult.toFixed(1)}x</div>
+                            <div>{exitMult.toFixed(1)}x</div>
+                            <div className={sensitivityIRR > 0.20 ? "text-green-400" : sensitivityIRR > 0.15 ? "text-yellow-400" : "text-red-400"}>
+                              {(sensitivityIRR * 100).toFixed(1)}%
+                            </div>
+                            <div>{sensitivityMOIC.toFixed(2)}x</div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold mb-3">Key Assumptions Summary</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span>Entry Valuation:</span><span>{fmt0.format(entryEV)}</span></div>
+                    <div className="flex justify-between"><span>Debt/Equity Split:</span><span>{(entryDebtPct * 100).toFixed(0)}% / {((1-entryDebtPct) * 100).toFixed(0)}%</span></div>
+                    <div className="flex justify-between"><span>Interest Rate:</span><span>{(costDebt * 100).toFixed(1)}%</span></div>
+                    <div className="flex justify-between"><span>Hold Period:</span><span>{lboYears} years</span></div>
+                    <div className="flex justify-between"><span>Exit Method:</span><span>{exitMultipleMode}</span></div>
+                    <div className="flex justify-between"><span>Exit Valuation:</span><span>{fmt0.format(lboExitEV)}</span></div>
+                  </div>
+                </div>
+              </div>
+            </Section>
+          </div>
         )}
 
         {activeTab === "data" && (
-          <Section title="Data Management">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-3">Export/Import</h3>
-                <div className="space-y-2">
-                  <Btn onClick={() => setJsonText(JSON.stringify(collectSnapshot(), null, 2))}>Export Current State</Btn>
-                  <Btn onClick={() => { try { navigator.clipboard.writeText(JSON.stringify(collectSnapshot(), null, 2)); pushLog({ kind: "success", text: "Copied to clipboard" }); } catch {} }}>Copy to Clipboard</Btn>
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-3">Scenarios</h3>
-                <div className="flex gap-2 mb-2">
-                  <input 
-                    className={cx("flex-1 rounded px-2 py-1 text-sm", theme === "dark" ? "bg-slate-800 border border-slate-600" : "bg-white border border-slate-300")} 
-                    placeholder="Scenario name" 
-                    value={scenarioName} 
-                    onChange={(e) => setScenarioName(e.target.value)} 
-                  />
-                  <Btn onClick={saveScenario} tone="primary">Save</Btn>
-                </div>
-                <div className="space-y-2 max-h-40 overflow-auto">
-                  {savedScenarios.map((s, i) => (
-                    <div key={s.id} className={cx("flex items-center justify-between p-2 rounded border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
-                      <span className="text-sm">{i + 1}. {s.name}</span>
-                      <div className="flex gap-1">
-                        <Btn onClick={() => applyScenario(s.id)}>Apply</Btn>
-                        <Btn onClick={() => deleteScenario(s.id)} tone="danger">Delete</Btn>
-                      </div>
+          <div className="space-y-6">
+            {/* Asset Reproduction Inputs */}
+            <Section title="Asset Reproduction Valuation">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Tangible Assets</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Equipment & Devices ($)</label>
+                      <input
+                        type="number"
+                        value={equipmentAssets}
+                        onChange={(e) => setEquipmentAssets(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="5000"
+                      />
                     </div>
-                  ))}
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Buildout & Improvements ($)</label>
+                      <input
+                        type="number"
+                        value={buildoutAssets}
+                        onChange={(e) => setBuildoutAssets(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="5000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Furniture, Fixtures & Equipment ($)</label>
+                      <input
+                        type="number"
+                        value={ffneAssets}
+                        onChange={(e) => setFfneAssets(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div className="pt-2 text-xs text-slate-500 border-t">
+                      <div>Total Tangible: <span className="font-semibold">{fmt0.format(totalAssetReproduction)}</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Intangible Assets</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Training Cost per Provider ($)</label>
+                      <input
+                        type="number"
+                        value={trainingCostPerProvider}
+                        onChange={(e) => setTrainingCostPerProvider(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Brand Rebuild Cost ($)</label>
+                      <input
+                        type="number"
+                        value={brandRebuildCost}
+                        onChange={(e) => setBrandRebuildCost(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="5000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Membership CAC ($)</label>
+                      <input
+                        type="number"
+                        value={membershipCac}
+                        onChange={(e) => setMembershipCac(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="10"
+                      />
+                    </div>
+                    <div className="pt-2 text-xs text-slate-500 border-t">
+                      <div>Total Intangible: <span className="font-semibold">{fmt0.format(totalIntangibles)}</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Working Capital</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">DSO (Days)</label>
+                      <input
+                        type="number"
+                        value={dsoDays}
+                        onChange={(e) => setDsoDays(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="0"
+                        max="120"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">DSI (Days)</label>
+                      <input
+                        type="number"
+                        value={dsiDays}
+                        onChange={(e) => setDsiDays(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="0"
+                        max="365"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">DPO (Days)</label>
+                      <input
+                        type="number"
+                        value={dpoDays}
+                        onChange={(e) => setDpoDays(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="0"
+                        max="120"
+                      />
+                    </div>
+                    <div className="pt-2 text-xs text-slate-500 border-t">
+                      <div>Net WC: <span className="font-semibold">{fmt0.format(netWorkingCapital)}</span></div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Section>
+            </Section>
+
+            {/* Asset Model Capex Inputs */}
+            <Section title="Asset-Based Capex Model">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Equipment</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Initial Cost ($)</label>
+                      <input
+                        type="number"
+                        value={equipmentDevices}
+                        onChange={(e) => setEquipmentDevices(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="5000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Replacement Years</label>
+                      <input
+                        type="number"
+                        value={equipReplacementYears}
+                        onChange={(e) => setEquipReplacementYears(parseInt(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="1"
+                        max="25"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Buildout</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Initial Cost ($)</label>
+                      <input
+                        type="number"
+                        value={buildoutImprovements}
+                        onChange={(e) => setBuildoutImprovements(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="5000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Refresh Years</label>
+                      <input
+                        type="number"
+                        value={buildoutRefreshYears}
+                        onChange={(e) => setBuildoutRefreshYears(parseInt(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="1"
+                        max="25"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">FF&E</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Initial Cost ($)</label>
+                      <input
+                        type="number"
+                        value={ffne}
+                        onChange={(e) => setFfne(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Refresh Years</label>
+                      <input
+                        type="number"
+                        value={ffneRefreshYears}
+                        onChange={(e) => setFfneRefreshYears(parseInt(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="1"
+                        max="15"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Minor Maintenance</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">% of Revenue</label>
+                      <input
+                        type="number"
+                        value={minorMaintPct * 100}
+                        onChange={(e) => setMinorMaintPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="5"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Data Export/Import */}
+            <Section title="Data Management & Export/Import">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold mb-3">Export Analysis Data</h3>
+                  <div className="space-y-2">
+                    <Btn onClick={() => {
+                      const data = {
+                        summary: generateExecutiveSummary(),
+                        inputs: collectSnapshot(),
+                        calculations: {
+                          totalRevenue: totalRevenueBase,
+                          ebitdaNormalized,
+                          enterpriseEPV,
+                          equityEPV,
+                          franchiseFactor,
+                          scenarioWacc
+                        },
+                        assetReproduction: {
+                          totalTangible: totalAssetReproduction,
+                          totalIntangible: totalIntangibles,
+                          netWorkingCapital,
+                          totalReproduction: totalReproductionValue
+                        },
+                        timestamp: new Date().toISOString()
+                      };
+                      setJsonText(JSON.stringify(data, null, 2));
+                    }}>
+                      Export Complete Analysis
+                    </Btn>
+                    <Btn onClick={() => setJsonText(JSON.stringify(collectSnapshot(), null, 2))}>
+                      Export Current Inputs
+                    </Btn>
+                    <Btn onClick={() => { 
+                      try { 
+                        navigator.clipboard.writeText(JSON.stringify(collectSnapshot(), null, 2)); 
+                        pushLog({ kind: "success", text: "Copied to clipboard" }); 
+                      } catch {} 
+                    }}>
+                      Copy to Clipboard
+                    </Btn>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-3">Import Data</h3>
+                  <div className="space-y-2">
+                    <textarea
+                      placeholder="Paste JSON data here to import..."
+                      value={jsonText}
+                      onChange={(e) => setJsonText(e.target.value)}
+                      className={cx("w-full h-32 px-3 py-2 rounded border text-sm", 
+                        theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                      )}
+                    />
+                    <Btn onClick={() => {
+                      try {
+                        const data = JSON.parse(jsonText);
+                        applySnapshot(data);
+                        pushLog({ kind: "success", text: "Data imported successfully" });
+                      } catch (e) {
+                        pushLog({ kind: "error", text: "Invalid JSON format" });
+                      }
+                    }}>
+                      Import Data
+                    </Btn>
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Scenario Management */}
+            <Section title="Scenario Management">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold mb-3">Save Current Scenario</h3>
+                  <div className="flex gap-2 mb-2">
+                    <input 
+                      className={cx("flex-1 rounded px-2 py-1 text-sm", theme === "dark" ? "bg-slate-800 border border-slate-600" : "bg-white border border-slate-300")} 
+                      placeholder="Scenario name" 
+                      value={scenarioName} 
+                      onChange={(e) => setScenarioName(e.target.value)} 
+                    />
+                    <Btn onClick={saveScenario} tone="primary">Save</Btn>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-3">Saved Scenarios</h3>
+                  <div className="space-y-2 max-h-40 overflow-auto">
+                    {savedScenarios.map((s, i) => (
+                      <div key={s.id} className={cx("flex items-center justify-between p-2 rounded border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                        <span className="text-sm">{i + 1}. {s.name}</span>
+                        <div className="flex gap-1">
+                          <Btn onClick={() => applyScenario(s.id)}>Apply</Btn>
+                          <Btn onClick={() => deleteScenario(s.id)} tone="danger">Delete</Btn>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Advanced Settings */}
+            <Section title="Advanced Settings & Validation">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold mb-3">Model Validation</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>Revenue Check:</span>
+                      <span className={totalRevenueBase > 0 ? "text-green-400" : "text-red-400"}>
+                        {totalRevenueBase > 0 ? "✓ Valid" : "✗ Invalid"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>EBITDA Check:</span>
+                      <span className={ebitdaNormalized > 0 ? "text-green-400" : "text-red-400"}>
+                        {ebitdaNormalized > 0 ? "✓ Positive" : "✗ Negative"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>WACC Check:</span>
+                      <span className={scenarioWacc > 0.01 && scenarioWacc < 0.5 ? "text-green-400" : "text-yellow-400"}>
+                        {scenarioWacc > 0.01 && scenarioWacc < 0.5 ? "✓ Reasonable" : "⚠ Check Range"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Franchise Factor:</span>
+                      <span className={franchiseFactor > 0.5 && franchiseFactor < 5 ? "text-green-400" : "text-yellow-400"}>
+                        {franchiseFactor > 0.5 && franchiseFactor < 5 ? "✓ Reasonable" : "⚠ Check Value"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold mb-3">Reset & Defaults</h3>
+                  <div className="space-y-2">
+                    <Btn onClick={resetDefaults} tone="danger">
+                      Reset to Defaults
+                    </Btn>
+                    <Btn onClick={() => {
+                      setScenario("Base");
+                      pushLog({ kind: "info", text: "Reset to base scenario" });
+                    }}>
+                      Reset Scenario to Base
+                    </Btn>
+                  </div>
+                </div>
+              </div>
+            </Section>
+          </div>
         )}
 
         {activeTab === "notes" && (
