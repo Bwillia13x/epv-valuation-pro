@@ -259,7 +259,7 @@ export default function MedispaEPVProCliPage() {
   }, [serviceLines, providers, locations, scenario]); // Add key dependencies
 
   const pushLog = (msg: Omit<CliMsg, "ts">) => {
-    setCliMessages(prev => [...prev.slice(-49), { ...msg, ts: Date.now() }]);
+    setCliLog(prev => [...prev.slice(-49), { ...msg, ts: Date.now() }]);
   };
 
   function collectSnapshot() {
