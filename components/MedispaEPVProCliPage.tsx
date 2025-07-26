@@ -208,13 +208,7 @@ export default function MedispaEPVProCliPage() {
   const [cashNonOperating, setCashNonOperating] = useState(50000);
   const [debtInterestBearing, setDebtInterestBearing] = useState(0);
 
-  // LBO inputs
-  const [lboEnabled, setLboEnabled] = useState(false);
-  const [entryEv, setEntryEv] = useState(0);
-  const [debtRatio, setDebtRatio] = useState(0.65);
-  const [exitMultipleMode, setExitMultipleMode] = useState<"EPV" | "Multiple">("EPV");
-  const [exitMultiple, setExitMultiple] = useState(5.0);
-  const [transactionYears, setTransactionYears] = useState(5);
+  // Transaction costs (needed for resetDefaults)
   const [transCostsPct, setTransCostsPct] = useState(0.02);
   const [exitCostsPct, setExitCostsPct] = useState(0.01);
 
@@ -504,78 +498,597 @@ export default function MedispaEPVProCliPage() {
   const enterpriseEPV = useMemo(() => (scenarioWacc > 0 ? adjustedEarningsScenario / scenarioWacc : 0), [adjustedEarningsScenario, scenarioWacc]);
   const equityEPV = useMemo(() => enterpriseEPV + cashNonOperating - debtInterestBearing, [enterpriseEPV, cashNonOperating, debtInterestBearing]);
 
-  // Simple component for now - just show basic results
+  // ========================= Additional State for Full Interface =========================
+  const tabs: { key: any; label: string }[] = [
+    { key: "inputs", label: "Inputs" },
+    { key: "capacity", label: "Capacity" },
+    { key: "model", label: "Model" },
+    { key: "valuation", label: "Valuation" },
+    { key: "analytics", label: "Sensitivity" },
+    { key: "montecarlo", label: "MonteCarlo" },
+    { key: "lbo", label: "LBO" },
+    { key: "data", label: "Data" },
+    { key: "notes", label: "Notes" },
+  ];
+
+  // CLI state
+  const [cliLog, setCliLog] = useState<CliMsg[]>([]);
+  const logRef = useRef<HTMLDivElement>(null);
+  
+  // Additional state for full interface
+  const [recoMethod, setRecoMethod] = useState<RecommendedMethod>("EPV Only");
+  
+  // Asset reproduction values
+  const totalAssetReproduction = useMemo(() => equipmentAssets + buildoutAssets + ffneAssets, [equipmentAssets, buildoutAssets, ffneAssets]);
+  const totalProviders = useMemo(() => providers.reduce((sum, p) => sum + p.fte, 0), [providers]);
+  const trainingIntangible = useMemo(() => totalProviders * trainingCostPerProvider * locations, [totalProviders, trainingCostPerProvider, locations]);
+  const membershipIntangible = useMemo(() => {
+    const membershipLine = serviceLines.find(l => l.isMembership);
+    return membershipLine ? (effectiveVolumesOverall.get(membershipLine.id) ?? 0) * membershipCac : 0;
+  }, [serviceLines, effectiveVolumesOverall, membershipCac]);
+  const totalIntangibles = useMemo(() => (brandRebuildCost + trainingIntangible + membershipIntangible) * locations, [brandRebuildCost, trainingIntangible, membershipIntangible, locations]);
+  
+  // Working capital
+  const totalCOGSForWC = useMemo(() => totalCOGS + clinicalLaborCost, [totalCOGS, clinicalLaborCost]);
+  const accountsReceivable = useMemo(() => totalRevenueBase * (dsoDays / 365), [totalRevenueBase, dsoDays]);
+  const inventory = useMemo(() => totalCOGSForWC * (dsiDays / 365), [totalCOGSForWC, dsiDays]);
+  const accountsPayable = useMemo(() => totalCOGSForWC * (dpoDays / 365), [totalCOGSForWC, dpoDays]);
+  const netWorkingCapital = useMemo(() => accountsReceivable + inventory - accountsPayable, [accountsReceivable, inventory, accountsPayable]);
+  
+  const totalReproductionValue = useMemo(() => totalAssetReproduction * locations + netWorkingCapital + totalIntangibles, [totalAssetReproduction, locations, netWorkingCapital, totalIntangibles]);
+  const franchiseFactor = useMemo(() => (totalReproductionValue > 0 ? enterpriseEPV / totalReproductionValue : 0), [enterpriseEPV, totalReproductionValue]);
+  
+  const recommendedEquity = useMemo(() => {
+    switch (recoMethod) {
+      case "Asset Reproduction": return totalReproductionValue + cashNonOperating - debtInterestBearing;
+      case "Conservative: Min": return Math.min(equityEPV, totalReproductionValue + cashNonOperating - debtInterestBearing);
+      case "Opportunistic: Max": return Math.max(equityEPV, totalReproductionValue + cashNonOperating - debtInterestBearing);
+      case "Blend: 70% EPV / 30% Asset": return 0.7 * equityEPV + 0.3 * (totalReproductionValue + cashNonOperating - debtInterestBearing);
+      default: return equityEPV;
+    }
+  }, [recoMethod, equityEPV, totalReproductionValue, cashNonOperating, debtInterestBearing]);
+
+  // LBO state
+  const [entryEvOverride, setEntryEvOverride] = useState<number | null>(null);
+  const [entryDebtPct, setEntryDebtPct] = useState(0.65);
+  const [lboYears, setLboYears] = useState(5);
+  const [exitMultipleMode, setExitMultipleMode] = useState<"EPV" | "Same EV">("EPV");
+  const entryEV = useMemo(() => (entryEvOverride ?? enterpriseEPV) * (1 + transCostsPct), [entryEvOverride, enterpriseEPV, transCostsPct]);
+  const entryDebt = useMemo(() => entryEV * entryDebtPct, [entryEV, entryDebtPct]);
+  const entryEquity = useMemo(() => entryEV - entryDebt, [entryEV, entryDebt]);
+  const lboExitEV = useMemo(() => {
+    const baseEV = exitMultipleMode === "EPV" ? enterpriseEPV : (entryEvOverride ?? enterpriseEPV);
+    return baseEV * (1 - exitCostsPct);
+  }, [exitMultipleMode, enterpriseEPV, entryEvOverride, exitCostsPct]);
+
+  const lboSim = useMemo(() => {
+    const years = clamp(lboYears, 1, 10);
+    let debt = entryDebt;
+    const kd = costDebt;
+    for (let y = 0; y < years; y++) {
+      const interest = debt * kd;
+      const fcfToFirm = adjustedEarningsScenario;
+      const afterInterest = fcfToFirm - interest;
+      const principalPaydown = Math.max(0, afterInterest);
+      debt = Math.max(0, debt - principalPaydown);
+    }
+    const exitEquity = Math.max(0, lboExitEV - debt);
+    const moic = entryEquity > 0 ? exitEquity / entryEquity : 0;
+    const irr = entryEquity > 0 ? Math.pow(moic, 1 / years) - 1 : 0;
+    return { exitDebt: debt, exitEquity, moic, irr };
+  }, [lboYears, entryDebt, adjustedEarningsScenario, costDebt, lboExitEV, entryEquity]);
+
+  // Monte Carlo state
+  const mcStats = useMemo(() => {
+    if (mcResults.length === 0) return null;
+    const sorted = [...mcResults].sort((a, b) => a - b);
+    const mean = sorted.reduce((a, b) => a + b, 0) / sorted.length;
+    const median = percentile(sorted, 0.5);
+    const p5 = percentile(sorted, 0.05);
+    const p95 = percentile(sorted, 0.95);
+    const equityResults = sorted.map(ev => ev + cashNonOperating - debtInterestBearing);
+    const meanEquity = equityResults.reduce((a, b) => a + b, 0) / equityResults.length;
+    const p5Equity = percentile(equityResults.sort((a, b) => a - b), 0.05);
+    const p95Equity = percentile(equityResults.sort((a, b) => a - b), 0.95);
+    return { mean, median, p5, p95, meanEquity, p5Equity, p95Equity };
+  }, [mcResults, cashNonOperating, debtInterestBearing]);
+
+  // Scenario management functions
+  function saveScenario() {
+    const name = scenarioName.trim() || `Scenario ${savedScenarios.length + 1}`;
+    const id = uid();
+    const snapshot = collectSnapshot();
+    const next = [...savedScenarios, { id, name, data: snapshot }];
+    setSavedScenarios(next);
+    localStorage.setItem("epv-pro-scenarios", JSON.stringify(next));
+    setScenarioName("");
+    pushLog({ kind: "success", text: `Saved scenario: ${name}` });
+  }
+
+  function applyScenario(idOrName: string) {
+    const sc = savedScenarios.find(s => s.id === idOrName || s.name === idOrName);
+    if (sc) { 
+      applySnapshot(sc.data); 
+      pushLog({ kind: "success", text: `Applied scenario: ${sc.name}` }); 
+    } else {
+      pushLog({ kind: "error", text: `Scenario not found: ${idOrName}` });
+    }
+  }
+
+  function deleteScenario(id: string) {
+    const sc = savedScenarios.find(s => s.id === id);
+    const next = savedScenarios.filter(s => s.id !== id);
+    setSavedScenarios(next);
+    localStorage.setItem("epv-pro-scenarios", JSON.stringify(next));
+    pushLog({ kind: "info", text: `Deleted scenario: ${sc?.name ?? id}` });
+  }
+
+  // Monte Carlo simulation
+  function runMonteCarlo() {
+    const runs = mcRuns;
+    const results: number[] = [];
+    
+    for (let i = 0; i < runs; i++) {
+      // Add some randomness to key inputs
+      const revenueVar = normalRand(1.0, 0.15);
+      const marginVar = normalRand(1.0, 0.10);
+      const waccVar = normalRand(scenarioWacc, scenarioWacc * 0.20);
+      
+      const simRevenue = totalRevenue * Math.max(0.3, revenueVar);
+      const simEarnings = adjustedEarningsScenario * Math.max(0.1, marginVar);
+      const simWacc = Math.max(0.05, Math.min(0.5, waccVar));
+      
+      const simEPV = simEarnings / simWacc;
+      results.push(simEPV);
+    }
+    
+    setMcResults(results);
+    pushLog({ kind: "success", text: `Monte Carlo completed: ${runs} runs` });
+  }
+
+  // CLI functions
+  function onCliSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    exec(cliInput);
+    setCliInput("");
+  }
+
+  function exec(line: string) {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    pushLog({ kind: "user", text: trimmed });
+    const tokens = parseTokens(trimmed.toLowerCase());
+    const first = tokens[0];
+    
+    try {
+      switch (first) {
+        case "help": {
+          pushLog({ kind: "info", text: "Commands: go <tab>, scenario <base|bull|bear>, set <field> <value>, capex <model|percent|amount> [value], method <owner|nopat>, reco <epv|asset|min|max|blend>, locations <n>, mc <runs>, capacity <on|off>, save <name>, apply <name|#>, export, import, reset, theme <dark|light>" });
+          break;
+        }
+        case "theme": {
+          const v = tokens[1];
+          if (v === "dark" || v === "light") setTheme(v);
+          pushLog({ kind: "success", text: `Theme set: ${v}` });
+          break;
+        }
+        case "go": {
+          const t = tokens[1];
+          const map: Record<string, typeof activeTab> = {
+            inputs: "inputs", capacity: "capacity", model: "model", valuation: "valuation", 
+            sensitivity: "analytics", analytics: "analytics", montecarlo: "montecarlo", 
+            lbo: "lbo", data: "data", notes: "notes",
+          };
+          const dest = map[t];
+          if (dest) { 
+            setActiveTab(dest); 
+            pushLog({ kind: "success", text: `Navigated to: ${t}` }); 
+          } else {
+            pushLog({ kind: "error", text: `Unknown tab: ${t}` });
+          }
+          break;
+        }
+        case "scenario": {
+          const s = tokens[1];
+          if (s === "base" || s === "bull" || s === "bear") {
+            setScenario(s.charAt(0).toUpperCase() + s.slice(1) as typeof scenario);
+            pushLog({ kind: "success", text: `Scenario set: ${s}` });
+          } else {
+            pushLog({ kind: "error", text: `Unknown scenario: ${s}` });
+          }
+          break;
+        }
+        case "locations": {
+          const n = parseInt(tokens[1], 10);
+          if (n && n > 0 && n <= 100) {
+            setLocations(n);
+            pushLog({ kind: "success", text: `Locations set: ${n}` });
+          } else {
+            pushLog({ kind: "error", text: "Invalid locations count" });
+          }
+          break;
+        }
+        case "mc": {
+          const runs = parseInt(tokens[1], 10);
+          if (runs && runs > 0 && runs <= 10000) {
+            setMcRuns(runs);
+            runMonteCarlo();
+          } else {
+            pushLog({ kind: "error", text: "Invalid MC runs (1-10000)" });
+          }
+          break;
+        }
+        case "capacity": {
+          const mode = tokens[1];
+          if (mode === "on") {
+            setEnableCapacity(true);
+            pushLog({ kind: "success", text: "Capacity constraints enabled" });
+          } else if (mode === "off") {
+            setEnableCapacity(false);
+            pushLog({ kind: "success", text: "Capacity constraints disabled" });
+          } else {
+            pushLog({ kind: "error", text: "Use: capacity on|off" });
+          }
+          break;
+        }
+        default: {
+          pushLog({ kind: "error", text: `Unknown command: ${first}. Type 'help' for available commands.` });
+        }
+      }
+    } catch (e) {
+      pushLog({ kind: "error", text: "Command execution error" });
+    }
+  }
+
+  // Hotkeys
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName?.toLowerCase();
+      const editing = tag === "input" || tag === "textarea" || target?.isContentEditable;
+      if (!editing) {
+        if (e.key >= "1" && e.key <= "9") {
+          const idx = parseInt(e.key, 10) - 1;
+          const t = tabs[idx];
+          if (t) setActiveTab(t.key);
+        }
+        if (e.key.toLowerCase() === "k" && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          cliRef.current?.focus();
+        }
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [tabs]);
+
+  // Auto-scroll CLI log
+  useEffect(() => {
+    if (!logRef.current) return;
+    logRef.current.scrollTop = logRef.current.scrollHeight;
+  }, [cliLog]);
+
+  // Helper components
+  const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+    <div className={cx("rounded-xl mb-6 border", theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200")}>
+      <div className={cx("px-6 py-4 border-b", theme === "dark" ? "border-slate-800" : "border-slate-200")}>
+        <h2 className="text-lg font-semibold">{title}</h2>
+      </div>
+      <div className="p-6">{children}</div>
+    </div>
+  );
+
+  const Btn = ({ children, onClick, active, tone = "neutral" }: { children: React.ReactNode; onClick?: () => void; active?: boolean; tone?: "primary" | "success" | "danger" | "neutral" }) => (
+    <button
+      onClick={onClick}
+      className={cx(
+        "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+        active && "ring-2 ring-indigo-500",
+        tone === "primary" && (theme === "dark" ? "bg-indigo-600 hover:bg-indigo-700 text-white" : "bg-indigo-600 hover:bg-indigo-700 text-white"),
+        tone === "success" && (theme === "dark" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "bg-emerald-600 hover:bg-emerald-700 text-white"),
+        tone === "danger" && (theme === "dark" ? "bg-rose-600 hover:bg-rose-700 text-white" : "bg-rose-600 hover:bg-rose-700 text-white"),
+        tone === "neutral" && (theme === "dark" ? "bg-slate-700 hover:bg-slate-600 text-slate-100 border border-slate-600" : "bg-white hover:bg-slate-50 text-slate-900 border border-slate-300")
+      )}
+    >
+      {children}
+    </button>
+  );
+
+  // Full EPV Platform Interface
   return (
-    <div className={cx("min-h-screen", theme === "dark" ? "bg-black text-green-400" : "bg-white text-gray-900")}>
-      <div className="container mx-auto p-4 max-w-6xl">
-        <div className="mb-6 text-center">
-          <h1 className="text-3xl font-bold mb-2">🏥 Medispa EPV Valuation Pro</h1>
-          <p className="text-lg opacity-80">Advanced Earnings Power Value Analysis</p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className={cx("p-4 rounded-lg border", theme === "dark" ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-gray-50")}>
-            <h3 className="text-lg font-semibold mb-2">Revenue</h3>
-            <div className="text-2xl font-bold">{fmt0.format(totalRevenueBase)}</div>
-            <div className="text-sm opacity-70">{locations} location{locations > 1 ? 's' : ''}</div>
+    <div className={cx("min-h-screen", theme === "dark" ? "bg-slate-950 text-slate-100" : "bg-slate-50 text-slate-900", "font-mono")}>
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        {/* Status bar */}
+        <div className={cx("w-full rounded-lg mb-4 border flex items-center justify-between px-4 py-3", theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200")}>
+          <div className="flex items-center gap-3">
+            <span className={cx("text-xs", theme === "dark" ? "text-emerald-400" : "text-emerald-600")}>●</span>
+            <span className="text-sm font-semibold">Medispa EPV Pro — Terminal</span>
+            <span className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Ctrl/Cmd+K to focus CLI • 1-9 to switch tabs</span>
           </div>
-          
-          <div className={cx("p-4 rounded-lg border", theme === "dark" ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-gray-50")}>
-            <h3 className="text-lg font-semibold mb-2">EBITDA (Normalized)</h3>
-            <div className="text-2xl font-bold">{fmt0.format(ebitdaNormalized)}</div>
-            <div className="text-sm opacity-70">{pctFmt(ebitdaNormalized / totalRevenueBase)} margin</div>
-          </div>
-          
-          <div className={cx("p-4 rounded-lg border", theme === "dark" ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-gray-50")}>
-            <h3 className="text-lg font-semibold mb-2">Enterprise Value (EPV)</h3>
-            <div className="text-2xl font-bold">{fmt0.format(enterpriseEPV)}</div>
-            <div className="text-sm opacity-70">WACC: {pctFmt(scenarioWacc)}</div>
+          <div className="flex items-center gap-4 text-xs">
+            <span>Scenario: <strong>{scenario}</strong></span>
+            <span>WACC: <strong>{pctFmt(scenarioWacc)}</strong></span>
+            <span>EV: <strong>{fmt0.format(enterpriseEPV)}</strong></span>
+            <Btn onClick={() => setTheme(theme === "dark" ? "light" : "dark")} tone="neutral">Theme: {theme}</Btn>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className={cx("p-6 rounded-lg border", theme === "dark" ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-gray-50")}>
-            <h3 className="text-xl font-semibold mb-4">Key Metrics</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span>EBIT (Normalized):</span>
-                <span className="font-mono">{fmt0.format(ebitNormalized)}</span>
+        {/* CLI Console */}
+        <div className={cx("rounded-xl mb-6 border", theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200")}>
+          <div className={cx("px-4 py-2 text-xs border-b", theme === "dark" ? "border-slate-800 text-slate-400" : "border-slate-200 text-slate-500")}>Console</div>
+          <div ref={logRef} className={cx("px-4 h-40 overflow-auto text-sm", theme === "dark" ? "text-slate-200" : "text-slate-800")}>
+            {cliLog.map((m, i) => (
+              <div key={m.ts + "-" + i} className="py-1">
+                <span className={cx("mr-2", m.kind === "user" ? "text-indigo-400" : m.kind === "success" ? "text-emerald-400" : m.kind === "error" ? "text-rose-400" : "text-slate-400")}>
+                  {m.kind === "user" ? ">" : m.kind.toUpperCase()}
+                </span>
+                <span>{m.text}</span>
               </div>
-              <div className="flex justify-between">
-                <span>NOPAT:</span>
-                <span className="font-mono">{fmt0.format(nopat)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Owner Earnings:</span>
-                <span className="font-mono">{fmt0.format(ownerEarnings)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Maintenance Capex:</span>
-                <span className="font-mono">{fmt0.format(maintCapexBase)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Equity Value:</span>
-                <span className="font-mono font-bold">{fmt0.format(equityEPV)}</span>
+            ))}
+          </div>
+          <form onSubmit={onCliSubmit} className={cx("flex items-center gap-2 px-4 py-3 border-t", theme === "dark" ? "border-slate-800" : "border-slate-200")}>
+            <span className="text-indigo-400">{">"}</span>
+            <input
+              ref={cliRef}
+              className={cx("flex-1 outline-none text-sm", theme === "dark" ? "bg-transparent text-slate-100 placeholder-slate-500" : "bg-transparent text-slate-900 placeholder-slate-500")}
+              placeholder="Type a command, e.g., 'go valuation' or 'set marketing 7.5%'"
+              value={cliInput}
+              onChange={(e) => setCliInput(e.target.value)}
+            />
+            <Btn tone="primary">Run</Btn>
+          </form>
+          <div className={cx("flex flex-wrap gap-2 px-4 pb-4", theme === "dark" ? "text-slate-300" : "text-slate-700")}>
+            {["help","go inputs","go valuation","scenario bull","locations 3","mc 1200","save CaseA"].map((c) => (
+              <button key={c} onClick={() => { setCliInput(c); }} className={cx("px-2 py-1 rounded-md text-xs border", theme === "dark" ? "bg-slate-800 border-slate-700 hover:bg-slate-700" : "bg-white border-slate-300 hover:bg-slate-100")}>{c}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <nav className="flex flex-wrap gap-2 mb-6">
+          {tabs.map((t, idx) => (
+            <Btn key={t.key} onClick={() => setActiveTab(t.key)} active={activeTab === t.key}>
+              {idx + 1}. {t.label}
+            </Btn>
+          ))}
+        </nav>
+
+        {/* KPI Header */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className={cx("rounded-xl p-4 border", theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200")}>
+            <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Revenue (scenario)</div>
+            <div className="text-xl font-semibold">{fmt0.format(totalRevenue)}</div>
+            <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>EBIT margin: {pctFmt(ebitMargin)}</div>
+          </div>
+          <div className={cx("rounded-xl p-4 border", theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200")}>
+            <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Enterprise EPV</div>
+            <div className="text-xl font-semibold text-emerald-400">{fmt0.format(enterpriseEPV)}</div>
+            <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>WACC: {pctFmt(scenarioWacc)}</div>
+          </div>
+          <div className={cx("rounded-xl p-4 border", theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200")}>
+            <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Equity (recommended)</div>
+            <div className="text-xl font-semibold text-indigo-400">{fmt0.format(recommendedEquity)}</div>
+            <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Method: {recoMethod}</div>
+          </div>
+          <div className={cx("rounded-xl p-4 border", theme === "dark" ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200")}>
+            <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Capacity utilization</div>
+            <div className="text-xl font-semibold">{(capUtilization * 100).toFixed(0)}%</div>
+            <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Locations: {locations}</div>
+          </div>
+        </div>
+
+        {/* Tab Content - Basic Implementation for Core Tabs */}
+        {activeTab === "inputs" && (
+          <Section title="Revenue Builder">
+            <div className="text-center py-8">
+              <div className="text-2xl font-bold text-emerald-400 mb-2">{fmt0.format(totalRevenueBase)}</div>
+              <div className="text-sm text-slate-500">Total Annual Revenue ({locations} location{locations > 1 ? 's' : ''})</div>
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {serviceLines.map((line, i) => (
+                  <div key={line.id} className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                    <div className="font-semibold">{line.name}</div>
+                    <div className="text-sm text-slate-500">{fmt0.format(revenueByLine[i])}</div>
+                    <div className="text-xs">{line.price} × {effectiveVolumesOverall.get(line.id) ?? (line.volume * locations)}</div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
+          </Section>
+        )}
 
-          <div className={cx("p-6 rounded-lg border", theme === "dark" ? "border-gray-700 bg-gray-900" : "border-gray-200 bg-gray-50")}>
-            <h3 className="text-xl font-semibold mb-4">Service Lines</h3>
-            <div className="space-y-2">
-              {serviceLines.map((line, i) => (
-                <div key={line.id} className="flex justify-between text-sm">
-                  <span>{line.name}:</span>
-                  <span className="font-mono">{fmt0.format(revenueByLine[i])}</span>
+        {activeTab === "model" && (
+          <Section title="Financial Model">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold mb-3">Revenue & Costs</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between"><span>Total Revenue:</span><span className="font-mono">{fmt0.format(totalRevenueBase)}</span></div>
+                  <div className="flex justify-between"><span>Total COGS:</span><span className="font-mono">{fmt0.format(totalCOGS)}</span></div>
+                  <div className="flex justify-between"><span>Clinical Labor:</span><span className="font-mono">{fmt0.format(clinicalLaborCost)}</span></div>
+                  <div className="flex justify-between font-semibold border-t pt-2"><span>Gross Profit:</span><span className="font-mono">{fmt0.format(grossProfit)}</span></div>
                 </div>
-              ))}
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">Operating Expenses</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between"><span>Marketing:</span><span className="font-mono">{fmt0.format(marketingCost)}</span></div>
+                  <div className="flex justify-between"><span>Admin:</span><span className="font-mono">{fmt0.format(adminCost)}</span></div>
+                  <div className="flex justify-between"><span>Fixed Costs:</span><span className="font-mono">{fmt0.format(fixedOpex)}</span></div>
+                  <div className="flex justify-between"><span>Other OpEx:</span><span className="font-mono">{fmt0.format(otherOpexCost + msoFee + complianceCost)}</span></div>
+                  <div className="flex justify-between font-semibold border-t pt-2"><span>EBITDA (Norm):</span><span className="font-mono">{fmt0.format(ebitdaNormalized)}</span></div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </Section>
+        )}
 
-        <div className="mt-8 text-center text-sm opacity-60">
-          <p>Built for private equity-grade analysis • For education only; not investment advice.</p>
-        </div>
+        {activeTab === "valuation" && (
+          <Section title="EPV Valuation Results">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-emerald-400">{fmt0.format(enterpriseEPV)}</div>
+                <div className="text-sm text-slate-500">Enterprise EPV</div>
+                <div className="text-xs mt-2">WACC: {pctFmt(scenarioWacc)}</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-indigo-400">{fmt0.format(equityEPV)}</div>
+                <div className="text-sm text-slate-500">Equity Value</div>
+                <div className="text-xs mt-2">EPV + Cash - Debt</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-orange-400">{franchiseFactor.toFixed(2)}x</div>
+                <div className="text-sm text-slate-500">Franchise Factor</div>
+                <div className="text-xs mt-2">EPV / Reproduction</div>
+              </div>
+            </div>
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold mb-3">Earnings Analysis</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between"><span>EBIT (Normalized):</span><span className="font-mono">{fmt0.format(ebitNormalized)}</span></div>
+                  <div className="flex justify-between"><span>NOPAT:</span><span className="font-mono">{fmt0.format(nopat)}</span></div>
+                  <div className="flex justify-between"><span>Owner Earnings:</span><span className="font-mono">{fmt0.format(ownerEarnings)}</span></div>
+                  <div className="flex justify-between"><span>Method Used:</span><span className="font-mono">{epvMethod}</span></div>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">Scenario: {scenario}</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between"><span>Revenue:</span><span className="font-mono">{fmt0.format(totalRevenue)}</span></div>
+                  <div className="flex justify-between"><span>Adj. Earnings:</span><span className="font-mono">{fmt0.format(adjustedEarningsScenario)}</span></div>
+                  <div className="flex justify-between"><span>Risk WACC:</span><span className="font-mono">{pctFmt(scenarioWacc)}</span></div>
+                </div>
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {activeTab === "montecarlo" && (
+          <Section title="Monte Carlo Risk Analysis">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">Runs:</span>
+                <input 
+                  type="number" 
+                  className={cx("px-2 py-1 rounded border", theme === "dark" ? "bg-slate-800 border-slate-600" : "bg-white border-slate-300")}
+                  value={mcRuns} 
+                  onChange={(e) => setMcRuns(Number(e.target.value))}
+                  min="100" max="10000" step="100"
+                />
+              </div>
+              <Btn onClick={runMonteCarlo} tone="primary">Run Simulation</Btn>
+            </div>
+            {mcStats && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold mb-3">Enterprise Value Distribution</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span>Mean:</span><span className="font-mono">{fmt0.format(mcStats.mean)}</span></div>
+                    <div className="flex justify-between"><span>Median:</span><span className="font-mono">{fmt0.format(mcStats.median)}</span></div>
+                    <div className="flex justify-between"><span>5th - 95th:</span><span className="font-mono">{fmt0.format(mcStats.p5)} - {fmt0.format(mcStats.p95)}</span></div>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-3">Equity Value Distribution</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span>Mean:</span><span className="font-mono">{fmt0.format(mcStats.meanEquity)}</span></div>
+                    <div className="flex justify-between"><span>5th - 95th:</span><span className="font-mono">{fmt0.format(mcStats.p5Equity)} - {fmt0.format(mcStats.p95Equity)}</span></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </Section>
+        )}
+
+        {activeTab === "lbo" && (
+          <Section title="LBO Analysis">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
+                <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Entry</div>
+                <div className="flex justify-between"><span>EV (incl. costs)</span><span className="font-semibold">{fmt0.format(entryEV)}</span></div>
+                <div className="flex justify-between"><span>Debt</span><span className="font-semibold">{fmt0.format(entryDebt)}</span></div>
+                <div className="flex justify-between"><span>Equity</span><span className="font-semibold">{fmt0.format(entryEquity)}</span></div>
+              </div>
+              <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
+                <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Exit</div>
+                <div className="flex justify-between"><span>EV (net of costs)</span><span className="font-semibold">{fmt0.format(lboExitEV)}</span></div>
+                <div className="flex justify-between"><span>Debt</span><span className="font-semibold">{fmt0.format(lboSim.exitDebt)}</span></div>
+                <div className="flex justify-between"><span>Equity</span><span className="font-semibold">{fmt0.format(lboSim.exitEquity)}</span></div>
+              </div>
+              <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
+                <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Returns</div>
+                <div className="flex justify-between"><span>MOIC</span><span className="font-semibold">{lboSim.moic.toFixed(2)}x</span></div>
+                <div className="flex justify-between"><span>IRR</span><span className="font-semibold">{(lboSim.irr * 100).toFixed(1)}%</span></div>
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {activeTab === "data" && (
+          <Section title="Data Management">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold mb-3">Export/Import</h3>
+                <div className="space-y-2">
+                  <Btn onClick={() => setJsonText(JSON.stringify(collectSnapshot(), null, 2))}>Export Current State</Btn>
+                  <Btn onClick={() => { try { navigator.clipboard.writeText(JSON.stringify(collectSnapshot(), null, 2)); pushLog({ kind: "success", text: "Copied to clipboard" }); } catch {} }}>Copy to Clipboard</Btn>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">Scenarios</h3>
+                <div className="flex gap-2 mb-2">
+                  <input 
+                    className={cx("flex-1 rounded px-2 py-1 text-sm", theme === "dark" ? "bg-slate-800 border border-slate-600" : "bg-white border border-slate-300")} 
+                    placeholder="Scenario name" 
+                    value={scenarioName} 
+                    onChange={(e) => setScenarioName(e.target.value)} 
+                  />
+                  <Btn onClick={saveScenario} tone="primary">Save</Btn>
+                </div>
+                <div className="space-y-2 max-h-40 overflow-auto">
+                  {savedScenarios.map((s, i) => (
+                    <div key={s.id} className={cx("flex items-center justify-between p-2 rounded border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                      <span className="text-sm">{i + 1}. {s.name}</span>
+                      <div className="flex gap-1">
+                        <Btn onClick={() => applyScenario(s.id)}>Apply</Btn>
+                        <Btn onClick={() => deleteScenario(s.id)} tone="danger">Delete</Btn>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Section>
+        )}
+
+        {activeTab === "notes" && (
+          <Section title="Modeling Notes">
+            <div className={cx("text-sm", theme === "dark" ? "text-slate-300" : "text-slate-700")}>
+              <ul className="list-disc pl-6 space-y-2">
+                <li>EPV values steady-state earning power with zero growth. Adjusted earnings can be NOPAT or Owner Earnings.</li>
+                <li>Capacity model estimates visit throughput; if enabled, service volumes scale to capacity.</li>
+                <li>Roll-up effects include admin/marketing synergies, MSO fees, and compliance overhead.</li>
+                <li>Maintenance capex supports model-based replacement cycles for devices and facilities.</li>
+                <li>Advanced CAPM optionally un/levers beta using target D/E and tax rates.</li>
+                <li>Built for private equity-grade analysis • For education only; not investment advice.</li>
+              </ul>
+            </div>
+          </Section>
+        )}
+
+        {/* Default/fallback tabs */}
+        {!["inputs", "model", "valuation", "montecarlo", "lbo", "data", "notes"].includes(activeTab) && (
+          <Section title={`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Tab`}>
+            <div className="text-center py-8">
+              <div className="text-lg font-semibold mb-2">Tab Under Development</div>
+              <div className="text-sm text-slate-500">This tab will contain additional EPV analysis features.</div>
+              <div className="mt-4">
+                <Btn onClick={() => setActiveTab("valuation")} tone="primary">Go to Valuation</Btn>
+              </div>
+            </div>
+          </Section>
+        )}
+
       </div>
     </div>
   );
