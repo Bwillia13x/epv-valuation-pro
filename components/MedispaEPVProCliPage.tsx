@@ -1,5 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { runMonteCarloEPV } from "../lib/valuationModels";
+import { 
+  generateCalculationAuditTrail, 
+  calculateCrossChecks, 
+  TransparencyInputs,
+  CalculationAuditTrail 
+} from "../lib/calculationTransparency";
+import {
+  AuditTrailDisplay,
+  FormulaReferenceDisplay,
+  VerificationDisplay,
+  TransparencySummaryDashboard,
+  ExportControls
+} from "./CalculationTransparencyComponents";
 
 // Medispa EPV Valuation Pro (Greenwald) — CLI/ClaudeCode Aesthetic
 // Next.js page with TypeScript + TailwindCSS (no extra deps)
@@ -111,7 +124,7 @@ export default function MedispaEPVProCliPage() {
   }, []);
   // ========================= State =========================
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [activeTab, setActiveTab] = useState<"inputs" | "capacity" | "model" | "valuation" | "analytics" | "montecarlo" | "lbo" | "data" | "notes">("inputs");
+  const [activeTab, setActiveTab] = useState<"inputs" | "capacity" | "model" | "valuation" | "calculations" | "analytics" | "montecarlo" | "lbo" | "data" | "notes">("inputs");
   const [scenario, setScenario] = useState<"Base" | "Bull" | "Bear">("Base");
 
   // Service lines
@@ -510,6 +523,7 @@ export default function MedispaEPVProCliPage() {
     { key: "capacity", label: "Capacity" },
     { key: "model", label: "Model" },
     { key: "valuation", label: "Valuation" },
+    { key: "calculations", label: "Calculations" },
     { key: "analytics", label: "Analytics" },
     { key: "montecarlo", label: "MonteCarlo" },
     { key: "lbo", label: "LBO" },
@@ -3346,7 +3360,336 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
           </div>
         )}
 
+        {activeTab === "calculations" && (
+          <CalculationsTab 
+            theme={theme}
+            serviceLines={serviceLines}
+            locations={locations}
+            effectiveVolumesOverall={effectiveVolumesOverall}
+            totalRevenueBase={totalRevenueBase}
+            serviceRevenue={serviceRevenue}
+            retailRevenue={retailRevenue}
+            totalCOGS={totalCOGS}
+            clinicalLaborCost={clinicalLaborCost}
+            clinicalLaborPct={clinicalLaborPct}
+            clinicalLaborPctEff={clinicalLaborPctEff}
+            laborMarketAdj={laborMarketAdj}
+            grossProfit={grossProfit}
+            marketingCost={marketingCost}
+            marketingPct={marketingPct}
+            marketingPctEff={marketingPctEff}
+            marketingSynergyPct={marketingSynergyPct}
+            adminCost={adminCost}
+            adminPct={adminPct}
+            adminPctEff={adminPctEff}
+            sgnaSynergyPct={sgnaSynergyPct}
+            minAdminPctFactor={minAdminPctFactor}
+            fixedOpex={fixedOpex}
+            rentAnnual={rentAnnual}
+            medDirectorAnnual={medDirectorAnnual}
+            insuranceAnnual={insuranceAnnual}
+            softwareAnnual={softwareAnnual}
+            utilitiesAnnual={utilitiesAnnual}
+            msoFee={msoFee}
+            msoFeePct={msoFeePct}
+            complianceCost={complianceCost}
+            complianceOverheadPct={complianceOverheadPct}
+            otherOpexCost={otherOpexCost}
+            otherOpexPct={otherOpexPct}
+            opexTotal={opexTotal}
+            ebitdaReported={ebitdaReported}
+            ebitdaNormalized={ebitdaNormalized}
+            ownerAddBack={ownerAddBack}
+            otherAddBack={otherAddBack}
+            ebitNormalized={ebitNormalized}
+            ebitMargin={ebitMargin}
+            daTotal={daTotal}
+            daAnnual={daAnnual}
+            maintCapexBase={maintCapexBase}
+            maintCapexScenario={maintCapexScenario}
+            maintCapexModelBase={maintCapexModelBase}
+            capexMode={capexMode}
+            maintenanceCapexPct={maintenanceCapexPct}
+            maintenanceCapexAmount={maintenanceCapexAmount}
+            equipmentDevices={equipmentDevices}
+            equipReplacementYears={equipReplacementYears}
+            buildoutImprovements={buildoutImprovements}
+            buildoutRefreshYears={buildoutRefreshYears}
+            ffne={ffne}
+            ffneRefreshYears={ffneRefreshYears}
+            minorMaintPct={minorMaintPct}
+            scenarioWacc={scenarioWacc}
+            baseWacc={baseWacc}
+            costEquity={costEquity}
+            afterTaxCostDebt={afterTaxCostDebt}
+            betaEff={betaEff}
+            rfRate={rfRate}
+            erp={erp}
+            sizePrem={sizePrem}
+            specificPrem={specificPrem}
+            targetDebtWeight={targetDebtWeight}
+            costDebt={costDebt}
+            taxRate={taxRate}
+            scenarioAdj={scenarioAdj}
+            riskWaccPremium={riskWaccPremium}
+            nopatScenario={nopatScenario}
+            ownerEarningsScenario={ownerEarningsScenario}
+            adjustedEarningsScenario={adjustedEarningsScenario}
+            riskEarningsHaircut={riskEarningsHaircut}
+            enterpriseEPV={enterpriseEPV}
+            equityEPV={equityEPV}
+            cashNonOperating={cashNonOperating}
+            debtInterestBearing={debtInterestBearing}
+            ebitScenario={ebitScenario}
+            epvMethod={epvMethod}
+            scenario={scenario}
+            totalCOGSForWC={totalCOGSForWC}
+            accountsReceivable={accountsReceivable}
+            inventory={inventory}
+            accountsPayable={accountsPayable}
+            netWorkingCapital={netWorkingCapital}
+            dsoDays={dsoDays}
+            dsiDays={dsiDays}
+            dpoDays={dpoDays}
+          />
+        )}
+
       </div>
     </div>
   );
-} 
+}
+
+// Calculations Tab Component
+const CalculationsTab = (props: any) => {
+  const { theme } = props;
+  
+  // Prepare inputs for transparency system
+  const transparencyInputs: TransparencyInputs = {
+    serviceLines: props.serviceLines,
+    locations: props.locations,
+    effectiveVolumesOverall: props.effectiveVolumesOverall,
+    totalRevenueBase: props.totalRevenueBase,
+    serviceRevenue: props.serviceRevenue,
+    retailRevenue: props.retailRevenue,
+    totalCOGS: props.totalCOGS,
+    clinicalLaborCost: props.clinicalLaborCost,
+    clinicalLaborPct: props.clinicalLaborPct,
+    clinicalLaborPctEff: props.clinicalLaborPctEff,
+    laborMarketAdj: props.laborMarketAdj,
+    grossProfit: props.grossProfit,
+    marketingCost: props.marketingCost,
+    marketingPct: props.marketingPct,
+    marketingPctEff: props.marketingPctEff,
+    marketingSynergyPct: props.marketingSynergyPct,
+    adminCost: props.adminCost,
+    adminPct: props.adminPct,
+    adminPctEff: props.adminPctEff,
+    sgnaSynergyPct: props.sgnaSynergyPct,
+    minAdminPctFactor: props.minAdminPctFactor,
+    fixedOpex: props.fixedOpex,
+    rentAnnual: props.rentAnnual,
+    medDirectorAnnual: props.medDirectorAnnual,
+    insuranceAnnual: props.insuranceAnnual,
+    softwareAnnual: props.softwareAnnual,
+    utilitiesAnnual: props.utilitiesAnnual,
+    msoFee: props.msoFee,
+    msoFeePct: props.msoFeePct,
+    complianceCost: props.complianceCost,
+    complianceOverheadPct: props.complianceOverheadPct,
+    otherOpexCost: props.otherOpexCost,
+    otherOpexPct: props.otherOpexPct,
+    opexTotal: props.opexTotal,
+    ebitdaReported: props.ebitdaReported,
+    ebitdaNormalized: props.ebitdaNormalized,
+    ownerAddBack: props.ownerAddBack,
+    otherAddBack: props.otherAddBack,
+    ebitNormalized: props.ebitNormalized,
+    ebitMargin: props.ebitMargin,
+    daTotal: props.daTotal,
+    daAnnual: props.daAnnual,
+    maintCapexBase: props.maintCapexBase,
+    maintCapexScenario: props.maintCapexScenario,
+    maintCapexModelBase: props.maintCapexModelBase,
+    capexMode: props.capexMode,
+    maintenanceCapexPct: props.maintenanceCapexPct,
+    maintenanceCapexAmount: props.maintenanceCapexAmount,
+    equipmentDevices: props.equipmentDevices,
+    equipReplacementYears: props.equipReplacementYears,
+    buildoutImprovements: props.buildoutImprovements,
+    buildoutRefreshYears: props.buildoutRefreshYears,
+    ffne: props.ffne,
+    ffneRefreshYears: props.ffneRefreshYears,
+    minorMaintPct: props.minorMaintPct,
+    scenarioWacc: props.scenarioWacc,
+    baseWacc: props.baseWacc,
+    costEquity: props.costEquity,
+    afterTaxCostDebt: props.afterTaxCostDebt,
+    betaEff: props.betaEff,
+    rfRate: props.rfRate,
+    erp: props.erp,
+    sizePrem: props.sizePrem,
+    specificPrem: props.specificPrem,
+    targetDebtWeight: props.targetDebtWeight,
+    costDebt: props.costDebt,
+    taxRate: props.taxRate,
+    scenarioAdj: props.scenarioAdj,
+    riskWaccPremium: props.riskWaccPremium,
+    nopatScenario: props.nopatScenario,
+    ownerEarningsScenario: props.ownerEarningsScenario,
+    adjustedEarningsScenario: props.adjustedEarningsScenario,
+    riskEarningsHaircut: props.riskEarningsHaircut,
+    enterpriseEPV: props.enterpriseEPV,
+    equityEPV: props.equityEPV,
+    cashNonOperating: props.cashNonOperating,
+    debtInterestBearing: props.debtInterestBearing,
+    ebitScenario: props.ebitScenario,
+    epvMethod: props.epvMethod,
+    scenario: props.scenario,
+    totalCOGSForWC: props.totalCOGSForWC,
+    accountsReceivable: props.accountsReceivable,
+    inventory: props.inventory,
+    accountsPayable: props.accountsPayable,
+    netWorkingCapital: props.netWorkingCapital,
+    dsoDays: props.dsoDays,
+    dsiDays: props.dsiDays,
+    dpoDays: props.dpoDays,
+  };
+
+  // Generate calculation audit trails
+  const calculationTrails = useMemo(() => 
+    generateCalculationAuditTrail(transparencyInputs), 
+    [transparencyInputs]
+  );
+
+  // Generate cross-checks
+  const crossChecks = useMemo(() => 
+    calculateCrossChecks(transparencyInputs), 
+    [transparencyInputs]
+  );
+
+  // Export function
+  const handleExport = (data: any, filename: string, type: string) => {
+    let content: string;
+    let mimeType: string;
+    
+    if (type === 'csv') {
+      if (Array.isArray(data.calculation_trails)) {
+        const headers = 'Category,Description,Formula,Result,Unit';
+        const rows = data.calculation_trails.flatMap((trail: CalculationAuditTrail) =>
+          trail.steps.map(step => 
+            `"${trail.category}","${step.description}","${step.formula}","${step.result}","${step.unit || 'USD'}"`
+          )
+        ).join('\n');
+        content = `${headers}\n${rows}`;
+      } else {
+        content = JSON.stringify(data);
+      }
+      mimeType = 'text/csv';
+    } else {
+      content = JSON.stringify(data, null, 2);
+      mimeType = 'application/json';
+    }
+    
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}.${type}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const [activeCalculationTab, setActiveCalculationTab] = React.useState<"summary" | "audit" | "formulas" | "verification">("summary");
+
+  return (
+    <div className="space-y-6">
+      {/* Calculation Navigation */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <button
+          onClick={() => setActiveCalculationTab("summary")}
+          className={cx(
+            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeCalculationTab === "summary"
+              ? (theme === "dark" ? "bg-emerald-600 text-white" : "bg-emerald-600 text-white")
+              : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
+          )}
+        >
+          📊 Summary
+        </button>
+        <button
+          onClick={() => setActiveCalculationTab("audit")}
+          className={cx(
+            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeCalculationTab === "audit"
+              ? (theme === "dark" ? "bg-emerald-600 text-white" : "bg-emerald-600 text-white")
+              : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
+          )}
+        >
+          🔍 Audit Trail
+        </button>
+        <button
+          onClick={() => setActiveCalculationTab("formulas")}
+          className={cx(
+            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeCalculationTab === "formulas"
+              ? (theme === "dark" ? "bg-emerald-600 text-white" : "bg-emerald-600 text-white")
+              : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
+          )}
+        >
+          📚 Formulas
+        </button>
+        <button
+          onClick={() => setActiveCalculationTab("verification")}
+          className={cx(
+            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            activeCalculationTab === "verification"
+              ? (theme === "dark" ? "bg-emerald-600 text-white" : "bg-emerald-600 text-white")
+              : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
+          )}
+        >
+          ✅ Verification
+        </button>
+      </div>
+
+      {/* Summary Tab */}
+      {activeCalculationTab === "summary" && (
+        <div className="space-y-6">
+          <TransparencySummaryDashboard trails={calculationTrails} theme={theme} />
+          <ExportControls trails={calculationTrails} theme={theme} onExport={handleExport} />
+        </div>
+      )}
+
+      {/* Audit Trail Tab */}
+      {activeCalculationTab === "audit" && (
+        <div className="space-y-6">
+          <div className={cx("border rounded-xl p-6", theme === "dark" ? "border-slate-700 bg-slate-900" : "border-slate-200 bg-white")}>
+            <h2 className="text-xl font-bold mb-4">🔍 Complete Mathematical Audit Trail</h2>
+            <p className="text-sm text-slate-600 mb-6">
+              This section provides a complete step-by-step breakdown of every calculation in the EPV model. 
+              Each section shows the exact formulas used, input values, and how the final results are derived.
+            </p>
+          </div>
+          {calculationTrails.map((trail, idx) => (
+            <AuditTrailDisplay key={idx} trail={trail} theme={theme} />
+          ))}
+        </div>
+      )}
+
+      {/* Formulas Tab */}
+      {activeCalculationTab === "formulas" && (
+        <div className="space-y-6">
+          <FormulaReferenceDisplay theme={theme} />
+        </div>
+      )}
+
+      {/* Verification Tab */}
+      {activeCalculationTab === "verification" && (
+        <div className="space-y-6">
+          <VerificationDisplay checks={crossChecks} theme={theme} />
+        </div>
+      )}
+    </div>
+  );
+}; 
