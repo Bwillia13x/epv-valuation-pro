@@ -1281,20 +1281,410 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
           </div>
         </div>
 
-        {/* Tab Content - Basic Implementation for Core Tabs */}
+        {/* Tab Content - Enhanced Input Forms */}
         {activeTab === "inputs" && (
-          <Section title="Revenue Builder">
-            <div className="text-center py-8">
-              <div className="text-2xl font-bold text-emerald-400 mb-2">{fmt0.format(totalRevenueBase)}</div>
-              <div className="text-sm text-slate-500">Total Annual Revenue ({locations} location{locations > 1 ? 's' : ''})</div>
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-6">
+            {/* Service Line Revenue Inputs */}
+            <Section title="Service Line Revenue & Pricing">
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {serviceLines.map((line, i) => (
                   <div key={line.id} className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
-                    <div className="font-semibold">{line.name}</div>
-                    <div className="text-sm text-slate-500">{fmt0.format(revenueByLine[i])}</div>
-                    <div className="text-xs">{line.price} × {effectiveVolumesOverall.get(line.id) ?? (line.volume * locations)}</div>
+                    <div className="font-semibold mb-3">{line.name}</div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">Price per Unit ($)</label>
+                        <input
+                          type="number"
+                          value={line.price}
+                          onChange={(e) => {
+                            const newLines = [...serviceLines];
+                            newLines[i] = { ...line, price: parseFloat(e.target.value) || 0 };
+                            setServiceLines(newLines);
+                          }}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                          step="0.01"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">Annual Volume (units)</label>
+                        <input
+                          type="number"
+                          value={line.volume}
+                          onChange={(e) => {
+                            const newLines = [...serviceLines];
+                            newLines[i] = { ...line, volume: parseFloat(e.target.value) || 0 };
+                            setServiceLines(newLines);
+                          }}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">COGS %</label>
+                        <input
+                          type="number"
+                          value={line.cogsPct * 100}
+                          onChange={(e) => {
+                            const newLines = [...serviceLines];
+                            newLines[i] = { ...line, cogsPct: parseFloat(e.target.value) / 100 || 0 };
+                            setServiceLines(newLines);
+                          }}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                          step="0.1"
+                          min="0"
+                          max="100"
+                        />
+                      </div>
+                      <div className="pt-2 text-xs text-slate-500 border-t">
+                        <div>Revenue: <span className="font-semibold">{fmt0.format(line.price * line.volume * locations)}</span></div>
+                        <div>Gross Margin: <span className="font-semibold">{((1 - line.cogsPct) * 100).toFixed(1)}%</span></div>
+                      </div>
+                    </div>
                   </div>
                 ))}
+              </div>
+              
+              {/* Add/Remove Service Lines */}
+              <div className="mt-4 flex gap-2">
+                <Btn onClick={() => {
+                  const newLine: ServiceLine = {
+                    id: `service_${Date.now()}`,
+                    name: "New Service",
+                    price: 100,
+                    volume: 50,
+                    cogsPct: 0.3,
+                    kind: "service",
+                    visitUnits: 1
+                  };
+                  setServiceLines([...serviceLines, newLine]);
+                }} tone="primary">
+                  + Add Service Line
+                </Btn>
+                {serviceLines.length > 1 && (
+                  <Btn onClick={() => setServiceLines(serviceLines.slice(0, -1))} tone="danger">
+                    Remove Last
+                  </Btn>
+                )}
+              </div>
+            </Section>
+
+            {/* Cost Structure Inputs */}
+            <Section title="Cost Structure & Operating Expenses">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Labor Costs</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Clinical Labor %</label>
+                      <input
+                        type="number"
+                        value={clinicalLaborPct * 100}
+                        onChange={(e) => setClinicalLaborPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Labor Market Adjustment</label>
+                      <input
+                        type="number"
+                        value={laborMarketAdj}
+                        onChange={(e) => setLaborMarketAdj(parseFloat(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.01"
+                        min="0.5"
+                        max="2.0"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Variable Expenses</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Marketing %</label>
+                      <input
+                        type="number"
+                        value={marketingPct * 100}
+                        onChange={(e) => setMarketingPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="25"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Admin %</label>
+                      <input
+                        type="number"
+                        value={adminPct * 100}
+                        onChange={(e) => setAdminPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="25"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">MSO Fee %</label>
+                      <input
+                        type="number"
+                        value={msoFeePct * 100}
+                        onChange={(e) => setMsoFeePct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="15"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Other OpEx %</label>
+                      <input
+                        type="number"
+                        value={otherOpexPct * 100}
+                        onChange={(e) => setOtherOpexPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="10"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Fixed Costs (Annual)</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Rent ($)</label>
+                      <input
+                        type="number"
+                        value={rentAnnual}
+                        onChange={(e) => setRentAnnual(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Medical Director ($)</label>
+                      <input
+                        type="number"
+                        value={medDirectorAnnual}
+                        onChange={(e) => setMedDirectorAnnual(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Insurance ($)</label>
+                      <input
+                        type="number"
+                        value={insuranceAnnual}
+                        onChange={(e) => setInsuranceAnnual(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Software ($)</label>
+                      <input
+                        type="number"
+                        value={softwareAnnual}
+                        onChange={(e) => setSoftwareAnnual(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Business Parameters */}
+            <Section title="Business Parameters & Adjustments">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Scale & Locations</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Number of Locations</label>
+                      <input
+                        type="number"
+                        value={locations}
+                        onChange={(e) => setLocations(parseInt(e.target.value) || 1)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        min="1"
+                        max="50"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Add-backs & Adjustments</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Owner Add-back ($)</label>
+                      <input
+                        type="number"
+                        value={ownerAddBack}
+                        onChange={(e) => setOwnerAddBack(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Other Add-back ($)</label>
+                      <input
+                        type="number"
+                        value={otherAddBack}
+                        onChange={(e) => setOtherAddBack(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">D&A and Capex</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">D&A Annual ($)</label>
+                      <input
+                        type="number"
+                        value={daAnnual}
+                        onChange={(e) => setDaAnnual(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Capex Mode</label>
+                      <select
+                        value={capexMode}
+                        onChange={(e) => setCapexMode(e.target.value as typeof capexMode)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                      >
+                        <option value="model">Asset Model</option>
+                        <option value="percent">% of Revenue</option>
+                        <option value="amount">Fixed Amount</option>
+                      </select>
+                    </div>
+                    {capexMode === "percent" && (
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">Maint Capex %</label>
+                        <input
+                          type="number"
+                          value={maintenanceCapexPct * 100}
+                          onChange={(e) => setMaintenanceCapexPct(parseFloat(e.target.value) / 100 || 0)}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                          step="0.1"
+                          min="0"
+                          max="15"
+                        />
+                      </div>
+                    )}
+                    {capexMode === "amount" && (
+                      <div>
+                        <label className="block text-xs text-slate-500 mb-1">Maint Capex ($)</label>
+                        <input
+                          type="number"
+                          value={maintenanceCapexAmount}
+                          onChange={(e) => setMaintenanceCapexAmount(parseFloat(e.target.value) || 0)}
+                          className={cx("w-full px-3 py-2 rounded border text-sm", 
+                            theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                          )}
+                          step="1000"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Financial Summary Dashboard */}
+            <Section title="Financial Summary (Live Calculation)">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-4 rounded bg-emerald-500/10 border border-emerald-500/20">
+                  <div className="text-2xl font-bold text-emerald-400">{fmt0.format(totalRevenueBase)}</div>
+                  <div className="text-sm text-slate-500">Total Revenue</div>
+                </div>
+                <div className="text-center p-4 rounded bg-blue-500/10 border border-blue-500/20">
+                  <div className="text-2xl font-bold text-blue-400">{fmt0.format(grossProfit)}</div>
+                  <div className="text-sm text-slate-500">Gross Profit</div>
+                </div>
+                <div className="text-center p-4 rounded bg-purple-500/10 border border-purple-500/20">
+                  <div className="text-2xl font-bold text-purple-400">{fmt0.format(ebitdaNormalized)}</div>
+                  <div className="text-sm text-slate-500">EBITDA (Norm)</div>
+                </div>
+                <div className="text-center p-4 rounded bg-orange-500/10 border border-orange-500/20">
+                  <div className="text-2xl font-bold text-orange-400">{pctFmt(ebitMargin)}</div>
+                  <div className="text-sm text-slate-500">EBIT Margin</div>
+                </div>
+              </div>
+            </Section>
+          </div>
+        )}
+
+        {activeTab === "capacity" && (
+          <Section title="Capacity Model">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <h3 className="font-semibold mb-3">Provider Slots</h3>
+                <div className="text-xl font-semibold">{providerSlotsPerLoc.toLocaleString()}</div>
+                <div className="text-sm text-slate-500">Total provider slots per year</div>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">Room Slots</h3>
+                <div className="text-xl font-semibold">{roomSlotsPerLoc.toLocaleString()}</div>
+                <div className="text-sm text-slate-500">Total room slots per year</div>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">Capacity Slots</h3>
+                <div className="text-xl font-semibold">{capSlotsPerLoc.toLocaleString()}</div>
+                <div className="text-sm text-slate-500">Total capacity slots per year</div>
               </div>
             </div>
           </Section>
@@ -1327,44 +1717,284 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
         )}
 
         {activeTab === "valuation" && (
-          <Section title="EPV Valuation Results">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-400">{fmt0.format(enterpriseEPV)}</div>
-                <div className="text-sm text-slate-500">Enterprise EPV</div>
-                <div className="text-xs mt-2">WACC: {pctFmt(scenarioWacc)}</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-indigo-400">{fmt0.format(equityEPV)}</div>
-                <div className="text-sm text-slate-500">Equity Value</div>
-                <div className="text-xs mt-2">EPV + Cash - Debt</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-orange-400">{franchiseFactor.toFixed(2)}x</div>
-                <div className="text-sm text-slate-500">Franchise Factor</div>
-                <div className="text-xs mt-2">EPV / Reproduction</div>
-              </div>
-            </div>
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="font-semibold mb-3">Earnings Analysis</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span>EBIT (Normalized):</span><span className="font-mono">{fmt0.format(ebitNormalized)}</span></div>
-                  <div className="flex justify-between"><span>NOPAT:</span><span className="font-mono">{fmt0.format(nopat)}</span></div>
-                  <div className="flex justify-between"><span>Owner Earnings:</span><span className="font-mono">{fmt0.format(ownerEarnings)}</span></div>
-                  <div className="flex justify-between"><span>Method Used:</span><span className="font-mono">{epvMethod}</span></div>
+          <div className="space-y-6">
+            {/* WACC & Valuation Parameters */}
+            <Section title="WACC & Valuation Parameters">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Market Parameters</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Risk-Free Rate (%)</label>
+                      <input
+                        type="number"
+                        value={rfRate * 100}
+                        onChange={(e) => setRfRate(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="15"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Market Risk Premium (%)</label>
+                      <input
+                        type="number"
+                        value={erp * 100}
+                        onChange={(e) => setErp(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="20"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Beta</label>
+                      <input
+                        type="number"
+                        value={beta}
+                        onChange={(e) => setBeta(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.01"
+                        min="0"
+                        max="3"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Company-Specific Premiums</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Size Premium (%)</label>
+                      <input
+                        type="number"
+                        value={sizePrem * 100}
+                        onChange={(e) => setSizePrem(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="10"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Specific Risk Premium (%)</label>
+                      <input
+                        type="number"
+                        value={specificPrem * 100}
+                        onChange={(e) => setSpecificPrem(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="10"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Tax Rate (%)</label>
+                      <input
+                        type="number"
+                        value={taxRate * 100}
+                        onChange={(e) => setTaxRate(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="50"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Capital Structure</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Target Debt Weight (%)</label>
+                      <input
+                        type="number"
+                        value={targetDebtWeight * 100}
+                        onChange={(e) => setTargetDebtWeight(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1"
+                        min="0"
+                        max="90"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Cost of Debt (%)</label>
+                      <input
+                        type="number"
+                        value={costDebt * 100}
+                        onChange={(e) => setCostDebt(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="20"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">EPV Method</label>
+                      <select
+                        value={epvMethod}
+                        onChange={(e) => setEpvMethod(e.target.value as EPVMethod)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                      >
+                        <option value="Owner Earnings">Owner Earnings</option>
+                        <option value="NOPAT (EBIT-based)">NOPAT (EBIT-based)</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div>
-                <h3 className="font-semibold mb-3">Scenario: {scenario}</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span>Revenue:</span><span className="font-mono">{fmt0.format(totalRevenue)}</span></div>
-                  <div className="flex justify-between"><span>Adj. Earnings:</span><span className="font-mono">{fmt0.format(adjustedEarningsScenario)}</span></div>
-                  <div className="flex justify-between"><span>Risk WACC:</span><span className="font-mono">{pctFmt(scenarioWacc)}</span></div>
+            </Section>
+
+            {/* Risk Adjustments */}
+            <Section title="Risk Adjustments & Scenario Selection">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Scenario Selection</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Scenario</label>
+                      <select
+                        value={scenario}
+                        onChange={(e) => setScenario(e.target.value as typeof scenario)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                      >
+                        <option value="Base">Base Case</option>
+                        <option value="Bull">Bull Case</option>
+                        <option value="Bear">Bear Case</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Risk Adjustments</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Earnings Haircut (%)</label>
+                      <input
+                        type="number"
+                        value={riskEarningsHaircut * 100}
+                        onChange={(e) => setRiskEarningsHaircut(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="50"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">WACC Premium (%)</label>
+                      <input
+                        type="number"
+                        value={riskWaccPremium * 100}
+                        onChange={(e) => setRiskWaccPremium(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.1"
+                        min="0"
+                        max="10"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Cash & Debt</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Non-Operating Cash ($)</label>
+                      <input
+                        type="number"
+                        value={cashNonOperating}
+                        onChange={(e) => setCashNonOperating(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Interest-Bearing Debt ($)</label>
+                      <input
+                        type="number"
+                        value={debtInterestBearing}
+                        onChange={(e) => setDebtInterestBearing(parseFloat(e.target.value) || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="1000"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Section>
+            </Section>
+
+            {/* Valuation Results */}
+            <Section title="EPV Valuation Results">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-emerald-400">{fmt0.format(enterpriseEPV)}</div>
+                  <div className="text-sm text-slate-500">Enterprise EPV</div>
+                  <div className="text-xs mt-2">WACC: {pctFmt(scenarioWacc)}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-indigo-400">{fmt0.format(equityEPV)}</div>
+                  <div className="text-sm text-slate-500">Equity Value</div>
+                  <div className="text-xs mt-2">EPV + Cash - Debt</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-400">{franchiseFactor.toFixed(2)}x</div>
+                  <div className="text-sm text-slate-500">Franchise Factor</div>
+                  <div className="text-xs mt-2">EPV / Reproduction</div>
+                </div>
+              </div>
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold mb-3">Earnings Analysis</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span>EBIT (Normalized):</span><span className="font-mono">{fmt0.format(ebitNormalized)}</span></div>
+                    <div className="flex justify-between"><span>NOPAT:</span><span className="font-mono">{fmt0.format(nopat)}</span></div>
+                    <div className="flex justify-between"><span>Owner Earnings:</span><span className="font-mono">{fmt0.format(ownerEarnings)}</span></div>
+                    <div className="flex justify-between"><span>Method Used:</span><span className="font-mono">{epvMethod}</span></div>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-3">Scenario: {scenario}</h3>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between"><span>Revenue:</span><span className="font-mono">{fmt0.format(totalRevenue)}</span></div>
+                    <div className="flex justify-between"><span>Adj. Earnings:</span><span className="font-mono">{fmt0.format(adjustedEarningsScenario)}</span></div>
+                    <div className="flex justify-between"><span>Risk WACC:</span><span className="font-mono">{pctFmt(scenarioWacc)}</span></div>
+                  </div>
+                </div>
+              </div>
+            </Section>
+          </div>
         )}
 
         {activeTab === "montecarlo" && (
