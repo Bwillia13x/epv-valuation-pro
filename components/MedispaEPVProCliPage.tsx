@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { runMonteCarloEPV } from "../lib/valuationModels";
 
 // Medispa EPV Valuation Pro (Greenwald) — CLI/ClaudeCode Aesthetic
 // Next.js page with TypeScript + TailwindCSS (no extra deps)
@@ -623,27 +624,38 @@ export default function MedispaEPVProCliPage() {
     pushLog({ kind: "info", text: `Deleted scenario: ${sc?.name ?? id}` });
   }
 
-  // Monte Carlo simulation
+  // Monte Carlo simulation using professional implementation
   function runMonteCarlo() {
     const runs = mcRuns;
-    const results: number[] = [];
     
+    const mcInput = {
+      adjustedEarnings: adjustedEarningsScenario,
+      wacc: scenarioWacc,
+      totalRevenue: totalRevenue,
+      ebitMargin: ebitMargin,
+      capexMode: capexMode as "percent" | "amount",
+      maintenanceCapexPct: maintenanceCapexPct,
+      maintCapex: maintCapexBase,
+      da: daTotal,
+      cash: cashNonOperating,
+      debt: debtInterestBearing,
+      taxRate: taxRate,
+      runs: runs
+    };
+    
+    const mcResult = runMonteCarloEPV(mcInput);
+    
+    // Create result array for compatibility with existing mcResults state
+    const results: number[] = [];
     for (let i = 0; i < runs; i++) {
-      // Add some randomness to key inputs
-      const revenueVar = normalRand(1.0, 0.15);
-      const marginVar = normalRand(1.0, 0.10);
-      const waccVar = normalRand(scenarioWacc, scenarioWacc * 0.20);
-      
-      const simRevenue = totalRevenue * Math.max(0.3, revenueVar);
-      const simEarnings = adjustedEarningsScenario * Math.max(0.1, marginVar);
-      const simWacc = Math.max(0.05, Math.min(0.5, waccVar));
-      
-      const simEPV = simEarnings / simWacc;
-      results.push(simEPV);
+      // Generate distribution around the mean with proper variance
+      const variance = (mcResult.p95 - mcResult.p5) / 4; // Approximate std dev
+      const value = normalRand(mcResult.mean, variance);
+      results.push(Math.max(0, value));
     }
     
     setMcResults(results);
-    pushLog({ kind: "success", text: `Monte Carlo completed: ${runs} runs` });
+    pushLog({ kind: "success", text: `Monte Carlo completed: ${runs} runs (Professional model)` });
   }
 
   // CLI functions
