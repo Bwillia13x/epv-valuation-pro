@@ -288,18 +288,16 @@ def calculate_epv_earnings(
     ebitda_normalized: float,
     da_annual: float,
     maintenance_capex: float,
-    epv_method: str
+    epv_method: str,
+    tax_rate: float
 ) -> Tuple[float, float, float]:
-    """Calculate EPV earnings components"""
+    """Calculate EPV earnings components, honouring provided tax_rate"""
     ebit_normalized = ebitda_normalized - da_annual
-    nopat = ebit_normalized * (1 - 0.25)  # Using default tax rate for now
+    nopat = ebit_normalized * (1 - tax_rate)
     owner_earnings = nopat + da_annual - maintenance_capex
-    
-    if epv_method == "Owner Earnings":
-        adjusted_earnings = owner_earnings
-    else:
-        adjusted_earnings = nopat
-    
+
+    adjusted_earnings = owner_earnings if epv_method == "Owner Earnings" else nopat
+
     return nopat, owner_earnings, adjusted_earnings
 
 def calculate_wacc(
@@ -388,8 +386,13 @@ def compute_unified_epv(inputs: EPVInputs, fin_data: Dict = None) -> EPVOutputs:
         maintenance_capex = inputs.maintenance_capex_amount
     
     # EPV earnings
+    # Calculate EPV earnings using user-specified tax rate
     nopat, owner_earnings, adjusted_earnings = calculate_epv_earnings(
-        ebitda_normalized, inputs.da_annual, maintenance_capex, inputs.epv_method
+        ebitda_normalized,
+        inputs.da_annual,
+        maintenance_capex,
+        inputs.epv_method,
+        inputs.tax_rate,
     )
     
     # WACC
@@ -430,16 +433,19 @@ def compute_unified_epv(inputs: EPVInputs, fin_data: Dict = None) -> EPVOutputs:
     recommended_equity = equity_epv
     
     # Scenario adjustments
+    # Scenario modelling now uses multiplicative WACC factor for dimensional consistency
     scenario_multipliers = {
         "Base": (1.0, 1.0, 1.0),
-        "Bull": (1.08, 1.05, 0.99),
-        "Bear": (0.92, 0.95, 1.01)
+        "Bull": (1.08, 1.05, 0.95),   # Revenue ↑8%, EBIT ↑5%, WACC ↓5%
+        "Bear": (0.92, 0.95, 1.05),   # Revenue ↓8%, EBIT ↓5%, WACC ↑5%
     }
-    rev_mult, ebit_mult, wacc_adj = scenario_multipliers.get(inputs.scenario, (1.0, 1.0, 1.0))
-    
+
+    rev_mult, ebit_mult, wacc_mult = scenario_multipliers.get(inputs.scenario, (1.0, 1.0, 1.0))
+
     scenario_revenue = total_revenue * rev_mult
     scenario_ebit = ebit_normalized * ebit_mult * rev_mult
-    scenario_epv = (scenario_ebit * (1 - inputs.tax_rate)) / (wacc + wacc_adj)
+    wacc_scenario = wacc * wacc_mult
+    scenario_epv = (scenario_ebit * (1 - inputs.tax_rate)) / wacc_scenario if wacc_scenario > 0 else 0
     
     return EPVOutputs(
         total_revenue=total_revenue,
