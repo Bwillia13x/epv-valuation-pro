@@ -258,6 +258,9 @@ export default function MedispaEPVProCliPage() {
   const [financialAnalysis, setFinancialAnalysis] = useState<AnalysisResults | null>(null);
   const [useHistoricalData, setUseHistoricalData] = useState(false);
 
+  // Calculation tab state
+  const [activeCalculationCategory, setActiveCalculationCategory] = useState<string>('All');
+
   // ========================= Init and defaults =========================
   useEffect(() => {
     const saved = localStorage.getItem("epv-pro-state");
@@ -924,6 +927,113 @@ export default function MedispaEPVProCliPage() {
     if (!logRef.current) return;
     logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [cliLog]);
+
+  // Prepare transparency inputs for calculation audit trail
+  const transparencyInputs: TransparencyInputs = useMemo(() => ({
+    serviceLines,
+    locations,
+    effectiveVolumesOverall,
+    totalRevenueBase,
+    serviceRevenue,
+    retailRevenue,
+    totalCOGS,
+    clinicalLaborCost,
+    clinicalLaborPct,
+    clinicalLaborPctEff,
+    laborMarketAdj,
+    grossProfit,
+    marketingCost,
+    marketingPct,
+    marketingPctEff,
+    marketingSynergyPct,
+    adminCost,
+    adminPct,
+    adminPctEff,
+    sgnaSynergyPct,
+    minAdminPctFactor,
+    fixedOpex,
+    rentAnnual,
+    medDirectorAnnual,
+    insuranceAnnual,
+    softwareAnnual,
+    utilitiesAnnual,
+    msoFee,
+    msoFeePct,
+    complianceCost,
+    complianceOverheadPct,
+    otherOpexCost,
+    otherOpexPct,
+    opexTotal,
+    ebitdaReported,
+    ebitdaNormalized,
+    ownerAddBack,
+    otherAddBack,
+    ebitNormalized,
+    ebitMargin,
+    daTotal,
+    daAnnual,
+    maintCapexBase,
+    maintCapexScenario,
+    maintCapexModelBase,
+    capexMode,
+    maintenanceCapexPct,
+    maintenanceCapexAmount,
+    equipmentDevices,
+    equipReplacementYears,
+    buildoutImprovements,
+    buildoutRefreshYears,
+    ffne,
+    ffneRefreshYears,
+    minorMaintPct,
+    scenarioWacc,
+    baseWacc,
+    costEquity,
+    afterTaxCostDebt,
+    betaEff,
+    rfRate,
+    erp,
+    sizePrem,
+    specificPrem,
+    targetDebtWeight,
+    costDebt,
+    taxRate,
+    scenarioAdj,
+    riskWaccPremium,
+    nopatScenario,
+    ownerEarningsScenario,
+    adjustedEarningsScenario,
+    riskEarningsHaircut,
+    enterpriseEPV,
+    equityEPV,
+    cashNonOperating,
+    debtInterestBearing,
+    ebitScenario,
+    epvMethod,
+    scenario,
+    totalCOGSForWC,
+    accountsReceivable,
+    inventory,
+    accountsPayable,
+    netWorkingCapital,
+    dsoDays,
+    dsiDays,
+    dpoDays,
+  }), [
+    serviceLines, locations, effectiveVolumesOverall, totalRevenueBase, serviceRevenue, retailRevenue,
+    totalCOGS, clinicalLaborCost, clinicalLaborPct, clinicalLaborPctEff, laborMarketAdj, grossProfit,
+    marketingCost, marketingPct, marketingPctEff, marketingSynergyPct, adminCost, adminPct, adminPctEff,
+    sgnaSynergyPct, minAdminPctFactor, fixedOpex, rentAnnual, medDirectorAnnual, insuranceAnnual,
+    softwareAnnual, utilitiesAnnual, msoFee, msoFeePct, complianceCost, complianceOverheadPct,
+    otherOpexCost, otherOpexPct, opexTotal, ebitdaReported, ebitdaNormalized, ownerAddBack, otherAddBack,
+    ebitNormalized, ebitMargin, daTotal, daAnnual, maintCapexBase, maintCapexScenario, maintCapexModelBase,
+    capexMode, maintenanceCapexPct, maintenanceCapexAmount, equipmentDevices, equipReplacementYears,
+    buildoutImprovements, buildoutRefreshYears, ffne, ffneRefreshYears, minorMaintPct, scenarioWacc,
+    baseWacc, costEquity, afterTaxCostDebt, betaEff, rfRate, erp, sizePrem, specificPrem, targetDebtWeight,
+    costDebt, taxRate, scenarioAdj, riskWaccPremium, nopatScenario, ownerEarningsScenario,
+    adjustedEarningsScenario, riskEarningsHaircut, enterpriseEPV, equityEPV, cashNonOperating,
+    debtInterestBearing, ebitScenario, epvMethod, scenario, totalCOGSForWC, accountsReceivable,
+    inventory, accountsPayable, netWorkingCapital, dsoDays, dsiDays, dpoDays
+  ]);
 
   // Helper components
   const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -3362,451 +3472,435 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
         )}
 
                  {activeTab === "analytics" && mounted && (
-           <div className="space-y-6">
-             <div className="flex justify-between items-center">
-               <h2 className="text-green-400 font-mono text-lg">📊 Data Visualization Suite</h2>
-               <div className="flex space-x-2">
-                 <Btn onClick={() => exportChartData(prepareWaterfallData(), 'waterfall_analysis', 'csv')}>
-                   Export Waterfall CSV
-                 </Btn>
-                 <Btn onClick={() => exportChartData(prepareSensitivityData(), 'sensitivity_analysis', 'csv')}>
-                   Export Sensitivity CSV
-                 </Btn>
-                 <Btn onClick={() => {
-                   const data = {
-                     waterfall: prepareWaterfallData(),
-                     sensitivity: prepareSensitivityData(),
-                     monteCarlo: mcResults,
-                     timestamp: new Date().toISOString(),
-                     scenario: scenario
-                   };
-                   exportChartData(data, 'comprehensive_analysis', 'json');
-                 }}>
-                   Export Full Analysis
-                 </Btn>
-               </div>
-             </div>
-
-             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-               {/* EBITDA Waterfall */}
-               <WaterfallChart 
-                 data={prepareWaterfallData()} 
-                 title="EBITDA Waterfall Analysis" 
-               />
-
-               {/* Monte Carlo Distribution */}
-               {mcResults?.rawResults?.evDist && mcResults.rawResults.evDist.length > 0 && (
-                 <DistributionChart
-                   values={mcResults.rawResults.evDist}
-                   percentiles={{
-                     p5: mcResults.p5,
-                     p25: mcResults.p25,
-                     p50: mcResults.median,
-                     p75: mcResults.p75,
-                     p95: mcResults.p95
-                   }}
-                   title="Enterprise Value Distribution"
-                 />
-               )}
-
-               {/* Sensitivity Analysis */}
-               <TornadoChart 
-                 data={prepareSensitivityData()} 
-                 title="Sensitivity Analysis (Tornado Chart)" 
-               />
-
-               {/* Valuation Bridge */}
-               <ValuationBridge 
-                 steps={prepareValuationBridge()} 
-                 title="EPV Valuation Bridge" 
-               />
-             </div>
-
-            {/* Summary Statistics Table */}
-            <div className="bg-gray-900 border border-green-500/30 rounded p-4">
-              <h3 className="text-green-400 font-mono text-sm mb-4">📈 Key Metrics Summary</h3>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                 <div className="text-center">
-                   <div className="text-gray-400 text-xs">Enterprise Value</div>
-                   <div className="text-green-400 font-mono text-lg">{formatCurrency(enterpriseEPV)}</div>
-                 </div>
-                 <div className="text-center">
-                   <div className="text-gray-400 text-xs">EV/Revenue</div>
-                   <div className="text-green-400 font-mono text-lg">
-                     {(enterpriseEPV / serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0)).toFixed(1)}x
-                   </div>
-                 </div>
-                                   <div className="text-center">
-                     <div className="text-gray-400 text-xs">EBIT Margin</div>
-                     <div className="text-green-400 font-mono text-lg">
-                       {formatPercent(
-                         (enterpriseEPV * scenarioWacc) / serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0)
-                       )}
-                     </div>
-                   </div>
-                <div className="text-center">
-                  <div className="text-gray-400 text-xs">WACC</div>
-                  <div className="text-green-400 font-mono text-lg">{formatPercent(scenarioWacc)}</div>
-                </div>
+          <div className="space-y-6">
+            {/* Header with Export Controls */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+              <h2 className="text-2xl font-bold">📊 Analytics & Visualization Suite</h2>
+              <div className="flex flex-wrap gap-2">
+                <Btn onClick={() => exportChartData(prepareWaterfallData(), 'waterfall_analysis', 'csv')} tone="primary">
+                  📊 Export Waterfall
+                </Btn>
+                <Btn onClick={() => exportChartData(prepareSensitivityData(), 'sensitivity_analysis', 'csv')} tone="primary">
+                  🌪️ Export Sensitivity
+                </Btn>
+                <Btn onClick={() => {
+                  const data = {
+                    executive_summary: generateExecutiveSummary(),
+                    detailed_analysis: generateDetailedReport(),
+                    waterfall: prepareWaterfallData(),
+                    sensitivity: prepareSensitivityData(),
+                    monteCarlo: mcResults,
+                    timestamp: new Date().toISOString(),
+                    scenario: scenario
+                  };
+                  exportChartData(data, 'comprehensive_analysis', 'json');
+                }} tone="success">
+                  📁 Export All
+                </Btn>
               </div>
             </div>
 
-            {/* Professional Report Generator */}
-            <div className="bg-gray-900 border border-green-500/30 rounded p-4">
-              <h3 className="text-green-400 font-mono text-sm mb-4">📋 Report Generation</h3>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Key Performance Indicators Dashboard */}
+            <Section title="📈 Key Performance Dashboard">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <div className="text-center p-4 rounded bg-emerald-500/10 border border-emerald-500/20">
+                  <div className="text-2xl font-bold text-emerald-400">{formatCurrency(enterpriseEPV)}</div>
+                  <div className="text-sm text-slate-500">Enterprise Value</div>
+                  <div className="text-xs text-slate-600 mt-1">EPV Perpetuity</div>
+                </div>
+                <div className="text-center p-4 rounded bg-blue-500/10 border border-blue-500/20">
+                  <div className="text-2xl font-bold text-blue-400">
+                    {(enterpriseEPV / totalRevenueBase).toFixed(1)}x
+                  </div>
+                  <div className="text-sm text-slate-500">EV/Revenue</div>
+                  <div className="text-xs text-slate-600 mt-1">Valuation Multiple</div>
+                </div>
+                <div className="text-center p-4 rounded bg-purple-500/10 border border-purple-500/20">
+                  <div className="text-2xl font-bold text-purple-400">{formatPercent(ebitMargin)}</div>
+                  <div className="text-sm text-slate-500">EBIT Margin</div>
+                  <div className="text-xs text-slate-600 mt-1">Profitability</div>
+                </div>
+                <div className="text-center p-4 rounded bg-orange-500/10 border border-orange-500/20">
+                  <div className="text-2xl font-bold text-orange-400">{formatPercent(scenarioWacc)}</div>
+                  <div className="text-sm text-slate-500">WACC</div>
+                  <div className="text-xs text-slate-600 mt-1">Discount Rate</div>
+                </div>
+                <div className="text-center p-4 rounded bg-indigo-500/10 border border-indigo-500/20">
+                  <div className="text-2xl font-bold text-indigo-400">{franchiseFactor.toFixed(2)}x</div>
+                  <div className="text-sm text-slate-500">Franchise Factor</div>
+                  <div className="text-xs text-slate-600 mt-1">EPV vs Assets</div>
+                </div>
+                <div className="text-center p-4 rounded bg-teal-500/10 border border-teal-500/20">
+                  <div className="text-2xl font-bold text-teal-400">{formatPercent(capUtilization)}</div>
+                  <div className="text-sm text-slate-500">Capacity Util.</div>
+                  <div className="text-xs text-slate-600 mt-1">Operational</div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Core Visualizations */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* EBITDA Waterfall Chart */}
+              <Section title="💧 EBITDA Waterfall Analysis">
+                <WaterfallChart 
+                  data={prepareWaterfallData()} 
+                  title="Revenue to EBITDA Bridge" 
+                />
+                <div className="mt-4 p-3 rounded bg-slate-500/10 border border-slate-500/20">
+                  <div className="text-xs text-slate-600">
+                    <strong>Analysis:</strong> Shows the step-by-step breakdown from total revenue to EBITDA, 
+                    highlighting the impact of each cost category on profitability.
+                  </div>
+                </div>
+              </Section>
+
+              {/* Sensitivity Tornado Chart */}
+              <Section title="🌪️ Sensitivity Analysis (Tornado Chart)">
+                <TornadoChart 
+                  data={prepareSensitivityData()} 
+                  title="Enterprise Value Sensitivity" 
+                />
+                <div className="mt-4 p-3 rounded bg-slate-500/10 border border-slate-500/20">
+                  <div className="text-xs text-slate-600">
+                    <strong>Key Drivers:</strong> Identifies which variables have the greatest impact on valuation. 
+                    Focus management attention on the most sensitive assumptions.
+                  </div>
+                </div>
+              </Section>
+
+              {/* Monte Carlo Distribution */}
+              {mcResults?.rawResults?.evDist && mcResults.rawResults.evDist.length > 0 && (
+                <Section title="🎲 Monte Carlo Distribution">
+                  <DistributionChart
+                    values={mcResults.rawResults.evDist}
+                    percentiles={{
+                      p5: mcResults.p5 || 0,
+                      p25: mcResults.p25 || 0,
+                      p50: mcResults.median || 0,
+                      p75: mcResults.p75 || 0,
+                      p95: mcResults.p95 || 0
+                    }}
+                    title="Enterprise Value Distribution"
+                  />
+                  <div className="mt-4 p-3 rounded bg-slate-500/10 border border-slate-500/20">
+                    <div className="text-xs text-slate-600">
+                      <strong>Risk Analysis:</strong> P5-P95 range shows potential downside/upside scenarios. 
+                      Mean: {formatCurrency(mcResults.mean || 0)}
+                    </div>
+                  </div>
+                </Section>
+              )}
+
+              {/* Valuation Bridge */}
+              <Section title="🌉 EPV Valuation Bridge">
+                <ValuationBridge 
+                  steps={prepareValuationBridge()} 
+                  title="EBIT to Enterprise Value" 
+                />
+                <div className="mt-4 p-3 rounded bg-slate-500/10 border border-slate-500/20">
+                  <div className="text-xs text-slate-600">
+                    <strong>Methodology:</strong> Shows the conversion from operating earnings to enterprise value 
+                    through tax, capex, and perpetuity value calculations.
+                  </div>
+                </div>
+              </Section>
+            </div>
+
+            {/* Business Model Analysis */}
+            <Section title="🏗️ Business Model Analysis">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Revenue Mix */}
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Revenue Mix Analysis</h4>
+                  <div className="space-y-3">
+                    {serviceLines.map((line, i) => {
+                      const lineRevenue = line.price * line.volume * locations;
+                      const percentage = (lineRevenue / totalRevenueBase) * 100;
+                      return (
+                        <div key={line.id} className="flex justify-between items-center">
+                          <span className="text-sm">{line.name}</span>
+                          <div className="text-right">
+                            <div className="text-sm font-mono">{formatCurrency(lineRevenue)}</div>
+                            <div className="text-xs text-slate-500">{percentage.toFixed(1)}%</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Margin Analysis */}
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Margin Breakdown</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Gross Margin</span>
+                      <span className="font-mono text-sm">{formatPercent(grossProfit / totalRevenueBase)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">EBITDA Margin</span>
+                      <span className="font-mono text-sm">{formatPercent(ebitdaNormalized / totalRevenueBase)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">EBIT Margin</span>
+                      <span className="font-mono text-sm">{formatPercent(ebitMargin)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Marketing %</span>
+                      <span className="font-mono text-sm">{formatPercent(marketingPctEff)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Admin %</span>
+                      <span className="font-mono text-sm">{formatPercent(adminPctEff)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Capacity Analysis */}
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">Capacity Metrics</h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Provider Capacity</span>
+                      <span className="font-mono text-sm">{providerSlotsPerLoc.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Room Capacity</span>
+                      <span className="font-mono text-sm">{roomSlotsPerLoc.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Bottleneck</span>
+                      <span className="font-mono text-sm">{capSlotsPerLoc.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Utilization</span>
+                      <span className="font-mono text-sm">{formatPercent(capUtilization)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Revenue/Slot</span>
+                      <span className="font-mono text-sm">
+                        {capSlotsPerLoc > 0 ? formatCurrency(totalRevenueBase / (capSlotsPerLoc * locations)) : 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Valuation Summary */}
+            <Section title="💰 Valuation Summary & Comparisons">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-6 rounded-lg bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/20">
+                  <div className="text-3xl font-bold text-emerald-400 mb-2">{formatCurrency(enterpriseEPV)}</div>
+                  <div className="text-lg font-semibold text-emerald-300">Enterprise EPV</div>
+                  <div className="text-sm text-slate-500 mt-2">
+                    Based on {epvMethod === "Owner Earnings" ? "Owner Earnings" : "NOPAT"} approach
+                  </div>
+                  <div className="text-xs text-slate-600 mt-1">
+                    WACC: {formatPercent(scenarioWacc)} | Earnings: {formatCurrency(adjustedEarningsScenario)}
+                  </div>
+                </div>
+
+                <div className="text-center p-6 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20">
+                  <div className="text-3xl font-bold text-blue-400 mb-2">{formatCurrency(totalReproductionValue)}</div>
+                  <div className="text-lg font-semibold text-blue-300">Asset Reproduction</div>
+                  <div className="text-sm text-slate-500 mt-2">
+                    Tangible + Intangible + Working Capital
+                  </div>
+                  <div className="text-xs text-slate-600 mt-1">
+                    Assets: {formatCurrency(totalAssetReproduction * locations)} | WC: {formatCurrency(netWorkingCapital)}
+                  </div>
+                </div>
+
+                <div className="text-center p-6 rounded-lg bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20">
+                  <div className="text-3xl font-bold text-purple-400 mb-2">{formatCurrency(recommendedEquity)}</div>
+                  <div className="text-lg font-semibold text-purple-300">Recommended Value</div>
+                  <div className="text-sm text-slate-500 mt-2">
+                    Method: {recoMethod}
+                  </div>
+                  <div className="text-xs text-slate-600 mt-1">
+                    Franchise Factor: {franchiseFactor.toFixed(2)}x
+                  </div>
+                </div>
+              </div>
+            </Section>
+
+            {/* Professional Report Generation */}
+            <Section title="📋 Professional Reports & Export">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Btn onClick={() => {
                   const report = generateExecutiveSummary();
                   exportChartData(report, 'executive_summary', 'json');
-                }}>
-                  Generate Executive Summary
+                }} tone="primary">
+                  📊 Executive Summary
                 </Btn>
                 <Btn onClick={() => {
                   const detailed = generateDetailedReport();
                   exportChartData(detailed, 'detailed_valuation_report', 'json');
-                }}>
-                  Export Detailed Report
+                }} tone="primary">
+                  📈 Detailed Report
                 </Btn>
                 <Btn onClick={() => {
                   window.print();
-                }}>
-                  Print Analysis
+                }} tone="neutral">
+                  🖨️ Print Analysis
+                </Btn>
+                <Btn onClick={() => {
+                  const pitchData = {
+                    slide1: {
+                      title: "Investment Opportunity",
+                      enterprise_value: enterpriseEPV,
+                      revenue: totalRevenueBase,
+                      ebitda_margin: ebitdaNormalized / totalRevenueBase,
+                      locations: locations
+                    },
+                    slide2: {
+                      title: "Financial Performance",
+                      waterfall: prepareWaterfallData(),
+                      margins: {
+                        gross: grossProfit / totalRevenueBase,
+                        ebitda: ebitdaNormalized / totalRevenueBase,
+                        ebit: ebitMargin
+                      }
+                    },
+                    slide3: {
+                      title: "Valuation Analysis",
+                      epv: enterpriseEPV,
+                      asset_reproduction: totalReproductionValue,
+                      franchise_factor: franchiseFactor,
+                      wacc: scenarioWacc
+                    }
+                  };
+                  exportChartData(pitchData, 'investment_pitch_deck', 'json');
+                }} tone="success">
+                  📺 Pitch Deck Data
                 </Btn>
               </div>
-            </div>
+            </Section>
+
+            {/* Monte Carlo Results (if available) */}
+            {mcResults && (
+              <Section title="🎯 Risk Analysis Summary">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                  <div className="text-center p-4 rounded bg-green-500/10 border border-green-500/20">
+                    <div className="text-2xl font-bold text-green-400">{formatCurrency(mcResults.mean || 0)}</div>
+                    <div className="text-sm text-slate-500">Mean EV</div>
+                  </div>
+                  <div className="text-center p-4 rounded bg-blue-500/10 border border-blue-500/20">
+                    <div className="text-2xl font-bold text-blue-400">{formatCurrency(mcResults.median || 0)}</div>
+                    <div className="text-sm text-slate-500">Median EV</div>
+                  </div>
+                  <div className="text-center p-4 rounded bg-yellow-500/10 border border-yellow-500/20">
+                    <div className="text-2xl font-bold text-yellow-400">{formatCurrency(mcResults.p5 || 0)}</div>
+                    <div className="text-sm text-slate-500">5th Percentile</div>
+                  </div>
+                  <div className="text-center p-4 rounded bg-orange-500/10 border border-orange-500/20">
+                    <div className="text-2xl font-bold text-orange-400">{formatCurrency(mcResults.p95 || 0)}</div>
+                    <div className="text-sm text-slate-500">95th Percentile</div>
+                  </div>
+                  <div className="text-center p-4 rounded bg-purple-500/10 border border-purple-500/20">
+                    <div className="text-2xl font-bold text-purple-400">
+                      {mcResults.p5 && mcResults.mean ? 
+                        `${(((mcResults.mean - mcResults.p5) / mcResults.mean) * 100).toFixed(1)}%` : 
+                        'N/A'}
+                    </div>
+                    <div className="text-sm text-slate-500">Downside Risk</div>
+                  </div>
+                </div>
+              </Section>
+            )}
           </div>
         )}
 
         {activeTab === "calculations" && (
-          <CalculationsTab 
-            theme={theme}
-            serviceLines={serviceLines}
-            locations={locations}
-            effectiveVolumesOverall={effectiveVolumesOverall}
-            totalRevenueBase={totalRevenueBase}
-            serviceRevenue={serviceRevenue}
-            retailRevenue={retailRevenue}
-            totalCOGS={totalCOGS}
-            clinicalLaborCost={clinicalLaborCost}
-            clinicalLaborPct={clinicalLaborPct}
-            clinicalLaborPctEff={clinicalLaborPctEff}
-            laborMarketAdj={laborMarketAdj}
-            grossProfit={grossProfit}
-            marketingCost={marketingCost}
-            marketingPct={marketingPct}
-            marketingPctEff={marketingPctEff}
-            marketingSynergyPct={marketingSynergyPct}
-            adminCost={adminCost}
-            adminPct={adminPct}
-            adminPctEff={adminPctEff}
-            sgnaSynergyPct={sgnaSynergyPct}
-            minAdminPctFactor={minAdminPctFactor}
-            fixedOpex={fixedOpex}
-            rentAnnual={rentAnnual}
-            medDirectorAnnual={medDirectorAnnual}
-            insuranceAnnual={insuranceAnnual}
-            softwareAnnual={softwareAnnual}
-            utilitiesAnnual={utilitiesAnnual}
-            msoFee={msoFee}
-            msoFeePct={msoFeePct}
-            complianceCost={complianceCost}
-            complianceOverheadPct={complianceOverheadPct}
-            otherOpexCost={otherOpexCost}
-            otherOpexPct={otherOpexPct}
-            opexTotal={opexTotal}
-            ebitdaReported={ebitdaReported}
-            ebitdaNormalized={ebitdaNormalized}
-            ownerAddBack={ownerAddBack}
-            otherAddBack={otherAddBack}
-            ebitNormalized={ebitNormalized}
-            ebitMargin={ebitMargin}
-            daTotal={daTotal}
-            daAnnual={daAnnual}
-            maintCapexBase={maintCapexBase}
-            maintCapexScenario={maintCapexScenario}
-            maintCapexModelBase={maintCapexModelBase}
-            capexMode={capexMode}
-            maintenanceCapexPct={maintenanceCapexPct}
-            maintenanceCapexAmount={maintenanceCapexAmount}
-            equipmentDevices={equipmentDevices}
-            equipReplacementYears={equipReplacementYears}
-            buildoutImprovements={buildoutImprovements}
-            buildoutRefreshYears={buildoutRefreshYears}
-            ffne={ffne}
-            ffneRefreshYears={ffneRefreshYears}
-            minorMaintPct={minorMaintPct}
-            scenarioWacc={scenarioWacc}
-            baseWacc={baseWacc}
-            costEquity={costEquity}
-            afterTaxCostDebt={afterTaxCostDebt}
-            betaEff={betaEff}
-            rfRate={rfRate}
-            erp={erp}
-            sizePrem={sizePrem}
-            specificPrem={specificPrem}
-            targetDebtWeight={targetDebtWeight}
-            costDebt={costDebt}
-            taxRate={taxRate}
-            scenarioAdj={scenarioAdj}
-            riskWaccPremium={riskWaccPremium}
-            nopatScenario={nopatScenario}
-            ownerEarningsScenario={ownerEarningsScenario}
-            adjustedEarningsScenario={adjustedEarningsScenario}
-            riskEarningsHaircut={riskEarningsHaircut}
-            enterpriseEPV={enterpriseEPV}
-            equityEPV={equityEPV}
-            cashNonOperating={cashNonOperating}
-            debtInterestBearing={debtInterestBearing}
-            ebitScenario={ebitScenario}
-            epvMethod={epvMethod}
-            scenario={scenario}
-            totalCOGSForWC={totalCOGSForWC}
-            accountsReceivable={accountsReceivable}
-            inventory={inventory}
-            accountsPayable={accountsPayable}
-            netWorkingCapital={netWorkingCapital}
-            dsoDays={dsoDays}
-            dsiDays={dsiDays}
-            dpoDays={dpoDays}
-          />
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+              <h2 className="text-2xl font-bold">🧮 Calculation Transparency & Verification</h2>
+              <div className="flex flex-wrap gap-2">
+                <Btn onClick={() => {
+                  const trails = generateCalculationAuditTrail(transparencyInputs);
+                  const exportData = {
+                    calculation_trails: trails,
+                    summary: {
+                      total_trails: trails.length,
+                      total_steps: trails.reduce((sum, trail) => sum + trail.steps.length, 0),
+                      scenario: scenario,
+                      timestamp: new Date().toISOString()
+                    }
+                  };
+                  exportChartData(exportData, 'calculation_audit_trail', 'json');
+                }} tone="primary">
+                  📋 Export Audit Trail
+                </Btn>
+                <Btn onClick={() => {
+                  const checks = calculateCrossChecks(transparencyInputs);
+                  exportChartData(checks, 'calculation_verification', 'json');
+                }} tone="primary">
+                  ✓ Export Verification
+                </Btn>
+                <Btn onClick={() => window.print()} tone="neutral">
+                  🖨️ Print Calculations
+                </Btn>
+              </div>
+            </div>
+
+            {/* Calculation Summary Dashboard */}
+            <TransparencySummaryDashboard 
+              trails={generateCalculationAuditTrail(transparencyInputs)}
+              theme={theme}
+            />
+
+            {/* Navigation Tabs for Different Calculation Categories */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {['All', 'Revenue', 'Costs', 'Expenses', 'Earnings', 'Capex', 'WACC', 'EPV', 'Working Capital'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCalculationCategory(cat)}
+                  className={cx(
+                    "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+                    activeCalculationCategory === cat
+                      ? (theme === "dark" ? "bg-blue-600 text-white" : "bg-blue-600 text-white")
+                      : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
+                  )}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Audit Trail Display */}
+            <div className="space-y-6">
+              {generateCalculationAuditTrail(transparencyInputs)
+                .filter(trail => 
+                  activeCalculationCategory === 'All' || 
+                  trail.category.toLowerCase().includes(activeCalculationCategory.toLowerCase())
+                )
+                .map((trail, i) => (
+                  <AuditTrailDisplay key={i} trail={trail} theme={theme} />
+                ))
+              }
+            </div>
+
+            {/* Verification and Cross-Checks */}
+            <VerificationDisplay 
+              checks={calculateCrossChecks(transparencyInputs)}
+              theme={theme}
+            />
+
+            {/* Formula Reference Library */}
+            <FormulaReferenceDisplay theme={theme} />
+
+            {/* Export Controls */}
+            <ExportControls 
+              trails={generateCalculationAuditTrail(transparencyInputs)}
+              theme={theme}
+              onExport={(data, filename, type) => exportChartData(data, filename, type)}
+            />
+          </div>
         )}
 
       </div>
     </div>
   );
-}
-
-// Calculations Tab Component
-const CalculationsTab = (props: any) => {
-  const { theme } = props;
-  
-  // Prepare inputs for transparency system
-  const transparencyInputs: TransparencyInputs = {
-    serviceLines: props.serviceLines,
-    locations: props.locations,
-    effectiveVolumesOverall: props.effectiveVolumesOverall,
-    totalRevenueBase: props.totalRevenueBase,
-    serviceRevenue: props.serviceRevenue,
-    retailRevenue: props.retailRevenue,
-    totalCOGS: props.totalCOGS,
-    clinicalLaborCost: props.clinicalLaborCost,
-    clinicalLaborPct: props.clinicalLaborPct,
-    clinicalLaborPctEff: props.clinicalLaborPctEff,
-    laborMarketAdj: props.laborMarketAdj,
-    grossProfit: props.grossProfit,
-    marketingCost: props.marketingCost,
-    marketingPct: props.marketingPct,
-    marketingPctEff: props.marketingPctEff,
-    marketingSynergyPct: props.marketingSynergyPct,
-    adminCost: props.adminCost,
-    adminPct: props.adminPct,
-    adminPctEff: props.adminPctEff,
-    sgnaSynergyPct: props.sgnaSynergyPct,
-    minAdminPctFactor: props.minAdminPctFactor,
-    fixedOpex: props.fixedOpex,
-    rentAnnual: props.rentAnnual,
-    medDirectorAnnual: props.medDirectorAnnual,
-    insuranceAnnual: props.insuranceAnnual,
-    softwareAnnual: props.softwareAnnual,
-    utilitiesAnnual: props.utilitiesAnnual,
-    msoFee: props.msoFee,
-    msoFeePct: props.msoFeePct,
-    complianceCost: props.complianceCost,
-    complianceOverheadPct: props.complianceOverheadPct,
-    otherOpexCost: props.otherOpexCost,
-    otherOpexPct: props.otherOpexPct,
-    opexTotal: props.opexTotal,
-    ebitdaReported: props.ebitdaReported,
-    ebitdaNormalized: props.ebitdaNormalized,
-    ownerAddBack: props.ownerAddBack,
-    otherAddBack: props.otherAddBack,
-    ebitNormalized: props.ebitNormalized,
-    ebitMargin: props.ebitMargin,
-    daTotal: props.daTotal,
-    daAnnual: props.daAnnual,
-    maintCapexBase: props.maintCapexBase,
-    maintCapexScenario: props.maintCapexScenario,
-    maintCapexModelBase: props.maintCapexModelBase,
-    capexMode: props.capexMode,
-    maintenanceCapexPct: props.maintenanceCapexPct,
-    maintenanceCapexAmount: props.maintenanceCapexAmount,
-    equipmentDevices: props.equipmentDevices,
-    equipReplacementYears: props.equipReplacementYears,
-    buildoutImprovements: props.buildoutImprovements,
-    buildoutRefreshYears: props.buildoutRefreshYears,
-    ffne: props.ffne,
-    ffneRefreshYears: props.ffneRefreshYears,
-    minorMaintPct: props.minorMaintPct,
-    scenarioWacc: props.scenarioWacc,
-    baseWacc: props.baseWacc,
-    costEquity: props.costEquity,
-    afterTaxCostDebt: props.afterTaxCostDebt,
-    betaEff: props.betaEff,
-    rfRate: props.rfRate,
-    erp: props.erp,
-    sizePrem: props.sizePrem,
-    specificPrem: props.specificPrem,
-    targetDebtWeight: props.targetDebtWeight,
-    costDebt: props.costDebt,
-    taxRate: props.taxRate,
-    scenarioAdj: props.scenarioAdj,
-    riskWaccPremium: props.riskWaccPremium,
-    nopatScenario: props.nopatScenario,
-    ownerEarningsScenario: props.ownerEarningsScenario,
-    adjustedEarningsScenario: props.adjustedEarningsScenario,
-    riskEarningsHaircut: props.riskEarningsHaircut,
-    enterpriseEPV: props.enterpriseEPV,
-    equityEPV: props.equityEPV,
-    cashNonOperating: props.cashNonOperating,
-    debtInterestBearing: props.debtInterestBearing,
-    ebitScenario: props.ebitScenario,
-    epvMethod: props.epvMethod,
-    scenario: props.scenario,
-    totalCOGSForWC: props.totalCOGSForWC,
-    accountsReceivable: props.accountsReceivable,
-    inventory: props.inventory,
-    accountsPayable: props.accountsPayable,
-    netWorkingCapital: props.netWorkingCapital,
-    dsoDays: props.dsoDays,
-    dsiDays: props.dsiDays,
-    dpoDays: props.dpoDays,
-  };
-
-  // Generate calculation audit trails
-  const calculationTrails = useMemo(() => 
-    generateCalculationAuditTrail(transparencyInputs), 
-    [transparencyInputs]
-  );
-
-  // Generate cross-checks
-  const crossChecks = useMemo(() => 
-    calculateCrossChecks(transparencyInputs), 
-    [transparencyInputs]
-  );
-
-  // Export function
-  const handleExport = (data: any, filename: string, type: string) => {
-    let content: string;
-    let mimeType: string;
-    
-    if (type === 'csv') {
-      if (Array.isArray(data.calculation_trails)) {
-        const headers = 'Category,Description,Formula,Result,Unit';
-        const rows = data.calculation_trails.flatMap((trail: CalculationAuditTrail) =>
-          trail.steps.map(step => 
-            `"${trail.category}","${step.description}","${step.formula}","${step.result}","${step.unit || 'USD'}"`
-          )
-        ).join('\n');
-        content = `${headers}\n${rows}`;
-      } else {
-        content = JSON.stringify(data);
-      }
-      mimeType = 'text/csv';
-    } else {
-      content = JSON.stringify(data, null, 2);
-      mimeType = 'application/json';
-    }
-    
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}.${type}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  const [activeCalculationTab, setActiveCalculationTab] = React.useState<"summary" | "audit" | "formulas" | "verification">("summary");
-
-  return (
-    <div className="space-y-6">
-      {/* Calculation Navigation */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <button
-          onClick={() => setActiveCalculationTab("summary")}
-          className={cx(
-            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-            activeCalculationTab === "summary"
-              ? (theme === "dark" ? "bg-emerald-600 text-white" : "bg-emerald-600 text-white")
-              : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
-          )}
-        >
-          📊 Summary
-        </button>
-        <button
-          onClick={() => setActiveCalculationTab("audit")}
-          className={cx(
-            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-            activeCalculationTab === "audit"
-              ? (theme === "dark" ? "bg-emerald-600 text-white" : "bg-emerald-600 text-white")
-              : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
-          )}
-        >
-          🔍 Audit Trail
-        </button>
-        <button
-          onClick={() => setActiveCalculationTab("formulas")}
-          className={cx(
-            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-            activeCalculationTab === "formulas"
-              ? (theme === "dark" ? "bg-emerald-600 text-white" : "bg-emerald-600 text-white")
-              : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
-          )}
-        >
-          📚 Formulas
-        </button>
-        <button
-          onClick={() => setActiveCalculationTab("verification")}
-          className={cx(
-            "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-            activeCalculationTab === "verification"
-              ? (theme === "dark" ? "bg-emerald-600 text-white" : "bg-emerald-600 text-white")
-              : (theme === "dark" ? "bg-slate-700 text-slate-300 hover:bg-slate-600" : "bg-white text-slate-700 hover:bg-slate-50 border")
-          )}
-        >
-          ✅ Verification
-        </button>
-      </div>
-
-      {/* Summary Tab */}
-      {activeCalculationTab === "summary" && (
-        <div className="space-y-6">
-          <TransparencySummaryDashboard trails={calculationTrails} theme={theme} />
-          <ExportControls trails={calculationTrails} theme={theme} onExport={handleExport} />
-        </div>
-      )}
-
-      {/* Audit Trail Tab */}
-      {activeCalculationTab === "audit" && (
-        <div className="space-y-6">
-          <div className={cx("border rounded-xl p-6", theme === "dark" ? "border-slate-700 bg-slate-900" : "border-slate-200 bg-white")}>
-            <h2 className="text-xl font-bold mb-4">🔍 Complete Mathematical Audit Trail</h2>
-            <p className="text-sm text-slate-600 mb-6">
-              This section provides a complete step-by-step breakdown of every calculation in the EPV model. 
-              Each section shows the exact formulas used, input values, and how the final results are derived.
-            </p>
-          </div>
-          {calculationTrails.map((trail, idx) => (
-            <AuditTrailDisplay key={idx} trail={trail} theme={theme} />
-          ))}
-        </div>
-      )}
-
-      {/* Formulas Tab */}
-      {activeCalculationTab === "formulas" && (
-        <div className="space-y-6">
-          <FormulaReferenceDisplay theme={theme} />
-        </div>
-      )}
-
-      {/* Verification Tab */}
-      {activeCalculationTab === "verification" && (
-        <div className="space-y-6">
-          <VerificationDisplay checks={crossChecks} theme={theme} />
-        </div>
-      )}
-    </div>
-  );
-}; 
+} 
