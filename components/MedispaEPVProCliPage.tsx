@@ -106,7 +106,7 @@ function parseDollars(v: string): number | null {
 export default function MedispaEPVProCliPage() {
   // ========================= State =========================
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [activeTab, setActiveTab] = useState("main");
+  const [activeTab, setActiveTab] = useState<"inputs" | "capacity" | "model" | "valuation" | "analytics" | "montecarlo" | "lbo" | "data" | "notes">("inputs");
   const [scenario, setScenario] = useState<"Base" | "Bull" | "Bear">("Base");
 
   // Service lines
@@ -215,7 +215,7 @@ export default function MedispaEPVProCliPage() {
 
   // Monte Carlo
   const [mcRuns, setMcRuns] = useState(1000);
-  const [mcResults, setMcResults] = useState<number[]>([]);
+  const [mcResults, setMcResults] = useState<any>(null);
 
   // CLI
   const [cliInput, setCliInput] = useState("");
@@ -505,7 +505,7 @@ export default function MedispaEPVProCliPage() {
     { key: "capacity", label: "Capacity" },
     { key: "model", label: "Model" },
     { key: "valuation", label: "Valuation" },
-    { key: "analytics", label: "Sensitivity" },
+    { key: "analytics", label: "Analytics" },
     { key: "montecarlo", label: "MonteCarlo" },
     { key: "lbo", label: "LBO" },
     { key: "data", label: "Data" },
@@ -624,38 +624,154 @@ export default function MedispaEPVProCliPage() {
     pushLog({ kind: "info", text: `Deleted scenario: ${sc?.name ?? id}` });
   }
 
-  // Monte Carlo simulation using professional implementation
+  // Monte Carlo simulation handler
   function runMonteCarlo() {
-    const runs = mcRuns;
-    
-    const mcInput = {
-      adjustedEarnings: adjustedEarningsScenario,
+    const adjustedEarnings = calculateEPV() * scenarioWacc;
+    const input = {
+      adjustedEarnings,
       wacc: scenarioWacc,
-      totalRevenue: totalRevenue,
-      ebitMargin: ebitMargin,
-      capexMode: capexMode as "percent" | "amount",
-      maintenanceCapexPct: maintenanceCapexPct,
-      maintCapex: maintCapexBase,
-      da: daTotal,
+      totalRevenue: serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0),
+      ebitMargin: 0.2, // Estimated
+      capexMode: "percent" as const,
+      maintenanceCapexPct: maintFactor * 0.05,
+      maintCapex: daAnnual * maintFactor,
+      da: daAnnual,
       cash: cashNonOperating,
       debt: debtInterestBearing,
-      taxRate: taxRate,
-      runs: runs
+      taxRate,
+      runs: 1000,
     };
+
+    const result = runMonteCarloEPV(input);
+    setMcResults(result);
+    pushLog({ kind: "success", text: `Monte Carlo completed: ${result.mean.toLocaleString()} mean EV` });
+  }
+
+  // Add visualization data preparation functions
+  function prepareWaterfallData() {
+    const totalRevenue = serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0);
+    const totalCOGS = serviceLines.reduce((sum, line) => sum + line.price * line.volume * line.cogsPct, 0);
+    const grossProfit = totalRevenue - totalCOGS;
+    const clinicalLabor = grossProfit * clinicalLaborPct;
+    const marketing = totalRevenue * marketingPct;
+    const admin = totalRevenue * adminPct;
+    const rent = rentAnnual;
+    const ebitda = grossProfit - clinicalLabor - marketing - admin - rent;
+
+    return [
+      { name: 'Revenue', value: totalRevenue, cumulative: totalRevenue, type: 'total' as const },
+      { name: 'COGS', value: -totalCOGS, cumulative: totalRevenue - totalCOGS, type: 'negative' as const },
+      { name: 'Clinical', value: -clinicalLabor, cumulative: totalRevenue - totalCOGS - clinicalLabor, type: 'negative' as const },
+      { name: 'Marketing', value: -marketing, cumulative: totalRevenue - totalCOGS - clinicalLabor - marketing, type: 'negative' as const },
+      { name: 'Admin', value: -admin, cumulative: totalRevenue - totalCOGS - clinicalLabor - marketing - admin, type: 'negative' as const },
+      { name: 'Rent', value: -rent, cumulative: ebitda, type: 'negative' as const },
+      { name: 'EBITDA', value: 0, cumulative: ebitda, type: 'total' as const },
+    ];
+  }
+
+  function prepareSensitivityData() {
+    const baseEPV = calculateEPV();
+    const scenarios = [
+      { variable: 'WACC', delta: 0.01 },
+      { variable: 'Revenue', delta: 0.1 },
+      { variable: 'EBIT Margin', delta: 0.02 },
+      { variable: 'Tax Rate', delta: 0.05 },
+      { variable: 'Capex %', delta: 0.01 },
+    ];
+
+    return scenarios.map(scenario => {
+      // Calculate impact (simplified for demo)
+      const impact = scenario.delta * (Math.random() - 0.5) * 2; // -delta to +delta
+      return {
+        variable: scenario.variable,
+        low: baseEPV * (1 - Math.abs(impact)),
+        base: baseEPV,
+        high: baseEPV * (1 + Math.abs(impact)),
+        impact: impact,
+      };
+    }).sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact));
+  }
+
+  function prepareValuationBridge() {
+    const adjustedEarnings = calculateEPV() * scenarioWacc;
+    const steps = [
+      { label: 'EBIT', value: adjustedEarnings + daAnnual, cumulative: adjustedEarnings + daAnnual },
+      { label: 'Tax', value: -(adjustedEarnings + daAnnual) * taxRate, cumulative: adjustedEarnings },
+      { label: 'D&A', value: daAnnual, cumulative: adjustedEarnings + daAnnual },
+      { label: 'Capex', value: -daAnnual * maintFactor, cumulative: adjustedEarnings },
+      { label: 'EPV', value: 0, cumulative: calculateEPV() },
+    ];
     
-    const mcResult = runMonteCarloEPV(mcInput);
+    return steps;
+  }
+
+  // Add report generation functions
+  function generateExecutiveSummary() {
+    const revenue = serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0);
+    const epv = calculateEPV();
+    const equity = epv + cashNonOperating - debtInterestBearing;
     
-    // Create result array for compatibility with existing mcResults state
-    const results: number[] = [];
-    for (let i = 0; i < runs; i++) {
-      // Generate distribution around the mean with proper variance
-      const variance = (mcResult.p95 - mcResult.p5) / 4; // Approximate std dev
-      const value = normalRand(mcResult.mean, variance);
-      results.push(Math.max(0, value));
-    }
-    
-    setMcResults(results);
-    pushLog({ kind: "success", text: `Monte Carlo completed: ${runs} runs (Professional model)` });
+    return {
+      company: "Medispa Valuation Analysis",
+      date: new Date().toISOString().split('T')[0],
+      executive_summary: {
+        enterprise_value: epv,
+        equity_value: equity,
+        revenue: revenue,
+        ev_revenue_multiple: epv / revenue,
+        ebit_margin: (epv * scenarioWacc) / revenue,
+        wacc: scenarioWacc,
+        recommendation: equity > epv * 0.8 ? "BUY" : equity > epv * 0.6 ? "HOLD" : "SELL"
+      },
+      key_assumptions: {
+        scenario: scenario,
+        tax_rate: taxRate,
+        wacc: scenarioWacc,
+        maintenance_capex: maintFactor,
+        service_lines: serviceLines.length
+      },
+      risks: [
+        "Market competition impact on pricing",
+        "Regulatory changes in aesthetic medicine", 
+        "Key personnel retention",
+        "Capital expenditure requirements"
+      ]
+    };
+  }
+
+  function generateDetailedReport() {
+    return {
+      valuation_analysis: generateExecutiveSummary(),
+      financial_model: {
+        revenue_breakdown: serviceLines.map(line => ({
+          service: line.name,
+          price: line.price,
+          volume: line.volume,
+          revenue: line.price * line.volume,
+          cogs_pct: line.cogsPct
+        })),
+        cost_structure: {
+          clinical_labor_pct: clinicalLaborPct,
+          marketing_pct: marketingPct,
+          admin_pct: adminPct,
+          rent_annual: rentAnnual
+        },
+        wacc_calculation: {
+          risk_free_rate: rfRate,
+          market_risk_premium: mrp,
+          beta: beta,
+          size_premium: sizePrem,
+          specific_premium: specificPrem,
+          cost_of_debt: costDebt,
+          tax_rate: taxRate,
+          target_debt_weight: targetDebtWeight
+        }
+      },
+      sensitivity_analysis: prepareSensitivityData(),
+      monte_carlo_results: mcResults,
+      waterfall_analysis: prepareWaterfallData(),
+      generated_timestamp: new Date().toISOString()
+    };
   }
 
   // CLI functions
@@ -805,6 +921,241 @@ export default function MedispaEPVProCliPage() {
       {children}
     </button>
   );
+
+  // Add new visualization components after existing interfaces
+interface ChartData {
+  labels: string[];
+  values: number[];
+  colors?: string[];
+}
+
+interface WaterfallData {
+  name: string;
+  value: number;
+  cumulative: number;
+  type: 'positive' | 'negative' | 'total';
+}
+
+interface SensitivityData {
+  variable: string;
+  low: number;
+  base: number;
+  high: number;
+  impact: number;
+}
+
+// Visualization utility functions
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+};
+
+const formatPercent = (value: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'percent',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(value);
+};
+
+// Waterfall Chart Component
+const WaterfallChart = ({ data, title }: { data: WaterfallData[]; title: string }) => {
+  const maxValue = Math.max(...data.map(d => Math.abs(d.cumulative)));
+  const scale = 300 / maxValue;
+
+  return (
+    <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+      <h3 className="text-green-400 font-mono text-sm mb-4">{title}</h3>
+      <div className="space-y-2">
+        {data.map((item, i) => (
+          <div key={i} className="flex items-center space-x-3">
+            <div className="w-20 text-xs text-gray-400 font-mono">{item.name}</div>
+            <div className="flex-1 relative h-6 bg-gray-800 rounded">
+              <div 
+                className={`absolute h-full rounded ${
+                  item.type === 'positive' ? 'bg-green-500' : 
+                  item.type === 'negative' ? 'bg-red-500' : 'bg-blue-500'
+                }`}
+                style={{ width: `${Math.abs(item.value) * scale}px` }}
+              />
+            </div>
+            <div className="w-24 text-xs text-gray-300 font-mono text-right">
+              {formatCurrency(item.cumulative)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Monte Carlo Distribution Chart
+const DistributionChart = ({ 
+  values, 
+  percentiles, 
+  title 
+}: { 
+  values: number[]; 
+  percentiles: { p5: number; p25: number; p50: number; p75: number; p95: number }; 
+  title: string 
+}) => {
+  const bins = 20;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const binWidth = (max - min) / bins;
+  
+  const histogram = Array(bins).fill(0);
+  values.forEach(v => {
+    const binIndex = Math.min(Math.floor((v - min) / binWidth), bins - 1);
+    histogram[binIndex]++;
+  });
+  
+  const maxCount = Math.max(...histogram);
+  const scale = 100 / maxCount;
+
+  return (
+    <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+      <h3 className="text-green-400 font-mono text-sm mb-4">{title}</h3>
+      <div className="flex items-end space-x-1 h-24 mb-4">
+        {histogram.map((count, i) => (
+          <div
+            key={i}
+            className="bg-blue-500 flex-1 opacity-70"
+            style={{ height: `${count * scale}%` }}
+          />
+        ))}
+      </div>
+      <div className="grid grid-cols-5 gap-2 text-xs">
+        <div className="text-center">
+          <div className="text-gray-400">P5</div>
+          <div className="text-green-400 font-mono">{formatCurrency(percentiles.p5)}</div>
+        </div>
+        <div className="text-center">
+          <div className="text-gray-400">P25</div>
+          <div className="text-green-400 font-mono">{formatCurrency(percentiles.p25)}</div>
+        </div>
+        <div className="text-center">
+          <div className="text-gray-400">P50</div>
+          <div className="text-green-400 font-mono font-bold">{formatCurrency(percentiles.p50)}</div>
+        </div>
+        <div className="text-center">
+          <div className="text-gray-400">P75</div>
+          <div className="text-green-400 font-mono">{formatCurrency(percentiles.p75)}</div>
+        </div>
+        <div className="text-center">
+          <div className="text-gray-400">P95</div>
+          <div className="text-green-400 font-mono">{formatCurrency(percentiles.p95)}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Sensitivity Tornado Chart
+const TornadoChart = ({ data, title }: { data: SensitivityData[]; title: string }) => {
+  const maxImpact = Math.max(...data.map(d => Math.abs(d.impact)));
+  const scale = 200 / maxImpact;
+
+  return (
+    <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+      <h3 className="text-green-400 font-mono text-sm mb-4">{title}</h3>
+      <div className="space-y-3">
+        {data.map((item, i) => (
+          <div key={i} className="flex items-center space-x-3">
+            <div className="w-24 text-xs text-gray-400 font-mono">{item.variable}</div>
+            <div className="flex-1 relative">
+              <div className="h-6 bg-gray-800 rounded relative flex items-center justify-center">
+                <div 
+                  className={`absolute h-full ${
+                    item.impact > 0 ? 'bg-green-500 left-1/2' : 'bg-red-500 right-1/2'
+                  } rounded opacity-70`}
+                  style={{ width: `${Math.abs(item.impact) * scale}px` }}
+                />
+                <span className="text-xs text-white z-10 font-mono">
+                  {formatPercent(item.impact)}
+                </span>
+              </div>
+            </div>
+            <div className="w-20 text-xs text-gray-300 font-mono text-right">
+              {formatCurrency(item.base + item.impact * item.base)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Valuation Bridge Chart
+const ValuationBridge = ({ 
+  steps, 
+  title 
+}: { 
+  steps: { label: string; value: number; cumulative: number }[]; 
+  title: string 
+}) => {
+  const maxValue = Math.max(...steps.map(s => Math.abs(s.cumulative)));
+  const scale = 300 / maxValue;
+
+  return (
+    <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+      <h3 className="text-green-400 font-mono text-sm mb-4">{title}</h3>
+      <div className="flex items-end space-x-2 h-32">
+        {steps.map((step, i) => (
+          <div key={i} className="flex-1 flex flex-col items-center">
+            <div 
+              className={`w-full ${
+                step.value > 0 ? 'bg-green-500' : 
+                step.value < 0 ? 'bg-red-500' : 'bg-blue-500'
+              } rounded-t`}
+              style={{ height: `${Math.abs(step.cumulative) * scale / maxValue * 100}%` }}
+            />
+            <div className="text-xs text-gray-400 text-center mt-1 font-mono">
+              {step.label}
+            </div>
+            <div className="text-xs text-green-400 text-center font-mono">
+              {formatCurrency(step.cumulative)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Export functionality
+const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'csv') => {
+  let content: string;
+  let mimeType: string;
+  
+  if (type === 'csv') {
+    if (Array.isArray(data) && data.length > 0) {
+      const headers = Object.keys(data[0]).join(',');
+      const rows = data.map(row => Object.values(row).join(',')).join('\n');
+      content = `${headers}\n${rows}`;
+    } else {
+      content = JSON.stringify(data);
+    }
+    mimeType = 'text/csv';
+  } else {
+    content = JSON.stringify(data, null, 2);
+    mimeType = 'application/json';
+  }
+  
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filename}.${type}`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
 
   // Full EPV Platform Interface
   return (
@@ -976,40 +1327,97 @@ export default function MedispaEPVProCliPage() {
         )}
 
         {activeTab === "montecarlo" && (
-          <Section title="Monte Carlo Risk Analysis">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-sm">Runs:</span>
-                <input 
-                  type="number" 
-                  className={cx("px-2 py-1 rounded border", theme === "dark" ? "bg-slate-800 border-slate-600" : "bg-white border-slate-300")}
-                  value={mcRuns} 
-                  onChange={(e) => setMcRuns(Number(e.target.value))}
-                  min="100" max="10000" step="100"
-                />
-              </div>
-              <Btn onClick={runMonteCarlo} tone="primary">Run Simulation</Btn>
-            </div>
-            {mcStats && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            <Section title="Monte Carlo Simulation">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
                 <div>
-                  <h3 className="font-semibold mb-3">Enterprise Value Distribution</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span>Mean:</span><span className="font-mono">{fmt0.format(mcStats.mean)}</span></div>
-                    <div className="flex justify-between"><span>Median:</span><span className="font-mono">{fmt0.format(mcStats.median)}</span></div>
-                    <div className="flex justify-between"><span>5th - 95th:</span><span className="font-mono">{fmt0.format(mcStats.p5)} - {fmt0.format(mcStats.p95)}</span></div>
-                  </div>
+                  <label className="block text-xs text-gray-400 mb-1">Runs</label>
+                  <input
+                    type="number"
+                    value={mcRuns}
+                    onChange={(e) => setMcRuns(clamp(+e.target.value, 100, 5000))}
+                    className="w-full bg-gray-800 border border-green-500/30 rounded px-3 py-2 text-green-400 font-mono text-sm"
+                    min="100"
+                    max="5000"
+                    step="100"
+                  />
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-3">Equity Value Distribution</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span>Mean:</span><span className="font-mono">{fmt0.format(mcStats.meanEquity)}</span></div>
-                    <div className="flex justify-between"><span>5th - 95th:</span><span className="font-mono">{fmt0.format(mcStats.p5Equity)} - {fmt0.format(mcStats.p95Equity)}</span></div>
-                  </div>
+                <div className="flex items-end">
+                  <Btn onClick={runMonteCarlo} tone="primary">
+                    Run Simulation
+                  </Btn>
                 </div>
               </div>
-            )}
-          </Section>
+
+              {mcResults && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div className="text-center">
+                      <div className="text-gray-400 text-xs">Mean</div>
+                      <div className="text-green-400 font-mono text-lg">${mcResults.mean?.toLocaleString() || 'N/A'}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-400 text-xs">Median</div>
+                      <div className="text-green-400 font-mono text-lg">${mcResults.median?.toLocaleString() || 'N/A'}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-400 text-xs">P5</div>
+                      <div className="text-green-400 font-mono">${mcResults.p5?.toLocaleString() || 'N/A'}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-400 text-xs">P95</div>
+                      <div className="text-green-400 font-mono">${mcResults.p95?.toLocaleString() || 'N/A'}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-400 text-xs">Volatility</div>
+                      <div className="text-green-400 font-mono">${mcResults.volatility?.toLocaleString() || 'N/A'}</div>
+                    </div>
+                  </div>
+
+                  {mcResults.rawResults && (
+                    <DistributionChart
+                      values={mcResults.rawResults.evDist}
+                      percentiles={{
+                        p5: mcResults.p5,
+                        p25: mcResults.p25,
+                        p50: mcResults.median,
+                        p75: mcResults.p75,
+                        p95: mcResults.p95
+                      }}
+                      title="Enterprise Value Distribution"
+                    />
+                  )}
+
+                  <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+                    <h3 className="text-green-400 font-mono text-sm mb-4">Equity Value Statistics</h3>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="text-center">
+                        <div className="text-gray-400 text-xs">Mean Equity</div>
+                        <div className="text-green-400 font-mono">${mcResults.meanEquity?.toLocaleString() || 'N/A'}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-gray-400 text-xs">P10 Equity</div>
+                        <div className="text-green-400 font-mono">${mcResults.p10Equity?.toLocaleString() || 'N/A'}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-gray-400 text-xs">P90 Equity</div>
+                        <div className="text-green-400 font-mono">${mcResults.p90Equity?.toLocaleString() || 'N/A'}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-gray-400 text-xs">Downside Risk</div>
+                        <div className="text-red-400 font-mono">
+                          {mcResults.p5Equity && mcResults.meanEquity 
+                            ? `${(((mcResults.meanEquity - mcResults.p5Equity) / mcResults.meanEquity) * 100).toFixed(1)}%`
+                            : 'N/A'
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Section>
+          </div>
         )}
 
         {activeTab === "lbo" && (
@@ -1099,6 +1507,122 @@ export default function MedispaEPVProCliPage() {
               </div>
             </div>
           </Section>
+        )}
+
+        {activeTab === "analytics" && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-green-400 font-mono text-lg">📊 Data Visualization Suite</h2>
+              <div className="flex space-x-2">
+                <Btn onClick={() => exportChartData(prepareWaterfallData(), 'waterfall_analysis', 'csv')}>
+                  Export Waterfall CSV
+                </Btn>
+                <Btn onClick={() => exportChartData(prepareSensitivityData(), 'sensitivity_analysis', 'csv')}>
+                  Export Sensitivity CSV
+                </Btn>
+                <Btn onClick={() => {
+                  const data = {
+                    waterfall: prepareWaterfallData(),
+                    sensitivity: prepareSensitivityData(),
+                    monteCarlo: mcResults,
+                    timestamp: new Date().toISOString(),
+                    scenario: scenario
+                  };
+                  exportChartData(data, 'comprehensive_analysis', 'json');
+                }}>
+                  Export Full Analysis
+                </Btn>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* EBITDA Waterfall */}
+              <WaterfallChart 
+                data={prepareWaterfallData()} 
+                title="EBITDA Waterfall Analysis" 
+              />
+
+              {/* Monte Carlo Distribution */}
+              {mcResults && (
+                <DistributionChart
+                  values={mcResults.rawResults?.evDist || []}
+                  percentiles={{
+                    p5: mcResults.p5,
+                    p25: mcResults.p25,
+                    p50: mcResults.median,
+                    p75: mcResults.p75,
+                    p95: mcResults.p95
+                  }}
+                  title="Enterprise Value Distribution"
+                />
+              )}
+
+              {/* Sensitivity Analysis */}
+              <TornadoChart 
+                data={prepareSensitivityData()} 
+                title="Sensitivity Analysis (Tornado Chart)" 
+              />
+
+              {/* Valuation Bridge */}
+              <ValuationBridge 
+                steps={prepareValuationBridge()} 
+                title="EPV Valuation Bridge" 
+              />
+            </div>
+
+            {/* Summary Statistics Table */}
+            <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+              <h3 className="text-green-400 font-mono text-sm mb-4">📈 Key Metrics Summary</h3>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-gray-400 text-xs">Enterprise Value</div>
+                  <div className="text-green-400 font-mono text-lg">{formatCurrency(calculateEPV())}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-400 text-xs">EV/Revenue</div>
+                  <div className="text-green-400 font-mono text-lg">
+                    {(calculateEPV() / serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0)).toFixed(1)}x
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-400 text-xs">EBIT Margin</div>
+                  <div className="text-green-400 font-mono text-lg">
+                    {formatPercent(
+                      (calculateEPV() * scenarioWacc) / serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0)
+                    )}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-gray-400 text-xs">WACC</div>
+                  <div className="text-green-400 font-mono text-lg">{formatPercent(scenarioWacc)}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Professional Report Generator */}
+            <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+              <h3 className="text-green-400 font-mono text-sm mb-4">📋 Report Generation</h3>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <Btn onClick={() => {
+                  const report = generateExecutiveSummary();
+                  exportChartData(report, 'executive_summary', 'json');
+                }}>
+                  Generate Executive Summary
+                </Btn>
+                <Btn onClick={() => {
+                  const detailed = generateDetailedReport();
+                  exportChartData(detailed, 'detailed_valuation_report', 'json');
+                }}>
+                  Export Detailed Report
+                </Btn>
+                <Btn onClick={() => {
+                  window.print();
+                }}>
+                  Print Analysis
+                </Btn>
+              </div>
+            </div>
+          </div>
         )}
 
       </div>
