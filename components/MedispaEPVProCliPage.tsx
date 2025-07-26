@@ -3895,7 +3895,7 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
             <ExportControls 
               trails={generateCalculationAuditTrail(transparencyInputs)}
               theme={theme}
-              onExport={(data, filename, type) => exportChartData(data, filename, type)}
+              onExport={(data, filename, type) => exportChartData(data, filename, type as 'csv' | 'json')}
             />
           </div>
         )}
