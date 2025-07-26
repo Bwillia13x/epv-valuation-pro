@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Removed deprecated appDir option for Next.js 14
+  reactStrictMode: true,
+  // Simple export configuration
 }
 
 module.exports = nextConfig 

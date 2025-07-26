@@ -104,6 +104,11 @@ function parseDollars(v: string): number | null {
 }
 
 export default function MedispaEPVProCliPage() {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   // ========================= State =========================
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [activeTab, setActiveTab] = useState<"inputs" | "capacity" | "model" | "valuation" | "analytics" | "montecarlo" | "lbo" | "data" | "notes">("inputs");
@@ -581,8 +586,8 @@ export default function MedispaEPVProCliPage() {
 
   // Monte Carlo state
   const mcStats = useMemo(() => {
-    if (mcResults.length === 0) return null;
-    const sorted = [...mcResults].sort((a, b) => a - b);
+    if (!mcResults || !mcResults.rawResults?.evDist || mcResults.rawResults.evDist.length === 0) return null;
+    const sorted = [...mcResults.rawResults.evDist].sort((a, b) => a - b);
     const mean = sorted.reduce((a, b) => a + b, 0) / sorted.length;
     const median = percentile(sorted, 0.5);
     const p5 = percentile(sorted, 0.05);
@@ -626,15 +631,15 @@ export default function MedispaEPVProCliPage() {
 
   // Monte Carlo simulation handler
   function runMonteCarlo() {
-    const adjustedEarnings = calculateEPV() * scenarioWacc;
+    const adjustedEarnings = enterpriseEPV * scenarioWacc;
     const input = {
       adjustedEarnings,
       wacc: scenarioWacc,
       totalRevenue: serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0),
       ebitMargin: 0.2, // Estimated
       capexMode: "percent" as const,
-      maintenanceCapexPct: maintFactor * 0.05,
-      maintCapex: daAnnual * maintFactor,
+      maintenanceCapexPct: maintenanceCapexPct,
+      maintCapex: maintCapexBase,
       da: daAnnual,
       cash: cashNonOperating,
       debt: debtInterestBearing,
@@ -670,7 +675,7 @@ export default function MedispaEPVProCliPage() {
   }
 
   function prepareSensitivityData() {
-    const baseEPV = calculateEPV();
+    const baseEPV = enterpriseEPV;
     const scenarios = [
       { variable: 'WACC', delta: 0.01 },
       { variable: 'Revenue', delta: 0.1 },
@@ -693,13 +698,13 @@ export default function MedispaEPVProCliPage() {
   }
 
   function prepareValuationBridge() {
-    const adjustedEarnings = calculateEPV() * scenarioWacc;
+    const adjustedEarnings = enterpriseEPV * scenarioWacc;
     const steps = [
       { label: 'EBIT', value: adjustedEarnings + daAnnual, cumulative: adjustedEarnings + daAnnual },
       { label: 'Tax', value: -(adjustedEarnings + daAnnual) * taxRate, cumulative: adjustedEarnings },
       { label: 'D&A', value: daAnnual, cumulative: adjustedEarnings + daAnnual },
-      { label: 'Capex', value: -daAnnual * maintFactor, cumulative: adjustedEarnings },
-      { label: 'EPV', value: 0, cumulative: calculateEPV() },
+      { label: 'Capex', value: -maintCapexBase, cumulative: adjustedEarnings },
+      { label: 'EPV', value: 0, cumulative: enterpriseEPV },
     ];
     
     return steps;
@@ -708,7 +713,7 @@ export default function MedispaEPVProCliPage() {
   // Add report generation functions
   function generateExecutiveSummary() {
     const revenue = serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0);
-    const epv = calculateEPV();
+    const epv = enterpriseEPV;
     const equity = epv + cashNonOperating - debtInterestBearing;
     
     return {
@@ -727,7 +732,7 @@ export default function MedispaEPVProCliPage() {
         scenario: scenario,
         tax_rate: taxRate,
         wacc: scenarioWacc,
-        maintenance_capex: maintFactor,
+        maintenance_capex: maintCapexBase,
         service_lines: serviceLines.length
       },
       risks: [
@@ -758,7 +763,7 @@ export default function MedispaEPVProCliPage() {
         },
         wacc_calculation: {
           risk_free_rate: rfRate,
-          market_risk_premium: mrp,
+          market_risk_premium: erp,
           beta: beta,
           size_premium: sizePrem,
           specific_premium: specificPrem,
@@ -964,8 +969,17 @@ const formatPercent = (value: number) => {
 
 // Waterfall Chart Component
 const WaterfallChart = ({ data, title }: { data: WaterfallData[]; title: string }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+        <h3 className="text-green-400 font-mono text-sm mb-4">{title}</h3>
+        <div className="text-gray-400 text-center">No data available</div>
+      </div>
+    );
+  }
+
   const maxValue = Math.max(...data.map(d => Math.abs(d.cumulative)));
-  const scale = 300 / maxValue;
+  const scale = maxValue > 0 ? 300 / maxValue : 0;
 
   return (
     <div className="bg-gray-900 border border-green-500/30 rounded p-4">
@@ -1003,6 +1017,15 @@ const DistributionChart = ({
   percentiles: { p5: number; p25: number; p50: number; p75: number; p95: number }; 
   title: string 
 }) => {
+  if (!values || values.length === 0) {
+    return (
+      <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+        <h3 className="text-green-400 font-mono text-sm mb-4">{title}</h3>
+        <div className="text-gray-400 text-center">No data available</div>
+      </div>
+    );
+  }
+
   const bins = 20;
   const min = Math.min(...values);
   const max = Math.max(...values);
@@ -1015,7 +1038,7 @@ const DistributionChart = ({
   });
   
   const maxCount = Math.max(...histogram);
-  const scale = 100 / maxCount;
+  const scale = maxCount > 0 ? 100 / maxCount : 0;
 
   return (
     <div className="bg-gray-900 border border-green-500/30 rounded p-4">
@@ -1057,8 +1080,17 @@ const DistributionChart = ({
 
 // Sensitivity Tornado Chart
 const TornadoChart = ({ data, title }: { data: SensitivityData[]; title: string }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+        <h3 className="text-green-400 font-mono text-sm mb-4">{title}</h3>
+        <div className="text-gray-400 text-center">No data available</div>
+      </div>
+    );
+  }
+
   const maxImpact = Math.max(...data.map(d => Math.abs(d.impact)));
-  const scale = 200 / maxImpact;
+  const scale = maxImpact > 0 ? 200 / maxImpact : 0;
 
   return (
     <div className="bg-gray-900 border border-green-500/30 rounded p-4">
@@ -1098,8 +1130,17 @@ const ValuationBridge = ({
   steps: { label: string; value: number; cumulative: number }[]; 
   title: string 
 }) => {
+  if (!steps || steps.length === 0) {
+    return (
+      <div className="bg-gray-900 border border-green-500/30 rounded p-4">
+        <h3 className="text-green-400 font-mono text-sm mb-4">{title}</h3>
+        <div className="text-gray-400 text-center">No data available</div>
+      </div>
+    );
+  }
+
   const maxValue = Math.max(...steps.map(s => Math.abs(s.cumulative)));
-  const scale = 300 / maxValue;
+  const scale = maxValue > 0 ? 300 / maxValue : 0;
 
   return (
     <div className="bg-gray-900 border border-green-500/30 rounded p-4">
@@ -1374,19 +1415,19 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
                     </div>
                   </div>
 
-                  {mcResults.rawResults && (
-                    <DistributionChart
-                      values={mcResults.rawResults.evDist}
-                      percentiles={{
-                        p5: mcResults.p5,
-                        p25: mcResults.p25,
-                        p50: mcResults.median,
-                        p75: mcResults.p75,
-                        p95: mcResults.p95
-                      }}
-                      title="Enterprise Value Distribution"
-                    />
-                  )}
+                                     {mcResults?.rawResults?.evDist && mcResults.rawResults.evDist.length > 0 && (
+                     <DistributionChart
+                       values={mcResults.rawResults.evDist}
+                       percentiles={{
+                         p5: mcResults.p5,
+                         p25: mcResults.p25,
+                         p50: mcResults.median,
+                         p75: mcResults.p75,
+                         p95: mcResults.p95
+                       }}
+                       title="Enterprise Value Distribution"
+                     />
+                   )}
 
                   <div className="bg-gray-900 border border-green-500/30 rounded p-4">
                     <h3 className="text-green-400 font-mono text-sm mb-4">Equity Value Statistics</h3>
@@ -1509,89 +1550,89 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
           </Section>
         )}
 
-        {activeTab === "analytics" && (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-green-400 font-mono text-lg">📊 Data Visualization Suite</h2>
-              <div className="flex space-x-2">
-                <Btn onClick={() => exportChartData(prepareWaterfallData(), 'waterfall_analysis', 'csv')}>
-                  Export Waterfall CSV
-                </Btn>
-                <Btn onClick={() => exportChartData(prepareSensitivityData(), 'sensitivity_analysis', 'csv')}>
-                  Export Sensitivity CSV
-                </Btn>
-                <Btn onClick={() => {
-                  const data = {
-                    waterfall: prepareWaterfallData(),
-                    sensitivity: prepareSensitivityData(),
-                    monteCarlo: mcResults,
-                    timestamp: new Date().toISOString(),
-                    scenario: scenario
-                  };
-                  exportChartData(data, 'comprehensive_analysis', 'json');
-                }}>
-                  Export Full Analysis
-                </Btn>
-              </div>
-            </div>
+                 {activeTab === "analytics" && mounted && (
+           <div className="space-y-6">
+             <div className="flex justify-between items-center">
+               <h2 className="text-green-400 font-mono text-lg">📊 Data Visualization Suite</h2>
+               <div className="flex space-x-2">
+                 <Btn onClick={() => exportChartData(prepareWaterfallData(), 'waterfall_analysis', 'csv')}>
+                   Export Waterfall CSV
+                 </Btn>
+                 <Btn onClick={() => exportChartData(prepareSensitivityData(), 'sensitivity_analysis', 'csv')}>
+                   Export Sensitivity CSV
+                 </Btn>
+                 <Btn onClick={() => {
+                   const data = {
+                     waterfall: prepareWaterfallData(),
+                     sensitivity: prepareSensitivityData(),
+                     monteCarlo: mcResults,
+                     timestamp: new Date().toISOString(),
+                     scenario: scenario
+                   };
+                   exportChartData(data, 'comprehensive_analysis', 'json');
+                 }}>
+                   Export Full Analysis
+                 </Btn>
+               </div>
+             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* EBITDA Waterfall */}
-              <WaterfallChart 
-                data={prepareWaterfallData()} 
-                title="EBITDA Waterfall Analysis" 
-              />
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+               {/* EBITDA Waterfall */}
+               <WaterfallChart 
+                 data={prepareWaterfallData()} 
+                 title="EBITDA Waterfall Analysis" 
+               />
 
-              {/* Monte Carlo Distribution */}
-              {mcResults && (
-                <DistributionChart
-                  values={mcResults.rawResults?.evDist || []}
-                  percentiles={{
-                    p5: mcResults.p5,
-                    p25: mcResults.p25,
-                    p50: mcResults.median,
-                    p75: mcResults.p75,
-                    p95: mcResults.p95
-                  }}
-                  title="Enterprise Value Distribution"
-                />
-              )}
+               {/* Monte Carlo Distribution */}
+               {mcResults?.rawResults?.evDist && mcResults.rawResults.evDist.length > 0 && (
+                 <DistributionChart
+                   values={mcResults.rawResults.evDist}
+                   percentiles={{
+                     p5: mcResults.p5,
+                     p25: mcResults.p25,
+                     p50: mcResults.median,
+                     p75: mcResults.p75,
+                     p95: mcResults.p95
+                   }}
+                   title="Enterprise Value Distribution"
+                 />
+               )}
 
-              {/* Sensitivity Analysis */}
-              <TornadoChart 
-                data={prepareSensitivityData()} 
-                title="Sensitivity Analysis (Tornado Chart)" 
-              />
+               {/* Sensitivity Analysis */}
+               <TornadoChart 
+                 data={prepareSensitivityData()} 
+                 title="Sensitivity Analysis (Tornado Chart)" 
+               />
 
-              {/* Valuation Bridge */}
-              <ValuationBridge 
-                steps={prepareValuationBridge()} 
-                title="EPV Valuation Bridge" 
-              />
-            </div>
+               {/* Valuation Bridge */}
+               <ValuationBridge 
+                 steps={prepareValuationBridge()} 
+                 title="EPV Valuation Bridge" 
+               />
+             </div>
 
             {/* Summary Statistics Table */}
             <div className="bg-gray-900 border border-green-500/30 rounded p-4">
               <h3 className="text-green-400 font-mono text-sm mb-4">📈 Key Metrics Summary</h3>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-gray-400 text-xs">Enterprise Value</div>
-                  <div className="text-green-400 font-mono text-lg">{formatCurrency(calculateEPV())}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-gray-400 text-xs">EV/Revenue</div>
-                  <div className="text-green-400 font-mono text-lg">
-                    {(calculateEPV() / serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0)).toFixed(1)}x
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-gray-400 text-xs">EBIT Margin</div>
-                  <div className="text-green-400 font-mono text-lg">
-                    {formatPercent(
-                      (calculateEPV() * scenarioWacc) / serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0)
-                    )}
-                  </div>
-                </div>
+                                 <div className="text-center">
+                   <div className="text-gray-400 text-xs">Enterprise Value</div>
+                   <div className="text-green-400 font-mono text-lg">{formatCurrency(enterpriseEPV)}</div>
+                 </div>
+                 <div className="text-center">
+                   <div className="text-gray-400 text-xs">EV/Revenue</div>
+                   <div className="text-green-400 font-mono text-lg">
+                     {(enterpriseEPV / serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0)).toFixed(1)}x
+                   </div>
+                 </div>
+                                   <div className="text-center">
+                     <div className="text-gray-400 text-xs">EBIT Margin</div>
+                     <div className="text-green-400 font-mono text-lg">
+                       {formatPercent(
+                         (enterpriseEPV * scenarioWacc) / serviceLines.reduce((sum, line) => sum + line.price * line.volume, 0)
+                       )}
+                     </div>
+                   </div>
                 <div className="text-center">
                   <div className="text-gray-400 text-xs">WACC</div>
                   <div className="text-green-400 font-mono text-lg">{formatPercent(scenarioWacc)}</div>
