@@ -1,0 +1,270 @@
+{
+  "ttm_metrics": {
+    "ttm_revenue": 7610000,
+    "ttm_ebitda_reported": 1520500,
+    "ttm_ebitda_adjusted": 1685500,
+    "ttm_margin": 0.22148488830486202
+  },
+  "ebitda_bridge": {
+    "reported_ebitda": 1520500,
+    "owner_addback": 180000,
+    "onetime_addback": 105000,
+    "rent_normalization": -120000,
+    "adjusted_ebitda": 1685500
+  },
+  "valuation_matrix": [
+    {
+      "multiple": 7.0,
+      "enterprise_value": 11798500.0,
+      "equity_value_to_seller": 9858500.0,
+      "ev_revenue_ratio": 1.5503942181340342
+    },
+    {
+      "multiple": 7.5,
+      "enterprise_value": 12641250.0,
+      "equity_value_to_seller": 10701250.0,
+      "ev_revenue_ratio": 1.6611366622864652
+    },
+    {
+      "multiple": 8.0,
+      "enterprise_value": 13484000.0,
+      "equity_value_to_seller": 11544000.0,
+      "ev_revenue_ratio": 1.7718791064388961
+    },
+    {
+      "multiple": 8.5,
+      "enterprise_value": 14326750.0,
+      "equity_value_to_seller": 12386750.0,
+      "ev_revenue_ratio": 1.8826215505913273
+    },
+    {
+      "multiple": 9.0,
+      "enterprise_value": 15169500.0,
+      "equity_value_to_seller": 13229500.0,
+      "ev_revenue_ratio": 1.9933639947437582
+    },
+    {
+      "multiple": 9.5,
+      "enterprise_value": 16012250.0,
+      "equity_value_to_seller": 14072250.0,
+      "ev_revenue_ratio": 2.1041064388961894
+    },
+    {
+      "multiple": 10.0,
+      "enterprise_value": 16855000.0,
+      "equity_value_to_seller": 14915000.0,
+      "ev_revenue_ratio": 2.2148488830486204
+    }
+  ],
+  "sources_uses": {
+    "entry_ev": 14326750.0,
+    "new_debt": 10315260.0,
+    "sponsor_equity": 4011490.0,
+    "equity_to_seller": 12386750.0,
+    "debt_pct": 72.0
+  },
+  "debt_schedule": [
+    {
+      "year": 1,
+      "revenue": 8218800.000000001,
+      "ebitda": 1836777.6,
+      "ebit": 1736777.6,
+      "nopat": 1285215.424,
+      "maint_capex": 164376.00000000003,
+      "delta_wc": 18355.736986301374,
+      "interest": 876797.1000000001,
+      "fcf_before_debt": 1102483.6870136987,
+      "fcf_after_interest": 225686.58701369865,
+      "principal_payment": 180549.26961095893,
+      "debt_balance": 10134710.730389042
+    },
+    {
+      "year": 2,
+      "revenue": 8876304.0,
+      "ebitda": 2001472.416,
+      "ebit": 1901472.416,
+      "nopat": 1407089.58784,
+      "maint_capex": 177526.08000000002,
+      "delta_wc": 19824.195945205458,
+      "interest": 861450.4120830686,
+      "fcf_before_debt": 1209739.3118947945,
+      "fcf_after_interest": 348288.89981172583,
+      "principal_payment": 278631.1198493807,
+      "debt_balance": 9856079.610539662
+    },
+    {
+      "year": 3,
+      "revenue": 9586408.320000002,
+      "ebitda": 2180763.0259200004,
+      "ebit": 2080763.0259200004,
+      "nopat": 1539764.6391808002,
+      "maint_capex": 191728.16640000005,
+      "delta_wc": 21410.13162082195,
+      "interest": 837766.7668958713,
+      "fcf_before_debt": 1326626.3411599782,
+      "fcf_after_interest": 488859.5742641069,
+      "principal_payment": 391087.65941128554,
+      "debt_balance": 9464991.951128377
+    },
+    {
+      "year": 4,
+      "revenue": 10353320.985600002,
+      "ebitda": 2375930.7099648006,
+      "ebit": 2275930.7099648006,
+      "nopat": 1684188.7253739524,
+      "maint_capex": 207066.41971200006,
+      "delta_wc": 23122.94215048768,
+      "interest": 804524.3158459121,
+      "fcf_before_debt": 1453999.3635114646,
+      "fcf_after_interest": 649475.0476655525,
+      "principal_payment": 519580.038132442,
+      "debt_balance": 8945411.912995934
+    },
+    {
+      "year": 5,
+      "revenue": 11181586.664448004,
+      "ebitda": 2588368.340090881,
+      "ebit": 2488368.340090881,
+      "nopat": 1841392.571667252,
+      "maint_capex": 223631.7332889601,
+      "delta_wc": 24972.777522526798,
+      "interest": 760360.0126046545,
+      "fcf_before_debt": 1592788.0608557654,
+      "fcf_after_interest": 832428.0482511108,
+      "principal_payment": 665942.4386008887,
+      "debt_balance": 8279469.474395046
+    }
+  ],
+  "irr_analysis": {
+    "entry_equity": 4011490.0,
+    "year5_ebitda": 2588368.340090881,
+    "exit_ev": 20706946.72072705,
+    "exit_debt": 8279469.474395046,
+    "exit_equity": 12427477.246332003,
+    "moic": 3.097970391633035,
+    "irr": 0.25376300978663857
+  },
+  "epv_analysis": {
+    "ebit": 1585500,
+    "nopat": 1173270.0,
+    "reinvestment": 158550.0,
+    "fcf": 1014720.0,
+    "epv_enterprise": 8456000.0,
+    "epv_equity": 6516000.0,
+    "epv_vs_multiple_ev": 0.5902245798942538,
+    "epv_implied_multiple": 5.016908929101157
+  },
+  "epv_sensitivity": [
+    [
+      {
+        "wacc": 0.11,
+        "reinvest_rate": 0.05,
+        "epv_enterprise": 9945409.090909092,
+        "epv_equity": 8005409.090909092
+      },
+      {
+        "wacc": 0.11,
+        "reinvest_rate": 0.1,
+        "epv_enterprise": 9224727.272727273,
+        "epv_equity": 7284727.272727273
+      },
+      {
+        "wacc": 0.11,
+        "reinvest_rate": 0.15,
+        "epv_enterprise": 8504045.454545455,
+        "epv_equity": 6564045.454545455
+      }
+    ],
+    [
+      {
+        "wacc": 0.12,
+        "reinvest_rate": 0.05,
+        "epv_enterprise": 9116625.0,
+        "epv_equity": 7176625.0
+      },
+      {
+        "wacc": 0.12,
+        "reinvest_rate": 0.1,
+        "epv_enterprise": 8456000.0,
+        "epv_equity": 6516000.0
+      },
+      {
+        "wacc": 0.12,
+        "reinvest_rate": 0.15,
+        "epv_enterprise": 7795375.0,
+        "epv_equity": 5855375.0
+      }
+    ],
+    [
+      {
+        "wacc": 0.13,
+        "reinvest_rate": 0.05,
+        "epv_enterprise": 8415346.153846154,
+        "epv_equity": 6475346.153846154
+      },
+      {
+        "wacc": 0.13,
+        "reinvest_rate": 0.1,
+        "epv_enterprise": 7805538.461538461,
+        "epv_equity": 5865538.461538461
+      },
+      {
+        "wacc": 0.13,
+        "reinvest_rate": 0.15,
+        "epv_enterprise": 7195730.769230769,
+        "epv_equity": 5255730.769230769
+      }
+    ]
+  ],
+  "operating_kpis": [
+    {
+      "quarter": "2024-Q1",
+      "visits": 2650,
+      "avg_ticket": 560,
+      "injector_hours": 1220,
+      "room_utilization": 0.7
+    },
+    {
+      "quarter": "2024-Q2",
+      "visits": 2760,
+      "avg_ticket": 560,
+      "injector_hours": 1270,
+      "room_utilization": 0.71
+    },
+    {
+      "quarter": "2024-Q3",
+      "visits": 2910,
+      "avg_ticket": 565,
+      "injector_hours": 1330,
+      "room_utilization": 0.73
+    },
+    {
+      "quarter": "2024-Q4",
+      "visits": 3080,
+      "avg_ticket": 570,
+      "injector_hours": 1390,
+      "room_utilization": 0.77
+    },
+    {
+      "quarter": "2025-Q1",
+      "visits": 3220,
+      "avg_ticket": 575,
+      "injector_hours": 1460,
+      "room_utilization": 0.81
+    },
+    {
+      "quarter": "2025-Q2",
+      "visits": 3380,
+      "avg_ticket": 580,
+      "injector_hours": 1520,
+      "room_utilization": 0.85
+    }
+  ],
+  "service_mix": {
+    "injectables": 0.6,
+    "devices": 0.3,
+    "memberships_facials": 0.07,
+    "retail": 0.03
+  },
+  "simulation_timestamp": "2025-07-26T19:46:50.147362"
+}

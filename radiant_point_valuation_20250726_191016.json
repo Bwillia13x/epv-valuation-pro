@@ -1,0 +1,128 @@
+{
+  "case_summary": {
+    "name": "Radiant Point Aesthetics, LLC",
+    "location": "Austin, TX",
+    "footprint": "6 treatment rooms; 2 injectors (MD+NP), 1 laser tech, 2 estheticians",
+    "service_mix": {
+      "injectables": 0.72,
+      "laser_devices": 0.13,
+      "facials_peels": 0.1,
+      "retail": 0.05
+    }
+  },
+  "ttm_metrics": {
+    "ttm_revenue": 7040000,
+    "ttm_product_cogs": 1020800,
+    "ttm_provider_cogs": 739200,
+    "ttm_gross_profit": 5280000,
+    "ttm_rent": 312000,
+    "ttm_marketing": 492800,
+    "ttm_admin_salaries": 1800000,
+    "ttm_other_opex": 844800,
+    "ttm_onetime": 40000,
+    "ttm_ebitda_reported": 1790900,
+    "ttm_ebitda_adjusted": 1982900,
+    "gross_margin": 0.75,
+    "ebitda_margin_reported": 0.25438920454545455,
+    "ebitda_margin_adjusted": 0.28166193181818183
+  },
+  "ebitda_bridge": {
+    "reported_ebitda": 1790900,
+    "owner_salary_addback": 120000,
+    "emr_onetime_addback": 80000,
+    "legal_onetime_addback": 40000,
+    "rent_normalization": -48000,
+    "adjusted_ebitda": 1982900
+  },
+  "valuation_matrix": {
+    "7.0x": {
+      "multiple": 7.0,
+      "enterprise_value": 13880300.0,
+      "equity_value": 13045300.0,
+      "ev_revenue_implied": 1.9716335227272728
+    },
+    "7.5x": {
+      "multiple": 7.5,
+      "enterprise_value": 14871750.0,
+      "equity_value": 14036750.0,
+      "ev_revenue_implied": 2.1124644886363635
+    },
+    "8.0x": {
+      "multiple": 8.0,
+      "enterprise_value": 15863200.0,
+      "equity_value": 15028200.0,
+      "ev_revenue_implied": 2.2532954545454547
+    },
+    "8.5x": {
+      "multiple": 8.5,
+      "enterprise_value": 16854650.0,
+      "equity_value": 16019650.0,
+      "ev_revenue_implied": 2.3941264204545454
+    },
+    "9.0x": {
+      "multiple": 9.0,
+      "enterprise_value": 17846100.0,
+      "equity_value": 17011100.0,
+      "ev_revenue_implied": 2.5349573863636365
+    },
+    "9.5x": {
+      "multiple": 9.5,
+      "enterprise_value": 18837550.0,
+      "equity_value": 18002550.0,
+      "ev_revenue_implied": 2.6757883522727273
+    },
+    "10.0x": {
+      "multiple": 10.0,
+      "enterprise_value": 19829000.0,
+      "equity_value": 18994000.0,
+      "ev_revenue_implied": 2.816619318181818
+    }
+  },
+  "irr_analysis": {
+    "entry_ev": 16854650.0,
+    "entry_equity": 16019650.0,
+    "debt_amount": 12219621.25,
+    "year5_revenue": 10344069.660672003,
+    "year5_ebitda": 3016971.3400934413,
+    "exit_ev": 24135770.72074753,
+    "exit_equity": 24135770.72074753,
+    "irr": 0.08542952228135547,
+    "mom_multiple": 1.5066353335277318,
+    "hold_period": 5
+  },
+  "epv_results": {
+    "ebit": 1922900,
+    "nopat": 1442175.0,
+    "reinvestment": 192290.0,
+    "fcf": 1249885.0,
+    "epv_enterprise": 10415708.333333334,
+    "epv_equity": 9580708.333333334,
+    "epv_vs_multiple_ev": 0.6179723894197349,
+    "implied_multiple": 5.252765310067746
+  },
+  "risk_analysis": {
+    "key_risks": [
+      "Single-clinician dependency (MD + NP injector model)",
+      "Related-party lease re-pricing risk at renewal",
+      "Injector hiring pipeline and retention challenges",
+      "Market saturation in Austin injectables market",
+      "Regulatory changes affecting aesthetic procedures",
+      "Economic sensitivity of discretionary spending"
+    ],
+    "mitigants": [
+      "Strong referral flywheel and 24k active patient base",
+      "Diversified service mix beyond just injectables",
+      "Proven ability to scale (added NP in Q3-24)",
+      "Strong operational metrics (84% room utilization)",
+      "Established EMR and online booking systems",
+      "Cash-pay model reduces payor concentration risk"
+    ],
+    "value_drivers": [
+      "Room utilization expansion potential (current 84%)",
+      "Average ticket growth ($540 to $560 achieved)",
+      "Service mix optimization opportunities",
+      "Operational leverage on fixed cost base",
+      "Geographic expansion potential in Austin MSA"
+    ]
+  }
+}

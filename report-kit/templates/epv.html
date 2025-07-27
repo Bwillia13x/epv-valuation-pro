@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPV Panel - CPP Visual Report Kit</title>
+    <link rel="stylesheet" href="../public/css/report.css">
+    <link rel="stylesheet" href="../vendor/katex.min.css">
+    <script src="../vendor/katex.min.js"></script>
+    <script src="../vendor/echarts.min.js"></script>
+    <script src="../public/js/format.js"></script>
+</head>
+<body>
+    <div class="chart-container">
+        <div class="epv-layout">
+            <!-- Left Panel: EPV Formula and Assumptions -->
+            <div class="epv-formula">
+                <h2 class="text-lg font-semibold mb-4">EPV Calculation</h2>
+                
+                <!-- KaTeX Formula -->
+                <div class="mb-4">
+                    <div id="epv-formula" class="text-center mb-3" style="font-size: 16px;"></div>
+                </div>
+                
+                <!-- Current Assumptions -->
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Current Assumptions:</h4>
+                    <div class="space-y-1">
+                        <div class="metric">
+                            <span class="metric-label">EBIT:</span>
+                            <span class="metric-value linked" id="ebit-value">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Tax Rate:</span>
+                            <span class="metric-value input" id="tax-rate">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Reinvestment:</span>
+                            <span class="metric-value input" id="reinvestment-rate">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">WACC:</span>
+                            <span class="metric-value input" id="wacc-rate">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Calculation Steps -->
+                <div class="mb-4">
+                    <h4 class="font-semibold mb-2">Calculation Steps:</h4>
+                    <div class="space-y-1">
+                        <div class="metric">
+                            <span class="metric-label">NOPAT:</span>
+                            <span class="metric-value linked" id="nopat-value">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Reinvestment:</span>
+                            <span class="metric-value linked" id="reinvestment-value">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Free Cash Flow:</span>
+                            <span class="metric-value linked" id="fcf-value">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- EPV Results -->
+                <div class="mb-4 p-3 bg-white border rounded-lg">
+                    <h4 class="font-semibold mb-2">EPV Results:</h4>
+                    <div class="space-y-1">
+                        <div class="metric">
+                            <span class="metric-label">EPV Enterprise:</span>
+                            <span class="metric-value output" id="epv-enterprise">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPV Equity:</span>
+                            <span class="metric-value output" id="epv-equity">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EPV Multiple:</span>
+                            <span class="metric-value output" id="epv-multiple">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Sensitivity Matrix -->
+            <div class="epv-sensitivity">
+                <h2 class="text-lg font-semibold mb-4">3×3 Sensitivity Analysis</h2>
+                <p class="text-sm text-neutral mb-4">EPV Enterprise Value by WACC and Reinvestment Rate</p>
+                
+                <div id="sensitivity-chart" style="height: 300px;"></div>
+                
+                <div class="mt-4 p-3 bg-white border rounded-lg">
+                    <h4 class="font-semibold mb-2">Sensitivity Insights:</h4>
+                    <div class="space-y-1 text-sm">
+                        <div class="metric">
+                            <span class="metric-label">Range:</span>
+                            <span class="metric-value linked" id="sensitivity-range">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Current Case:</span>
+                            <span class="metric-value output" id="current-case">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">vs Market Multiple:</span>
+                            <span class="metric-value linked" id="vs-market">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Note -->
+        <div class="mt-4 text-center text-sm text-neutral">
+            <span id="footer-note">EPV provides conservative valuation floor based on normalized earnings power</span>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let caseData = null;
+        let sensitivityChart = null;
+        
+        // Wait for data injection
+        function initializeEPV() {
+            if (!window.__CASE__) {
+                setTimeout(initializeEPV, 100);
+                return;
+            }
+            
+            caseData = window.__CASE__;
+            
+            // Render KaTeX formula
+            renderFormula();
+            
+            // Update assumption values
+            updateAssumptions();
+            
+            // Create sensitivity chart
+            createSensitivityChart();
+            
+            // Update insights
+            updateInsights();
+            
+            // Signal that chart is ready
+            window.__READY__ = true;
+        }
+        
+        function renderFormula() {
+            const formulaElement = document.getElementById('epv-formula');
+            const formula = 'EPV = \\frac{EBIT \\times (1 - Tax) - Reinvestment}{WACC}';
+            
+            try {
+                katex.render(formula, formulaElement, {
+                    throwOnError: false,
+                    displayMode: true
+                });
+            } catch (error) {
+                // Fallback if KaTeX fails
+                formulaElement.innerHTML = 'EPV = (EBIT × (1 - Tax) - Reinvestment) / WACC';
+            }
+        }
+        
+        function updateAssumptions() {
+            const epv = caseData.epv_analysis;
+            
+            // Assumptions (inferred from EPV analysis)
+            const ebit = epv.ebit;
+            const nopat = epv.nopat;
+            const reinvestment = epv.reinvestment;
+            const fcf = epv.fcf;
+            
+            // Calculate rates from the data
+            const taxRate = 1 - (nopat / ebit);
+            const reinvestmentRate = reinvestment / ebit;
+            const wacc = fcf / epv.epv_enterprise;
+            
+            document.getElementById('ebit-value').textContent = money(ebit);
+            document.getElementById('tax-rate').textContent = pct(taxRate);
+            document.getElementById('reinvestment-rate').textContent = pct(reinvestmentRate) + ' of EBIT';
+            document.getElementById('wacc-rate').textContent = pct(wacc);
+            
+            document.getElementById('nopat-value').textContent = money(nopat);
+            document.getElementById('reinvestment-value').textContent = money(reinvestment);
+            document.getElementById('fcf-value').textContent = money(fcf);
+            
+            document.getElementById('epv-enterprise').textContent = money(epv.epv_enterprise);
+            document.getElementById('epv-equity').textContent = money(epv.epv_equity);
+            document.getElementById('epv-multiple').textContent = `${epv.epv_implied_multiple.toFixed(1)}×`;
+        }
+        
+        function createSensitivityChart() {
+            const sensitivity = caseData.epv_sensitivity;
+            
+            // Extract sensitivity data
+            const waccValues = ['11.0%', '12.0%', '13.0%'];
+            const reinvestValues = ['5.0%', '10.0%', '15.0%'];
+            
+            // Create data matrix for heatmap
+            const data = [];
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    const value = sensitivity[i][j].epv_enterprise;
+                    data.push([j, i, value]); // [x, y, value]
+                }
+            }
+            
+            // Find min/max for color scaling
+            const values = data.map(d => d[2]);
+            const minValue = Math.min(...values);
+            const maxValue = Math.max(...values);
+            
+            const option = {
+                tooltip: {
+                    position: 'top',
+                    formatter: function(params) {
+                        const wacc = waccValues[params.data[0]];
+                        const reinvest = reinvestValues[params.data[1]];
+                        const value = params.data[2];
+                        return `WACC: ${wacc}<br/>Reinvest: ${reinvest}<br/>EPV: ${money(value)}`;
+                    }
+                },
+                grid: {
+                    height: '70%',
+                    top: '10%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: waccValues,
+                    splitArea: {
+                        show: true
+                    },
+                    axisLabel: {
+                        fontSize: 12
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: reinvestValues,
+                    splitArea: {
+                        show: true
+                    },
+                    axisLabel: {
+                        fontSize: 12
+                    }
+                },
+                visualMap: {
+                    min: minValue,
+                    max: maxValue,
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: '10%',
+                    inRange: {
+                        color: ['#fee2e2', '#dcfce7', '#22c55e']
+                    },
+                    text: ['High', 'Low'],
+                    textStyle: {
+                        fontSize: 10
+                    }
+                },
+                series: [{
+                    name: 'EPV Enterprise',
+                    type: 'heatmap',
+                    data: data,
+                    label: {
+                        show: true,
+                        formatter: function(params) {
+                            return money(params.value[2], { unit: 'M' });
+                        },
+                        fontSize: 11,
+                        fontWeight: 'bold'
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }]
+            };
+            
+            const chartElement = document.getElementById('sensitivity-chart');
+            sensitivityChart = echarts.init(chartElement);
+            sensitivityChart.setOption(option);
+        }
+        
+        function updateInsights() {
+            const sensitivity = caseData.epv_sensitivity;
+            const epv = caseData.epv_analysis;
+            
+            // Calculate range
+            const allValues = [];
+            sensitivity.forEach(row => {
+                row.forEach(cell => {
+                    allValues.push(cell.epv_enterprise);
+                });
+            });
+            
+            const minEpv = Math.min(...allValues);
+            const maxEpv = Math.max(...allValues);
+            
+            // Base case (should be 12% WACC, 10% reinvestment)
+            const baseCase = sensitivity[1][1]; // Middle cell
+            
+            // Compare to market valuation
+            const baseMultiple = 8.5;
+            const adjEbitda = caseData.ebitda_bridge.adjusted_ebitda;
+            const marketEv = adjEbitda * baseMultiple;
+            const vsMarket = epv.epv_enterprise / marketEv;
+            
+            document.getElementById('sensitivity-range').textContent = 
+                `${money(minEpv)} - ${money(maxEpv)}`;
+            document.getElementById('current-case').textContent = 
+                money(baseCase.epv_enterprise);
+            document.getElementById('vs-market').textContent = 
+                `${(vsMarket * 100).toFixed(0)}% of market multiple`;
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (sensitivityChart) {
+                sensitivityChart.resize();
+            }
+        });
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeEPV);
+        } else {
+            initializeEPV();
+        }
+    </script>
+</body>
+</html> 

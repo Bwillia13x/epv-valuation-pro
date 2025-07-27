@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valuation Matrix - CPP Visual Report Kit</title>
+    <link rel="stylesheet" href="../public/css/report.css">
+    <script src="../vendor/echarts.min.js"></script>
+    <script src="../public/js/format.js"></script>
+</head>
+<body>
+    <div class="chart-container">
+        <div class="matrix-layout">
+            <div class="card-header">
+                <h1 class="card-title" id="chart-title">Valuation Matrix</h1>
+                <p class="card-subtitle" id="chart-subtitle">TTM Window Loading...</p>
+            </div>
+            
+            <div class="matrix-assumptions">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; font-size: 12px;">
+                    <div>
+                        <strong>Adj. EBITDA:</strong> <span id="adj-ebitda">Loading...</span>
+                    </div>
+                    <div>
+                        <strong>Old Net Debt:</strong> <span id="old-net-debt">Loading...</span>
+                    </div>
+                    <div>
+                        <strong>Base Case:</strong> <span id="base-multiple">8.5×</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="matrix-table">
+                <table id="valuation-table">
+                    <thead>
+                        <tr>
+                            <th>Multiple</th>
+                            <th>Enterprise Value</th>
+                            <th>Equity to Seller</th>
+                            <th>EV/Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <tr>
+                            <td colspan="4" class="text-center">Loading valuation data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 16px; background: var(--color-background); border-radius: 8px;">
+                <h4 class="text-sm font-semibold mb-4">Valuation Summary</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <div class="metric">
+                            <span class="metric-label">Valuation Range:</span>
+                            <span class="metric-value linked" id="valuation-range">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Base Case EV:</span>
+                            <span class="metric-value output" id="base-ev">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Base Case Equity:</span>
+                            <span class="metric-value output" id="base-equity">Loading...</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="metric">
+                            <span class="metric-label">Multiple Range:</span>
+                            <span class="metric-value linked" id="multiple-range">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Revenue Multiple:</span>
+                            <span class="metric-value linked" id="revenue-multiple">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">EBITDA Margin:</span>
+                            <span class="metric-value linked" id="ebitda-margin">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let caseData = null;
+        
+        // Wait for data injection
+        function initializeMatrix() {
+            if (!window.__CASE__) {
+                setTimeout(initializeMatrix, 100);
+                return;
+            }
+            
+            caseData = window.__CASE__;
+            const title = window.__TITLE__ || 'Valuation Matrix';
+            const ttm = window.__TTM__ || 'TTM Window';
+            
+            // Update title and subtitle
+            document.getElementById('chart-title').textContent = title;
+            document.getElementById('chart-subtitle').textContent = `Valuation Matrix - ${ttm}`;
+            
+            // Populate assumptions
+            populateAssumptions();
+            
+            // Create valuation table
+            createValuationTable();
+            
+            // Update summary metrics
+            updateSummaryMetrics();
+            
+            // Signal that chart is ready
+            window.__READY__ = true;
+        }
+        
+        function populateAssumptions() {
+            const adjEbitda = caseData.ebitda_bridge.adjusted_ebitda;
+            const netDebt = 1940000; // From HarborGlow case
+            
+            document.getElementById('adj-ebitda').textContent = money(adjEbitda);
+            document.getElementById('old-net-debt').textContent = money(netDebt);
+        }
+        
+        function createValuationTable() {
+            const matrix = caseData.valuation_matrix;
+            const tableBody = document.getElementById('table-body');
+            
+            // Clear loading message
+            tableBody.innerHTML = '';
+            
+            // Find base case multiple (8.5x or 8.0x)
+            let baseMultiple = 8.5;
+            let baseCase = matrix.find(row => row.multiple === baseMultiple);
+            if (!baseCase) {
+                baseMultiple = 8.0;
+                baseCase = matrix.find(row => row.multiple === baseMultiple);
+            }
+            if (!baseCase && matrix.length > 0) {
+                baseCase = matrix[Math.floor(matrix.length / 2)]; // Middle row as fallback
+                baseMultiple = baseCase.multiple;
+            }
+            
+            // Update base multiple display
+            document.getElementById('base-multiple').textContent = `${baseMultiple}×`;
+            
+            // Create table rows
+            matrix.forEach(row => {
+                const tr = document.createElement('tr');
+                const isBaseCase = row.multiple === baseMultiple;
+                
+                if (isBaseCase) {
+                    tr.className = 'table-highlight';
+                }
+                
+                tr.innerHTML = `
+                    <td class="font-semibold">${row.multiple.toFixed(1)}×</td>
+                    <td class="font-mono">${money(row.enterprise_value)}</td>
+                    <td class="font-mono">${money(row.equity_value_to_seller)}</td>
+                    <td class="font-mono">${row.ev_revenue_ratio.toFixed(1)}×</td>
+                `;
+                
+                tableBody.appendChild(tr);
+            });
+        }
+        
+        function updateSummaryMetrics() {
+            const matrix = caseData.valuation_matrix;
+            const revenue = caseData.ttm_metrics.ttm_revenue;
+            const adjEbitda = caseData.ebitda_bridge.adjusted_ebitda;
+            
+            if (matrix.length === 0) return;
+            
+            // Find base case
+            let baseCase = matrix.find(row => row.multiple === 8.5) || 
+                          matrix.find(row => row.multiple === 8.0) || 
+                          matrix[Math.floor(matrix.length / 2)];
+            
+            // Valuation range
+            const minEquity = Math.min(...matrix.map(r => r.equity_value_to_seller));
+            const maxEquity = Math.max(...matrix.map(r => r.equity_value_to_seller));
+            
+            // Multiple range
+            const minMultiple = Math.min(...matrix.map(r => r.multiple));
+            const maxMultiple = Math.max(...matrix.map(r => r.multiple));
+            
+            // Update displays
+            document.getElementById('valuation-range').textContent = 
+                `${money(minEquity)} - ${money(maxEquity)}`;
+            document.getElementById('base-ev').textContent = money(baseCase.enterprise_value);
+            document.getElementById('base-equity').textContent = money(baseCase.equity_value_to_seller);
+            document.getElementById('multiple-range').textContent = 
+                `${minMultiple.toFixed(1)}× - ${maxMultiple.toFixed(1)}×`;
+            document.getElementById('revenue-multiple').textContent = 
+                `${baseCase.ev_revenue_ratio.toFixed(1)}×`;
+            document.getElementById('ebitda-margin').textContent = 
+                pct(adjEbitda / revenue);
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeMatrix);
+        } else {
+            initializeMatrix();
+        }
+    </script>
+</body>
+</html> 

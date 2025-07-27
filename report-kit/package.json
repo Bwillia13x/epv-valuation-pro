@@ -1,0 +1,38 @@
+{
+  "name": "cpp-visual-report-kit",
+  "version": "1.0.0",
+  "description": "Local CPP-grade visual generator for private equity case studies",
+  "type": "module",
+  "main": "scripts/render.mjs",
+  "scripts": {
+    "render": "node scripts/render.mjs",
+    "compare": "node scripts/compare.mjs",
+    "test": "node scripts/render.mjs --case cases/sample.json --title 'Test Case' --ttm '2024-Q3 → 2025-Q2' --out test_exports"
+  },
+  "keywords": [
+    "private-equity",
+    "valuation",
+    "cpp",
+    "visuals",
+    "reports",
+    "charts",
+    "pdf"
+  ],
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "author": "CPP Team",
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "local"
+  },
+  "bugs": {
+    "url": "mailto:support@cpp.local"
+  },
+  "homepage": "README.md"
+} 

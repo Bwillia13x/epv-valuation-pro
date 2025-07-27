@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensitivity Tornado Chart - CPP Visual Report Kit</title>
+    <link rel="stylesheet" href="../public/css/report.css">
+    <script src="../vendor/echarts.min.js"></script>
+    <script src="../public/js/format.js"></script>
+</head>
+<body>
+    <div class="chart-container">
+        <div class="tornado-layout">
+            <div class="card-header">
+                <h1 class="card-title" id="chart-title">Sensitivity Analysis</h1>
+                <p class="card-subtitle" id="chart-subtitle">Impact on Sponsor IRR</p>
+            </div>
+            
+            <div class="tornado-content">
+                <!-- Main Tornado Chart -->
+                <div class="tornado-panel">
+                    <h3 class="panel-title">Tornado Chart - IRR Sensitivity</h3>
+                    <div id="tornado-chart" class="chart-large"></div>
+                    <div class="tornado-notes">
+                        <p><strong>Base Case IRR:</strong> <span id="base-irr">--</span></p>
+                        <p>Each variable moved ±20% from base case assumptions</p>
+                    </div>
+                </div>
+                
+                <!-- Sensitivity Table -->
+                <div class="sensitivity-table-panel">
+                    <h3 class="panel-title">Detailed Sensitivity Analysis</h3>
+                    <table class="sensitivity-table" id="sensitivity-table">
+                        <thead>
+                            <tr>
+                                <th class="variable-header">Variable</th>
+                                <th class="base-header">Base Case</th>
+                                <th class="low-header">Low (-20%)</th>
+                                <th class="high-header">High (+20%)</th>
+                                <th class="impact-header">IRR Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sensitivity-tbody">
+                            <!-- Dynamic content will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Two-Way Sensitivity -->
+                <div class="two-way-panel">
+                    <h3 class="panel-title">Two-Way Sensitivity: Revenue Growth vs Exit Multiple</h3>
+                    <div id="two-way-heatmap" class="chart-medium"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculateSensitivities(caseData) {
+            const baseIrr = caseData.irr_analysis.irr;
+            const baseRevenue = caseData.ttm_metrics.ttm_revenue;
+            const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
+            const baseMargin = baseEbitda / baseRevenue;
+            const sponsorEquity = caseData.sources_uses.sponsor_equity;
+            
+            const variables = [
+                {
+                    name: 'Revenue Growth',
+                    baseValue: caseData.assumptions.revenue_growth,
+                    formatter: (v) => window.__FORMAT__.pct(v),
+                    calculate: (factor) => {
+                        const revenueGrowth = caseData.assumptions.revenue_growth * factor;
+                        const year5Revenue = baseRevenue * Math.pow(1 + revenueGrowth, 5);
+                        const year5Ebitda = year5Revenue * (baseMargin + 0.005 * 5); // Base margin improvement
+                        const exitEv = year5Ebitda * 8.0; // Base exit multiple
+                        const exitEquity = exitEv - caseData.irr_analysis.exit_debt;
+                        const moic = exitEquity / sponsorEquity;
+                        return Math.pow(moic, 1/5) - 1;
+                    }
+                },
+                {
+                    name: 'EBITDA Margin',
+                    baseValue: baseMargin,
+                    formatter: (v) => window.__FORMAT__.pct(v),
+                    calculate: (factor) => {
+                        const margin = baseMargin * factor;
+                        const year5Revenue = baseRevenue * Math.pow(1 + caseData.assumptions.revenue_growth, 5);
+                        const year5Ebitda = year5Revenue * (margin + 0.005 * 5);
+                        const exitEv = year5Ebitda * 8.0;
+                        const exitEquity = exitEv - caseData.irr_analysis.exit_debt;
+                        const moic = exitEquity / sponsorEquity;
+                        return Math.pow(moic, 1/5) - 1;
+                    }
+                },
+                {
+                    name: 'Exit Multiple',
+                    baseValue: 8.0,
+                    formatter: (v) => v.toFixed(1) + '×',
+                    calculate: (factor) => {
+                        const exitMultiple = 8.0 * factor;
+                        const year5Revenue = baseRevenue * Math.pow(1 + caseData.assumptions.revenue_growth, 5);
+                        const year5Ebitda = year5Revenue * (baseMargin + 0.005 * 5);
+                        const exitEv = year5Ebitda * exitMultiple;
+                        const exitEquity = exitEv - caseData.irr_analysis.exit_debt;
+                        const moic = exitEquity / sponsorEquity;
+                        return Math.pow(moic, 1/5) - 1;
+                    }
+                },
+                {
+                    name: 'Debt % of EV',
+                    baseValue: caseData.assumptions.debt_pct,
+                    formatter: (v) => window.__FORMAT__.pct(v),
+                    calculate: (factor) => {
+                        const debtPct = caseData.assumptions.debt_pct * factor;
+                        const newSponsorEquity = caseData.sources_uses.entry_ev * (1 - debtPct);
+                        const year5Revenue = baseRevenue * Math.pow(1 + caseData.assumptions.revenue_growth, 5);
+                        const year5Ebitda = year5Revenue * (baseMargin + 0.005 * 5);
+                        const exitEv = year5Ebitda * 8.0;
+                        // Approximate debt balance change
+                        const debtChange = (debtPct - caseData.assumptions.debt_pct) * caseData.sources_uses.entry_ev;
+                        const exitEquity = exitEv - (caseData.irr_analysis.exit_debt + debtChange * 0.7); // Assume 70% remains
+                        const moic = exitEquity / newSponsorEquity;
+                        return Math.pow(moic, 1/5) - 1;
+                    }
+                },
+                {
+                    name: 'Maintenance CapEx',
+                    baseValue: caseData.assumptions.maintenance_capex_pct,
+                    formatter: (v) => window.__FORMAT__.pct(v),
+                    calculate: (factor) => {
+                        // Simplified: assume higher capex reduces cash generation and debt paydown
+                        const capexRate = caseData.assumptions.maintenance_capex_pct * factor;
+                        const capexImpact = (capexRate - caseData.assumptions.maintenance_capex_pct);
+                        const year5Revenue = baseRevenue * Math.pow(1 + caseData.assumptions.revenue_growth, 5);
+                        const year5Ebitda = year5Revenue * (baseMargin + 0.005 * 5);
+                        const exitEv = year5Ebitda * 8.0;
+                        // Higher capex = less debt paydown
+                        const additionalDebt = capexImpact * year5Revenue * 5 * 0.5; // Simplified impact
+                        const exitEquity = exitEv - (caseData.irr_analysis.exit_debt + additionalDebt);
+                        const moic = exitEquity / sponsorEquity;
+                        return Math.pow(moic, 1/5) - 1;
+                    }
+                },
+                {
+                    name: 'Working Capital',
+                    baseValue: 0.02, // Approximate WC as % of revenue
+                    formatter: (v) => window.__FORMAT__.pct(v),
+                    calculate: (factor) => {
+                        // Simplified: higher WC requirements reduce cash generation
+                        const wcRate = 0.02 * factor;
+                        const wcImpact = (wcRate - 0.02);
+                        const year5Revenue = baseRevenue * Math.pow(1 + caseData.assumptions.revenue_growth, 5);
+                        const year5Ebitda = year5Revenue * (baseMargin + 0.005 * 5);
+                        const exitEv = year5Ebitda * 8.0;
+                        const additionalDebt = wcImpact * year5Revenue * 0.3; // WC impact on debt
+                        const exitEquity = exitEv - (caseData.irr_analysis.exit_debt + additionalDebt);
+                        const moic = exitEquity / sponsorEquity;
+                        return Math.pow(moic, 1/5) - 1;
+                    }
+                }
+            ];
+            
+            // Calculate sensitivities
+            variables.forEach(variable => {
+                variable.lowIrr = variable.calculate(0.8); // -20%
+                variable.highIrr = variable.calculate(1.2); // +20%
+                variable.impact = Math.abs(variable.highIrr - variable.lowIrr);
+                variable.lowValue = variable.baseValue * 0.8;
+                variable.highValue = variable.baseValue * 1.2;
+            });
+            
+            // Sort by impact (descending)
+            variables.sort((a, b) => b.impact - a.impact);
+            
+            return variables;
+        }
+
+        function createTornadoChart(variables, baseIrr) {
+            const chart = echarts.init(document.getElementById('tornado-chart'));
+            
+            const categories = variables.map(v => v.name);
+            const lowData = variables.map(v => (v.lowIrr - baseIrr) * 100);
+            const highData = variables.map(v => (v.highIrr - baseIrr) * 100);
+            
+            const option = {
+                grid: {
+                    left: '25%',
+                    right: '10%',
+                    top: '10%',
+                    bottom: '15%'
+                },
+                xAxis: {
+                    type: 'value',
+                    name: 'IRR Impact (%)',
+                    nameLocation: 'middle',
+                    nameGap: 25,
+                    axisLine: {
+                        lineStyle: {
+                            color: '#666'
+                        }
+                    },
+                    axisLabel: {
+                        formatter: function(value) {
+                            return value > 0 ? `+${value.toFixed(1)}%` : `${value.toFixed(1)}%`;
+                        },
+                        fontSize: 10
+                    },
+                    splitLine: {
+                        show: true,
+                        lineStyle: {
+                            color: '#e5e7eb',
+                            type: 'dashed'
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: categories,
+                    axisLabel: {
+                        fontSize: 11,
+                        color: '#374151'
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLine: {
+                        show: false
+                    }
+                },
+                series: [
+                    {
+                        name: 'Downside (-20%)',
+                        type: 'bar',
+                        data: lowData,
+                        itemStyle: {
+                            color: '#ef4444'
+                        },
+                        barWidth: '60%',
+                        stack: 'total'
+                    },
+                    {
+                        name: 'Upside (+20%)',
+                        type: 'bar',
+                        data: highData,
+                        itemStyle: {
+                            color: '#22c55e'
+                        },
+                        barWidth: '60%',
+                        stack: 'total'
+                    }
+                ],
+                legend: {
+                    bottom: 0,
+                    textStyle: {
+                        fontSize: 10
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    formatter: function(params) {
+                        const categoryIndex = params[0].dataIndex;
+                        const variable = variables[categoryIndex];
+                        let result = `<strong>${variable.name}</strong><br/>`;
+                        result += `Low (-20%): ${window.__FORMAT__.pct(variable.lowIrr)} IRR<br/>`;
+                        result += `High (+20%): ${window.__FORMAT__.pct(variable.highIrr)} IRR<br/>`;
+                        result += `Impact Range: ${window.__FORMAT__.pct(variable.impact)}`;
+                        return result;
+                    }
+                }
+            };
+            
+            chart.setOption(option);
+            return chart;
+        }
+
+        function createSensitivityTable(variables, baseIrr) {
+            const tbody = document.getElementById('sensitivity-tbody');
+            tbody.innerHTML = '';
+            
+            variables.forEach(variable => {
+                const row = document.createElement('tr');
+                
+                // Variable name
+                const nameCell = document.createElement('td');
+                nameCell.textContent = variable.name;
+                nameCell.className = 'variable-name';
+                row.appendChild(nameCell);
+                
+                // Base case value
+                const baseCell = document.createElement('td');
+                baseCell.textContent = variable.formatter(variable.baseValue);
+                baseCell.className = 'base-value';
+                row.appendChild(baseCell);
+                
+                // Low case
+                const lowCell = document.createElement('td');
+                lowCell.textContent = `${variable.formatter(variable.lowValue)} → ${window.__FORMAT__.pct(variable.lowIrr)}`;
+                lowCell.className = 'low-value';
+                row.appendChild(lowCell);
+                
+                // High case
+                const highCell = document.createElement('td');
+                highCell.textContent = `${variable.formatter(variable.highValue)} → ${window.__FORMAT__.pct(variable.highIrr)}`;
+                highCell.className = 'high-value';
+                row.appendChild(highCell);
+                
+                // Impact
+                const impactCell = document.createElement('td');
+                impactCell.textContent = window.__FORMAT__.pct(variable.impact);
+                impactCell.className = 'impact-value';
+                row.appendChild(impactCell);
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function createTwoWayHeatmap(caseData) {
+            const chart = echarts.init(document.getElementById('two-way-heatmap'));
+            
+            const revenueGrowthRange = [0.04, 0.06, 0.08, 0.10, 0.12]; // 4% to 12%
+            const exitMultipleRange = [6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5]; // 6.5× to 9.5×
+            
+            const data = [];
+            const baseRevenue = caseData.ttm_metrics.ttm_revenue;
+            const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
+            const baseMargin = baseEbitda / baseRevenue;
+            const sponsorEquity = caseData.sources_uses.sponsor_equity;
+            
+            revenueGrowthRange.forEach((revGrowth, i) => {
+                exitMultipleRange.forEach((exitMult, j) => {
+                    const year5Revenue = baseRevenue * Math.pow(1 + revGrowth, 5);
+                    const year5Ebitda = year5Revenue * (baseMargin + 0.005 * 5);
+                    const exitEv = year5Ebitda * exitMult;
+                    const exitEquity = exitEv - caseData.irr_analysis.exit_debt;
+                    const moic = exitEquity / sponsorEquity;
+                    const irr = (Math.pow(moic, 1/5) - 1) * 100;
+                    
+                    data.push([j, i, irr]);
+                });
+            });
+            
+            const option = {
+                grid: {
+                    left: '15%',
+                    right: '10%',
+                    top: '10%',
+                    bottom: '25%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: exitMultipleRange.map(x => x.toFixed(1) + '×'),
+                    name: 'Exit Multiple',
+                    nameLocation: 'middle',
+                    nameGap: 25,
+                    axisLabel: {
+                        fontSize: 10
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: revenueGrowthRange.map(r => window.__FORMAT__.pct(r)),
+                    name: 'Revenue Growth',
+                    nameLocation: 'middle',
+                    nameGap: 40,
+                    axisLabel: {
+                        fontSize: 10
+                    }
+                },
+                visualMap: {
+                    min: Math.min(...data.map(d => d[2])),
+                    max: Math.max(...data.map(d => d[2])),
+                    calculable: true,
+                    orient: 'horizontal',
+                    left: 'center',
+                    bottom: '5%',
+                    inRange: {
+                        color: ['#ef4444', '#f59e0b', '#22c55e']
+                    },
+                    text: ['High IRR', 'Low IRR'],
+                    textStyle: {
+                        fontSize: 10
+                    }
+                },
+                series: [{
+                    name: 'IRR',
+                    type: 'heatmap',
+                    data: data,
+                    label: {
+                        show: true,
+                        formatter: function(params) {
+                            return params.value[2].toFixed(1) + '%';
+                        },
+                        fontSize: 9
+                    }
+                }],
+                tooltip: {
+                    formatter: function(params) {
+                        const revGrowth = revenueGrowthRange[params.value[1]];
+                        const exitMult = exitMultipleRange[params.value[0]];
+                        const irr = params.value[2];
+                        return `Revenue Growth: ${window.__FORMAT__.pct(revGrowth)}<br/>Exit Multiple: ${exitMult.toFixed(1)}×<br/>IRR: ${irr.toFixed(1)}%`;
+                    }
+                }
+            };
+            
+            chart.setOption(option);
+            return chart;
+        }
+
+        function initializeTornadoAnalysis(caseData) {
+            document.getElementById('chart-title').textContent = 'Sensitivity Analysis';
+            document.getElementById('chart-subtitle').textContent = 'Impact on Sponsor IRR • ' + (window.__TTM__ || 'TTM Analysis');
+            
+            const baseIrr = caseData.irr_analysis.irr;
+            document.getElementById('base-irr').textContent = window.__FORMAT__.pct(baseIrr);
+            
+            // Calculate sensitivity variables
+            const variables = calculateSensitivities(caseData);
+            
+            // Create visualizations
+            createTornadoChart(variables, baseIrr);
+            createSensitivityTable(variables, baseIrr);
+            createTwoWayHeatmap(caseData);
+        }
+
+        // Wait for case data injection
+        function waitForData() {
+            if (window.__CASE__) {
+                initializeTornadoAnalysis(window.__CASE__);
+                window.__READY__ = true;
+            } else {
+                setTimeout(waitForData, 100);
+            }
+        }
+
+        // Start initialization
+        waitForData();
+    </script>
+
+    <style>
+        .tornado-layout {
+            padding: 20px;
+            background: white;
+        }
+        
+        .tornado-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+        
+        .tornado-panel {
+            grid-column: 1 / -1;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sensitivity-table-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .two-way-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin: 0 0 15px 0;
+            text-align: center;
+        }
+        
+        .chart-large {
+            flex: 1;
+            min-height: 300px;
+        }
+        
+        .chart-medium {
+            flex: 1;
+            min-height: 200px;
+        }
+        
+        .tornado-notes {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+        }
+        
+        .tornado-notes p {
+            margin: 5px 0;
+            font-size: 12px;
+            color: var(--color-text-light);
+        }
+        
+        .tornado-notes strong {
+            color: var(--color-text);
+        }
+        
+        .sensitivity-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            flex: 1;
+        }
+        
+        .sensitivity-table th,
+        .sensitivity-table td {
+            padding: 8px 10px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 11px;
+        }
+        
+        .sensitivity-table th {
+            background: #f3f4f6;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        
+        .variable-header {
+            text-align: left !important;
+            width: 25%;
+        }
+        
+        .variable-name {
+            text-align: left !important;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+        
+        .base-value {
+            color: var(--color-linked);
+            font-weight: 500;
+        }
+        
+        .low-value {
+            color: #ef4444;
+        }
+        
+        .high-value {
+            color: #22c55e;
+        }
+        
+        .impact-value {
+            color: var(--color-output);
+            font-weight: 600;
+        }
+    </style>
+</body>
+</html> 

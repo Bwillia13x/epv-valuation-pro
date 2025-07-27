@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Dashboard - CPP Visual Report Kit</title>
+    <link rel="stylesheet" href="../public/css/report.css">
+    <script src="../vendor/echarts.min.js"></script>
+    <script src="../public/js/format.js"></script>
+</head>
+<body>
+    <div class="chart-container">
+        <div class="kpi-layout">
+            <div class="card-header">
+                <h1 class="card-title" id="chart-title">Key Performance Indicators</h1>
+                <p class="card-subtitle" id="chart-subtitle">TTM Window Loading...</p>
+            </div>
+            
+            <div class="kpi-grid">
+                <!-- Revenue & Growth KPIs -->
+                <div class="kpi-section">
+                    <h3 class="section-title">Revenue & Growth</h3>
+                    <div class="gauge-row">
+                        <div class="gauge-container">
+                            <div id="revenue-gauge" class="gauge-chart"></div>
+                            <div class="gauge-label">Revenue Growth</div>
+                        </div>
+                        <div class="gauge-container">
+                            <div id="margin-gauge" class="gauge-chart"></div>
+                            <div class="gauge-label">EBITDA Margin</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Returns KPIs -->
+                <div class="kpi-section">
+                    <h3 class="section-title">Investment Returns</h3>
+                    <div class="gauge-row">
+                        <div class="gauge-container">
+                            <div id="irr-gauge" class="gauge-chart"></div>
+                            <div class="gauge-label">Sponsor IRR</div>
+                        </div>
+                        <div class="gauge-container">
+                            <div id="moic-gauge" class="gauge-chart"></div>
+                            <div class="gauge-label">MOIC</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Financial Health KPIs -->
+                <div class="kpi-section">
+                    <h3 class="section-title">Financial Health</h3>
+                    <div class="metric-cards">
+                        <div class="metric-card">
+                            <div class="metric-value" id="debt-ratio">--</div>
+                            <div class="metric-label">Debt/EBITDA</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="interest-coverage">--</div>
+                            <div class="metric-label">Interest Coverage</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="cash-conversion">--</div>
+                            <div class="metric-label">Cash Conversion</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Valuation KPIs -->
+                <div class="kpi-section">
+                    <h3 class="section-title">Valuation Metrics</h3>
+                    <div class="metric-cards">
+                        <div class="metric-card">
+                            <div class="metric-value" id="ev-multiple">--</div>
+                            <div class="metric-label">EV/EBITDA</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="epv-discount">--</div>
+                            <div class="metric-label">EPV Discount</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-value" id="equity-value">--</div>
+                            <div class="metric-label">Equity Value</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts and data
+        function createGauge(elementId, value, max, title, unit = '%', thresholds = [30, 70]) {
+            const chart = echarts.init(document.getElementById(elementId));
+            
+            const option = {
+                series: [{
+                    type: 'gauge',
+                    center: ['50%', '55%'],
+                    radius: '85%',
+                    startAngle: 180,
+                    endAngle: 0,
+                    min: 0,
+                    max: max,
+                    splitNumber: 5,
+                    itemStyle: {
+                        color: value < thresholds[0] ? '#ef4444' : 
+                               value < thresholds[1] ? '#f59e0b' : '#22c55e'
+                    },
+                    progress: {
+                        show: true,
+                        width: 12
+                    },
+                    pointer: {
+                        show: false
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            width: 12,
+                            color: [[1, '#e5e7eb']]
+                        }
+                    },
+                    axisTick: {
+                        distance: -25,
+                        splitNumber: 5,
+                        lineStyle: {
+                            width: 2,
+                            color: '#666'
+                        }
+                    },
+                    splitLine: {
+                        distance: -30,
+                        length: 14,
+                        lineStyle: {
+                            width: 3,
+                            color: '#666'
+                        }
+                    },
+                    axisLabel: {
+                        distance: -15,
+                        color: '#666',
+                        fontSize: 10
+                    },
+                    title: {
+                        show: false
+                    },
+                    detail: {
+                        backgroundColor: 'transparent',
+                        borderWidth: 0,
+                        width: '100%',
+                        lineHeight: 40,
+                        height: 40,
+                        borderRadius: 8,
+                        offsetCenter: [0, '0%'],
+                        valueAnimation: true,
+                        formatter: function (value) {
+                            return `{value|${value.toFixed(1)}${unit}}`;
+                        },
+                        rich: {
+                            value: {
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                                color: value < thresholds[0] ? '#ef4444' : 
+                                       value < thresholds[1] ? '#f59e0b' : '#22c55e'
+                            }
+                        }
+                    },
+                    data: [{
+                        value: value
+                    }]
+                }]
+            };
+            
+            chart.setOption(option);
+            return chart;
+        }
+
+        // Initialize dashboard when data is loaded
+        function initializeKpiDashboard(caseData) {
+            // Update title and subtitle
+            document.getElementById('chart-title').textContent = 'Key Performance Indicators';
+            document.getElementById('chart-subtitle').textContent = `TTM: ${window.__TTM__ || 'Loading...'}`;
+            
+            // Calculate metrics
+            const ttm = caseData.ttm_metrics;
+            const lbo = caseData.irr_analysis;
+            const bridge = caseData.ebitda_bridge;
+            const sources = caseData.sources_uses;
+            const epv = caseData.epv_analysis;
+            const assumptions = caseData.assumptions;
+            
+            // Revenue growth (annualized from 5-year projection)
+            const revenueGrowth = assumptions.revenue_growth * 100; // Convert to percentage
+            
+            // EBITDA margin
+            const ebitdaMargin = ttm.ttm_margin * 100;
+            
+            // IRR and MOIC
+            const irr = lbo.irr * 100;
+            const moic = lbo.moic;
+            
+            // Create gauges
+            createGauge('revenue-gauge', revenueGrowth, 15, 'Revenue Growth', '%', [3, 7]);
+            createGauge('margin-gauge', ebitdaMargin, 30, 'EBITDA Margin', '%', [15, 22]);
+            createGauge('irr-gauge', irr, 50, 'Sponsor IRR', '%', [15, 25]);
+            createGauge('moic-gauge', moic, 5, 'MOIC', '×', [2, 3]);
+            
+            // Update metric cards
+            const year1 = caseData.debt_schedule[0];
+            const debtRatio = (sources.new_debt / bridge.adjusted_ebitda).toFixed(1);
+            const interestCoverage = (year1.ebitda / year1.interest_expense).toFixed(1);
+            const cashConversion = ((year1.fcf_before_interest / year1.ebitda) * 100).toFixed(0);
+            
+            document.getElementById('debt-ratio').textContent = `${debtRatio}×`;
+            document.getElementById('interest-coverage').textContent = `${interestCoverage}×`;
+            document.getElementById('cash-conversion').textContent = `${cashConversion}%`;
+            
+            // Valuation metrics
+            const baseMultiple = 8.5;
+            const epvDiscount = ((1 - (epv.epv_enterprise / (bridge.adjusted_ebitda * baseMultiple))) * 100).toFixed(0);
+            const equityValue = window.__FORMAT__.abbr(caseData.valuation_matrix.find(v => v.multiple === baseMultiple)?.equity_value_to_seller || 0);
+            
+            document.getElementById('ev-multiple').textContent = `${baseMultiple}×`;
+            document.getElementById('epv-discount').textContent = `${epvDiscount}%`;
+            document.getElementById('equity-value').textContent = equityValue;
+        }
+
+        // Wait for case data injection
+        function waitForData() {
+            if (window.__CASE__) {
+                initializeKpiDashboard(window.__CASE__);
+                window.__READY__ = true;
+            } else {
+                setTimeout(waitForData, 100);
+            }
+        }
+
+        // Start initialization
+        waitForData();
+    </script>
+
+    <style>
+        .kpi-layout {
+            padding: 20px;
+            background: white;
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+        
+        .kpi-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--color-border);
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin: 0 0 15px 0;
+            text-align: center;
+        }
+        
+        .gauge-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 200px;
+        }
+        
+        .gauge-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .gauge-chart {
+            width: 150px;
+            height: 120px;
+        }
+        
+        .gauge-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--color-text);
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        .metric-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            height: 200px;
+            align-content: center;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--color-output);
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: var(--color-text-light);
+            font-weight: 500;
+        }
+    </style>
+</body>
+</html> 

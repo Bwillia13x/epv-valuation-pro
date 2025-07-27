@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBITDA Bridge - CPP Visual Report Kit</title>
+    <link rel="stylesheet" href="../public/css/report.css">
+    <script src="../vendor/echarts.min.js"></script>
+    <script src="../public/js/format.js"></script>
+</head>
+<body>
+    <div class="chart-container">
+        <div class="bridge-layout">
+            <div class="card-header">
+                <h1 class="card-title" id="chart-title">EBITDA Bridge</h1>
+                <p class="card-subtitle" id="chart-subtitle">TTM Window Loading...</p>
+            </div>
+            
+            <div class="bridge-chart" id="bridge-chart"></div>
+            
+            <div class="bridge-details">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <h4 class="text-sm font-semibold mb-2">Bridge Components</h4>
+                        <div class="metric">
+                            <span class="metric-label">Reported EBITDA:</span>
+                            <span class="metric-value linked" id="reported-value">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Owner Add-back:</span>
+                            <span class="metric-value input" id="owner-value">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">One-time Items:</span>
+                            <span class="metric-value input" id="onetime-value">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Rent Normalization:</span>
+                            <span class="metric-value input" id="rent-value">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Adjusted EBITDA:</span>
+                            <span class="metric-value output" id="adjusted-value">Loading...</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold mb-2">Margin Analysis</h4>
+                        <div class="metric">
+                            <span class="metric-label">TTM Revenue:</span>
+                            <span class="metric-value linked" id="revenue-value">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Reported Margin:</span>
+                            <span class="metric-value linked" id="reported-margin">Loading...</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Adjusted Margin:</span>
+                            <span class="metric-value output" id="adjusted-margin">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for chart and data
+        let chartInstance = null;
+        let caseData = null;
+        
+        // Wait for data injection
+        function initializeChart() {
+            if (!window.__CASE__) {
+                setTimeout(initializeChart, 100);
+                return;
+            }
+            
+            caseData = window.__CASE__;
+            const title = window.__TITLE__ || 'EBITDA Bridge';
+            const ttm = window.__TTM__ || 'TTM Window';
+            
+            // Update title and subtitle
+            document.getElementById('chart-title').textContent = title;
+            document.getElementById('chart-subtitle').textContent = `EBITDA Bridge - ${ttm}`;
+            
+            // Create the waterfall chart
+            createWaterfallChart();
+            
+            // Update detail values
+            updateDetailValues();
+            
+            // Signal that chart is ready
+            window.__READY__ = true;
+        }
+        
+        function createWaterfallChart() {
+            const bridge = caseData.ebitda_bridge;
+            const revenue = caseData.ttm_metrics.ttm_revenue;
+            
+            // Prepare waterfall data
+            const categories = ['Reported\nEBITDA', 'Owner\nAdd-back', 'One-time\nItems', 'Rent\nNormalization', 'Adjusted\nEBITDA'];
+            const values = [
+                bridge.reported_ebitda,
+                bridge.owner_addback,
+                bridge.onetime_addback,
+                bridge.rent_normalization,
+                bridge.adjusted_ebitda
+            ];
+            
+            // Calculate cumulative values for waterfall positioning
+            let cumulative = [values[0]];
+            for (let i = 1; i < values.length - 1; i++) {
+                cumulative.push(cumulative[i-1] + values[i]);
+            }
+            cumulative.push(values[values.length - 1]);
+            
+            // Create chart data for waterfall effect
+            const seriesData = [];
+            
+            // First bar (Reported EBITDA)
+            seriesData.push({
+                name: categories[0],
+                value: values[0],
+                itemStyle: { color: '#1f2937' } // Linked color
+            });
+            
+            // Adjustment bars (floating)
+            for (let i = 1; i < values.length - 1; i++) {
+                const value = values[i];
+                const base = cumulative[i-1];
+                
+                seriesData.push({
+                    name: categories[i],
+                    value: value > 0 ? [base, base + value] : [base + value, base],
+                    itemStyle: { color: '#2563eb' } // Input color
+                });
+            }
+            
+            // Final bar (Adjusted EBITDA)
+            seriesData.push({
+                name: categories[categories.length - 1],
+                value: values[values.length - 1],
+                itemStyle: { color: '#16a34a' } // Output color
+            });
+            
+            // Chart configuration
+            const option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' },
+                    formatter: function(params) {
+                        const point = params[0];
+                        const value = Array.isArray(point.value) ? 
+                            point.value[1] - point.value[0] : point.value;
+                        return `${point.name}<br/>Value: ${money(value)}`;
+                    }
+                },
+                grid: {
+                    left: '10%',
+                    right: '10%',
+                    bottom: '15%',
+                    top: '10%'
+                },
+                xAxis: {
+                    type: 'category',
+                    data: categories,
+                    axisLabel: {
+                        fontSize: 12,
+                        color: '#1f2937'
+                    },
+                    axisLine: {
+                        lineStyle: { color: '#e5e7eb' }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: function(value) {
+                            return money(value);
+                        },
+                        fontSize: 12,
+                        color: '#6b7280'
+                    },
+                    axisLine: {
+                        lineStyle: { color: '#e5e7eb' }
+                    },
+                    splitLine: {
+                        lineStyle: { color: '#f3f4f6' }
+                    }
+                },
+                series: [{
+                    type: 'bar',
+                    data: seriesData.map((item, index) => {
+                        if (index === 0 || index === seriesData.length - 1) {
+                            return {
+                                value: item.value,
+                                itemStyle: item.itemStyle,
+                                label: {
+                                    show: true,
+                                    position: 'inside',
+                                    formatter: money(item.value),
+                                    fontSize: 11,
+                                    fontWeight: 'bold',
+                                    color: 'white'
+                                }
+                            };
+                        } else {
+                            const value = Array.isArray(item.value) ? 
+                                item.value[1] - item.value[0] : item.value;
+                            return {
+                                value: item.value,
+                                itemStyle: item.itemStyle,
+                                label: {
+                                    show: true,
+                                    position: 'inside',
+                                    formatter: money(value),
+                                    fontSize: 11,
+                                    fontWeight: 'bold',
+                                    color: 'white'
+                                }
+                            };
+                        }
+                    }),
+                    barWidth: '60%'
+                }]
+            };
+            
+            // Create chart instance
+            const chartElement = document.getElementById('bridge-chart');
+            chartInstance = echarts.init(chartElement);
+            chartInstance.setOption(option);
+            
+            // Add margin percentages below bars
+            addMarginLabels();
+        }
+        
+        function addMarginLabels() {
+            const bridge = caseData.ebitda_bridge;
+            const revenue = caseData.ttm_metrics.ttm_revenue;
+            
+            const reportedMargin = (bridge.reported_ebitda / revenue) * 100;
+            const adjustedMargin = (bridge.adjusted_ebitda / revenue) * 100;
+            
+            // Update chart to include margin labels (simplified approach)
+            setTimeout(() => {
+                const chartElement = document.getElementById('bridge-chart');
+                const marginDiv = document.createElement('div');
+                marginDiv.style.position = 'absolute';
+                marginDiv.style.bottom = '40px';
+                marginDiv.style.left = '0';
+                marginDiv.style.right = '0';
+                marginDiv.style.display = 'flex';
+                marginDiv.style.justifyContent = 'space-around';
+                marginDiv.style.fontSize = '11px';
+                marginDiv.style.color = '#6b7280';
+                marginDiv.innerHTML = `
+                    <span>${reportedMargin.toFixed(1)}%</span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span>${adjustedMargin.toFixed(1)}%</span>
+                `;
+                chartElement.style.position = 'relative';
+                chartElement.appendChild(marginDiv);
+            }, 500);
+        }
+        
+        function updateDetailValues() {
+            const bridge = caseData.ebitda_bridge;
+            const revenue = caseData.ttm_metrics.ttm_revenue;
+            
+            document.getElementById('reported-value').textContent = money(bridge.reported_ebitda);
+            document.getElementById('owner-value').textContent = money(bridge.owner_addback);
+            document.getElementById('onetime-value').textContent = money(bridge.onetime_addback);
+            document.getElementById('rent-value').textContent = money(bridge.rent_normalization);
+            document.getElementById('adjusted-value').textContent = money(bridge.adjusted_ebitda);
+            
+            document.getElementById('revenue-value').textContent = money(revenue);
+            document.getElementById('reported-margin').textContent = pct(bridge.reported_ebitda / revenue);
+            document.getElementById('adjusted-margin').textContent = pct(bridge.adjusted_ebitda / revenue);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (chartInstance) {
+                chartInstance.resize();
+            }
+        });
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeChart);
+        } else {
+            initializeChart();
+        }
+    </script>
+</body>
+</html> 

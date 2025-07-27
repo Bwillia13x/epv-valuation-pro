@@ -1,0 +1,54 @@
+CPP VISUAL REPORT SUMMARY
+==================================================
+
+CASE: VistaBelle Aesthetics (Denver)
+TTM WINDOW: 2024-Q3 → 2025-Q2
+GENERATED: 2025-07-27T02:29:36.671Z
+
+FINANCIAL METRICS:
+──────────────────
+• TTM Revenue: $6.00M
+• Reported EBITDA: $1.05M
+• Adjusted EBITDA: $1.19M
+• EBITDA Margin: 19.8%
+
+VALUATION (BASE CASE):
+─────────────────────
+• Base Multiple: 8.5×
+• Enterprise Value: $10.10M
+• Equity to Seller: $8.93M
+
+LBO ANALYSIS:
+────────────
+• Sponsor Equity: $2.52M
+• IRR: 28.4%
+• MOIC: 3.5×
+• Exit Multiple: 8.0×
+
+EPV ANALYSIS:
+────────────
+• EPV Enterprise: $6.04M
+• EPV Equity: $4.87M
+• EPV Multiple: 5.1×
+
+ACCEPTANCE CHECKS:
+─────────────────
+✅ EBITDA Bridge Reconciliation
+✅ Valuation Matrix (8.5× Multiple)
+✅ LBO Exit Equity Calculation
+✅ EPV Calculation Consistency
+✅ Revenue Growth Consistency
+✅ EBITDA Margin Reasonableness
+✅ IRR Reasonableness
+
+FILES GENERATED:
+───────────────
+• 01_EBITDA_Bridge.png
+• 02_Valuation_Matrix.png  
+• 03_EPV_Panel.png
+• 04_LBO_Summary.png
+• CPP_OnePager.pdf
+• summary.txt
+
+==================================================
+Quality: Investment Grade | Status: CPP Ready

@@ -1,0 +1,144 @@
+{
+  "target_name": "VistaBelle Aesthetics, LLC",
+  "analysis_date": "2025-07-26 20:09:43",
+  "ttm_window": "2024-Q3 to 2025-Q2",
+  "ttm_metrics": {
+    "ttm_revenue": "6000000",
+    "ttm_ebitda_reported": 1048000.0,
+    "ttm_ebitda_adjusted": 1188000.0,
+    "ttm_margin": 0.198
+  },
+  "ebitda_bridge": {
+    "reported_ebitda": 1048000.0,
+    "owner_addback": 130000,
+    "onetime_addback": 70000,
+    "rent_normalization": -60000,
+    "adjusted_ebitda": 1188000.0
+  },
+  "valuation_matrix": [
+    {
+      "multiple": 7.0,
+      "enterprise_value": 8316000.0,
+      "equity_value_to_seller": 7146000.0,
+      "ev_revenue_ratio": 1.386
+    },
+    {
+      "multiple": 7.5,
+      "enterprise_value": 8910000.0,
+      "equity_value_to_seller": 7740000.0,
+      "ev_revenue_ratio": 1.485
+    },
+    {
+      "multiple": 8.0,
+      "enterprise_value": 9504000.0,
+      "equity_value_to_seller": 8334000.0,
+      "ev_revenue_ratio": 1.584
+    },
+    {
+      "multiple": 8.5,
+      "enterprise_value": 10098000.0,
+      "equity_value_to_seller": 8928000.0,
+      "ev_revenue_ratio": 1.683
+    },
+    {
+      "multiple": 9.0,
+      "enterprise_value": 10692000.0,
+      "equity_value_to_seller": 9522000.0,
+      "ev_revenue_ratio": 1.782
+    },
+    {
+      "multiple": 9.5,
+      "enterprise_value": 11286000.0,
+      "equity_value_to_seller": 10116000.0,
+      "ev_revenue_ratio": 1.881
+    }
+  ],
+  "epv_analysis": {
+    "ebit": 1098000.0,
+    "nopat": 812520.0,
+    "reinvestment": 87840.0,
+    "epv_fcf": 724680.0,
+    "wacc": 0.12,
+    "epv_enterprise_value": 6039000.0,
+    "epv_equity_value": 4869000.0,
+    "epv_implied_multiple": 5.083333333333333
+  },
+  "lbo_analysis": {
+    "entry_multiple": 8.5,
+    "entry_ev": 10098000.0,
+    "new_debt": 7270560.0,
+    "sponsor_equity": 2827440.0,
+    "debt_pct": 72.0,
+    "exit_multiple": 8.0,
+    "exit_equity_proceeds": 7442762.8466942925,
+    "irr": 0.21357929042981394,
+    "moic": 2.6323327273768116
+  },
+  "projections": [
+    {
+      "year": 1,
+      "revenue": 6480000.0,
+      "ebitda": 1283040.0,
+      "ebit": 1193040.0,
+      "nopat": 882849.6,
+      "maint_capex": 116639.99999999999,
+      "delta_wc": 9600.0,
+      "interest": 617997.6000000001,
+      "fcf_before_debt": 756609.6,
+      "debt_paydown": 69305.99999999994,
+      "debt_balance": 7201254.0
+    },
+    {
+      "year": 2,
+      "revenue": 6998400.000000001,
+      "ebitda": 1385683.2000000002,
+      "ebit": 1295683.2000000002,
+      "nopat": 958805.5680000001,
+      "maint_capex": 125971.20000000001,
+      "delta_wc": 10368.000000000018,
+      "interest": 612106.5900000001,
+      "fcf_before_debt": 822466.368,
+      "debt_paydown": 105179.88899999997,
+      "debt_balance": 7096074.111
+    },
+    {
+      "year": 3,
+      "revenue": 7558272.000000001,
+      "ebitda": 1496537.8560000001,
+      "ebit": 1406537.8560000001,
+      "nopat": 1040838.0134400001,
+      "maint_capex": 136048.896,
+      "delta_wc": 11197.44,
+      "interest": 603166.299435,
+      "fcf_before_debt": 893591.6774400002,
+      "debt_paydown": 145212.6890025001,
+      "debt_balance": 6950861.4219975
+    },
+    {
+      "year": 4,
+      "revenue": 8162933.760000002,
+      "ebitda": 1616260.8844800005,
+      "ebit": 1526260.8844800005,
+      "nopat": 1129433.0545152004,
+      "maint_capex": 146932.80768000003,
+      "delta_wc": 12093.235200000014,
+      "interest": 590823.2208697875,
+      "fcf_before_debt": 970407.0116352004,
+      "debt_paydown": 189791.89538270643,
+      "debt_balance": 6761069.526614794
+    },
+    {
+      "year": 5,
+      "revenue": 8815968.460800003,
+      "ebitda": 1745561.7552384008,
+      "ebit": 1655561.7552384008,
+      "nopat": 1225115.6988764165,
+      "maint_capex": 158687.43229440006,
+      "delta_wc": 13060.694016000032,
+      "interest": 574690.9097622575,
+      "fcf_before_debt": 1053367.5725660163,
+      "debt_paydown": 239338.33140187943,
+      "debt_balance": 6521731.195212914
+    }
+  ]
+}

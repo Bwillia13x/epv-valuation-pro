@@ -501,6 +501,44 @@ export default function MedispaEPVProCliPage() {
 
   const opexTotal = useMemo(() => marketingCost + adminCost + msoFee + complianceCost + fixedOpex + otherOpexCost, [marketingCost, adminCost, msoFee, complianceCost, fixedOpex, otherOpexCost]);
 
+  // TTM Calculations for LumiDerm Aesthetic Group Case
+  // TTM Window: Q3-2024, Q4-2024, Q1-2025, Q2-2025
+  const ttmQuarterlyData = useMemo(() => [
+    { quarter: '2024-Q3', revenue: 1480000, ebitdaReported: 184600, inTtm: true },
+    { quarter: '2024-Q4', revenue: 1540000, ebitdaReported: 125800, inTtm: true },
+    { quarter: '2025-Q1', revenue: 1580000, ebitdaReported: 236600, inTtm: true },
+    { quarter: '2025-Q2', revenue: 1620000, ebitdaReported: 257400, inTtm: true },
+    // Q2-2024 data (NOT in TTM window)
+    { quarter: '2024-Q2', revenue: 1420000, ebitdaReported: 153400, inTtm: false }
+  ], []);
+
+  const ttmRevenue = useMemo(() => 
+    ttmQuarterlyData.filter(q => q.inTtm).reduce((sum, q) => sum + q.revenue, 0), 
+    [ttmQuarterlyData]
+  );
+
+  const ttmEbitdaReported = useMemo(() => 
+    ttmQuarterlyData.filter(q => q.inTtm).reduce((sum, q) => sum + q.ebitdaReported, 0), 
+    [ttmQuarterlyData]
+  );
+
+  // TTM Normalizations for LumiDerm (per broker guidance)
+  const ttmOwnerAddback = 150000;    // Owner salary above market
+  const ttmOnetimeAddback = 90000;   // Q4-2024 rebrand costs (in TTM)
+  const ttmRentNormalization = -96000; // Rent to market adjustment ($35k to $43k/mo)
+  // No other exclusions for LumiDerm case
+
+  const ttmEbitdaAdjusted = useMemo(() => 
+    ttmEbitdaReported + ttmOwnerAddback + ttmOnetimeAddback + ttmRentNormalization, 
+    [ttmEbitdaReported]
+  );
+
+  const ttmEbitdaMargin = useMemo(() => 
+    ttmRevenue > 0 ? ttmEbitdaAdjusted / ttmRevenue : 0, 
+    [ttmEbitdaAdjusted, ttmRevenue]
+  );
+
+  // Legacy calculations (for non-TTM mode)
   const ebitdaReported = useMemo(() => grossProfit - opexTotal, [grossProfit, opexTotal]);
   const ebitdaNormalized = useMemo(() => ebitdaReported + (ownerAddBack + otherAddBack) * locations, [ebitdaReported, ownerAddBack, otherAddBack, locations]);
   const daTotal = useMemo(() => daAnnual * locations, [daAnnual, locations]);
@@ -664,35 +702,161 @@ export default function MedispaEPVProCliPage() {
     }
   }, [recoMethod, equityEPV, totalReproductionValue, cashNonOperating, debtInterestBearing]);
 
-  // LBO state
+  // TTM Mode state
+  const [useTtmMode, setUseTtmMode] = useState(true);
+
+  // Valuation Matrix state
+  const [entryMultiples, setEntryMultiples] = useState([7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0]);
+  const [baseEntryMultiple, setBaseEntryMultiple] = useState(8.5);
+
+  // LBO state  
   const [entryEvOverride, setEntryEvOverride] = useState<number | null>(null);
-  const [entryDebtPct, setEntryDebtPct] = useState(0.65);
+  const [entryDebtPct, setEntryDebtPct] = useState(0.75); // 75% debt for LumiDerm
   const [lboYears, setLboYears] = useState(5);
   const [exitMultipleMode, setExitMultipleMode] = useState<"EPV" | "Same EV">("EPV");
-  const entryEV = useMemo(() => (entryEvOverride ?? enterpriseEPV) * (1 + transCostsPct), [entryEvOverride, enterpriseEPV, transCostsPct]);
-  const entryDebt = useMemo(() => entryEV * entryDebtPct, [entryEV, entryDebtPct]);
-  const entryEquity = useMemo(() => entryEV - entryDebt, [entryEV, entryDebt]);
+  const [exitMultiple, setExitMultiple] = useState(7.5); // 7.5x exit for LumiDerm
+  const [debtRate, setDebtRate] = useState(0.09); // 9.0% debt rate for LumiDerm
+  // Valuation Matrix Calculations (multiple-based)
+  const currentEbitda = useMemo(() => useTtmMode ? ttmEbitdaAdjusted : ebitdaNormalized, [useTtmMode, ttmEbitdaAdjusted, ebitdaNormalized]);
+  const currentRevenue = useMemo(() => useTtmMode ? ttmRevenue : totalRevenueBase, [useTtmMode, ttmRevenue, totalRevenueBase]);
+  const oldNetDebt = 1250000; // Net debt from LumiDerm case
+
+  const valuationMatrix = useMemo(() => {
+    return entryMultiples.map(multiple => {
+      const enterpriseValue = currentEbitda * multiple;
+      const equityValueToSeller = enterpriseValue - oldNetDebt;
+      const evRevenueRatio = enterpriseValue / currentRevenue;
+      return {
+        multiple,
+        enterpriseValue,
+        equityValueToSeller,
+        evRevenueRatio
+      };
+    });
+  }, [entryMultiples, currentEbitda, currentRevenue]);
+
+  const baseValuation = useMemo(() => {
+    const enterpriseValue = currentEbitda * baseEntryMultiple;
+    const equityValueToSeller = enterpriseValue - oldNetDebt;
+    return { enterpriseValue, equityValueToSeller };
+  }, [currentEbitda, baseEntryMultiple]);
+
+  // LBO Sources & Uses (corrected)
+  const entryEV = useMemo(() => 
+    entryEvOverride ?? baseValuation.enterpriseValue, 
+    [entryEvOverride, baseValuation.enterpriseValue]
+  );
+  const newDebt = useMemo(() => entryEV * entryDebtPct, [entryEV, entryDebtPct]);
+  const sponsorEquity = useMemo(() => entryEV - newDebt, [entryEV, newDebt]);
   const lboExitEV = useMemo(() => {
     const baseEV = exitMultipleMode === "EPV" ? enterpriseEPV : (entryEvOverride ?? enterpriseEPV);
     return baseEV * (1 - exitCostsPct);
   }, [exitMultipleMode, enterpriseEPV, entryEvOverride, exitCostsPct]);
 
-  const lboSim = useMemo(() => {
+  // Working Capital & FCF calculations
+  const maintenanceCapexPctAnnual = 0.02; // 2.0% of revenue for LumiDerm
+  
+  const debtSchedule = useMemo(() => {
     const years = clamp(lboYears, 1, 10);
-    let debt = entryDebt;
-    const kd = costDebt;
-    for (let y = 0; y < years; y++) {
-      const interest = debt * kd;
-      const fcfToFirm = adjustedEarningsScenario;
-      const afterInterest = fcfToFirm - interest;
-      const principalPaydown = Math.max(0, afterInterest);
-      debt = Math.max(0, debt - principalPaydown);
+    const schedule = [];
+    let debt = newDebt;
+    const rate = debtRate;
+    const baseRevenue = currentRevenue;
+    const baseEbitda = currentEbitda;
+    const revenueCagr = 0.08; // 8% revenue growth assumption
+    const marginImprovement = 0.01 / years; // 100bps over hold period
+    
+    for (let y = 1; y <= years; y++) {
+      const yearRevenue = baseRevenue * Math.pow(1 + revenueCagr, y);
+      const yearEbitdaMargin = (baseEbitda / baseRevenue) + (marginImprovement * y);
+      const yearEbitda = yearRevenue * yearEbitdaMargin;
+      const yearEbit = yearEbitda - (80000 * locations); // D&A assumption for LumiDerm
+      const yearNopat = yearEbit * (1 - taxRate);
+      
+      // Working capital change (LumiDerm policy: A/R 12 days, Inventory 70 days, A/P 40 days)
+      const newAR = yearRevenue * (12 / 365);
+      const newInventory = (yearRevenue * 0.165) * (70 / 365); // 16.5% product COGS
+      const newAP = (yearRevenue * 0.285) * (40 / 365); // 28.5% total COGS 
+      const newWC = newAR + newInventory - newAP;
+              const prevWC = y === 1 ? netWorkingCapital : 
+          (baseRevenue * Math.pow(1 + revenueCagr, y-1) * (12/365)) +
+          (baseRevenue * Math.pow(1 + revenueCagr, y-1) * 0.165 * (70/365)) -
+          (baseRevenue * Math.pow(1 + revenueCagr, y-1) * 0.285 * (40/365));
+      const deltaWC = newWC - prevWC;
+      
+      // Maintenance CapEx
+      const maintCapex = yearRevenue * maintenanceCapexPctAnnual;
+      
+      // Interest and FCF
+      const interest = debt * rate;
+      const fcfBeforeDebt = yearNopat - maintCapex - deltaWC;
+      const fcfAfterInterest = fcfBeforeDebt - interest;
+              const principalPayment = Math.max(0, fcfAfterInterest * 0.75); // 75% sweep for LumiDerm
+      const newDebtBalance = Math.max(0, debt - principalPayment);
+      
+      schedule.push({
+        year: y,
+        revenue: yearRevenue,
+        ebitda: yearEbitda,
+        ebit: yearEbit,
+        nopat: yearNopat,
+        maintCapex,
+        deltaWC,
+        interest,
+        fcfBeforeDebt,
+        fcfAfterInterest,
+        principalPayment,
+        debtBalance: newDebtBalance
+      });
+      
+      debt = newDebtBalance;
     }
-    const exitEquity = Math.max(0, lboExitEV - debt);
-    const moic = entryEquity > 0 ? exitEquity / entryEquity : 0;
-    const irr = entryEquity > 0 ? Math.pow(moic, 1 / years) - 1 : 0;
-    return { exitDebt: debt, exitEquity, moic, irr };
-  }, [lboYears, entryDebt, adjustedEarningsScenario, costDebt, lboExitEV, entryEquity]);
+    
+    return schedule;
+  }, [lboYears, newDebt, debtRate, currentRevenue, currentEbitda, taxRate, locations, netWorkingCapital]);
+  
+  const lboSim = useMemo(() => {
+    if (debtSchedule.length === 0) return { exitDebt: 0, exitEquity: 0, moic: 0, irr: 0 };
+    
+    const finalYear = debtSchedule[debtSchedule.length - 1];
+    const exitEV = finalYear.ebitda * exitMultiple;
+    const exitEquity = Math.max(0, exitEV - finalYear.debtBalance);
+    const moic = sponsorEquity > 0 ? exitEquity / sponsorEquity : 0;
+    const irr = sponsorEquity > 0 ? Math.pow(moic, 1 / lboYears) - 1 : 0;
+    
+    return { 
+      exitDebt: finalYear.debtBalance, 
+      exitEquity, 
+      moic, 
+      irr,
+      exitEV
+    };
+  }, [debtSchedule, exitMultiple, sponsorEquity, lboYears]);
+
+  // EPV Assumptions for display (LumiDerm case)
+  const epvAssumptions = useMemo(() => {
+    const ebit = currentEbitda - (80000 * locations); // D&A for LumiDerm
+    const taxRateUsed = 0.26; // 26% tax rate for LumiDerm
+    const reinvestmentRate = 0.08; // 8% of EBIT for LumiDerm
+    const reinvestment = ebit * reinvestmentRate;
+    const nopat = ebit * (1 - taxRateUsed);
+    const fcf = nopat - reinvestment;
+    const wacc = 0.12; // 12% WACC for LumiDerm
+    const epvEnterprise = fcf / wacc;
+    const epvEquity = epvEnterprise - oldNetDebt;
+    
+    return {
+      ebit,
+      taxRateUsed,
+      reinvestmentRate,
+      reinvestment,
+      nopat,
+      fcf,
+      wacc,
+      epvEnterprise,
+      epvEquity
+    };
+  }, [currentEbitda, locations, taxRate, scenarioWacc]);
 
   // Monte Carlo state
   const mcStats = useMemo(() => {
@@ -2361,45 +2525,174 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
               </div>
             </Section>
 
-            {/* Valuation Results */}
-            <Section title="EPV Valuation Results">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-400">{fmt0.format(enterpriseEPV)}</div>
-                  <div className="text-sm text-slate-500">Enterprise EPV</div>
-                  <div className="text-xs mt-2">WACC: {pctFmt(scenarioWacc)}</div>
+            {/* TTM Window Banner */}
+            <div className={cx("p-4 rounded-lg border-l-4 border-blue-500", theme === "dark" ? "bg-blue-900/20 border-blue-500" : "bg-blue-50 border-blue-500")}>
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="font-semibold text-blue-600">TTM Window: Q3-2024, Q4-2024, Q1-2025, Q2-2025</h3>
+                  <p className="text-sm text-slate-600">Revenue: {fmt0.format(ttmRevenue)} | Reported EBITDA: {fmt0.format(ttmEbitdaReported)} | Adjusted EBITDA: {fmt0.format(ttmEbitdaAdjusted)}</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-400">{fmt0.format(equityEPV)}</div>
-                  <div className="text-sm text-slate-500">Equity Value</div>
-                  <div className="text-xs mt-2">EPV + Cash - Debt</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-400">{franchiseFactor.toFixed(2)}x</div>
-                  <div className="text-sm text-slate-500">Franchise Factor</div>
-                  <div className="text-xs mt-2">EPV / Reproduction</div>
+                <div className="flex items-center space-x-2">
+                  <label className="text-xs">Use TTM:</label>
+                  <input 
+                    type="checkbox" 
+                    checked={useTtmMode} 
+                    onChange={(e) => setUseTtmMode(e.target.checked)}
+                    className="form-checkbox"
+                  />
                 </div>
               </div>
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-3">Earnings Analysis</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span>EBIT (Normalized):</span><span className="font-mono">{fmt0.format(ebitNormalized)}</span></div>
-                    <div className="flex justify-between"><span>NOPAT:</span><span className="font-mono">{fmt0.format(nopat)}</span></div>
-                    <div className="flex justify-between"><span>Owner Earnings:</span><span className="font-mono">{fmt0.format(ownerEarnings)}</span></div>
-                    <div className="flex justify-between"><span>Method Used:</span><span className="font-mono">{epvMethod}</span></div>
+            </div>
+
+            {/* EBITDA Bridge */}
+            <Section title="EBITDA Bridge (TTM)">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">EBITDA Normalization</h4>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span>Reported EBITDA (TTM):</span>
+                      <span className="font-mono">{fmt0.format(ttmEbitdaReported)}</span>
+                    </div>
+                    <div className="flex justify-between text-green-600">
+                      <span>+ Owner Salary Add-back:</span>
+                      <span className="font-mono">+{fmt0.format(ttmOwnerAddback)}</span>
+                    </div>
+                    <div className="flex justify-between text-green-600">
+                      <span>+ One-time Rebrand (Q4-24):</span>
+                      <span className="font-mono">+{fmt0.format(ttmOnetimeAddback)}</span>
+                    </div>
+                    <div className="flex justify-between text-red-600">
+                      <span>- Rent Normalization:</span>
+                      <span className="font-mono">{fmt0.format(ttmRentNormalization)}</span>
+                    </div>
+                    <div className="border-t pt-2">
+                      <div className="flex justify-between font-semibold">
+                        <span>Adjusted EBITDA:</span>
+                        <span className="font-mono">{fmt0.format(ttmEbitdaAdjusted)}</span>
+                      </div>
+                      <div className="flex justify-between text-xs text-slate-500">
+                        <span>Margin:</span>
+                        <span>{pctFmt(ttmEbitdaMargin)}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-3">Scenario: {scenario}</h3>
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">LumiDerm Case Notes</h4>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span>Revenue:</span><span className="font-mono">{fmt0.format(totalRevenue)}</span></div>
-                    <div className="flex justify-between"><span>Adj. Earnings:</span><span className="font-mono">{fmt0.format(adjustedEarningsScenario)}</span></div>
-                    <div className="flex justify-between"><span>Risk WACC:</span><span className="font-mono">{pctFmt(scenarioWacc)}</span></div>
+                    <div className="text-slate-600">
+                      <p className="mb-2">• Rebrand completed Q4-2024 (included in TTM)</p>
+                      <p className="mb-2">• Below-market related-party lease normalized</p>
+                      <p className="mb-2">• Marketing ramp during 2024 reflected in growth</p>
+                      <p className="italic text-xs">All relevant adjustments captured in TTM window</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </Section>
+
+            {/* Valuation Matrix */}
+            <Section title="Valuation Matrix">
+              <div className="space-y-4">
+                <div className="flex space-x-4 items-center">
+                  <label className="text-sm">Entry Multiple (Base Case):</label>
+                  <select 
+                    value={baseEntryMultiple} 
+                    onChange={(e) => setBaseEntryMultiple(Number(e.target.value))}
+                    className={cx("px-3 py-1 rounded border text-sm", 
+                      theme === "dark" ? "bg-slate-700 border-slate-600" : "bg-white border-slate-300"
+                    )}
+                  >
+                    {entryMultiples.map(mult => (
+                      <option key={mult} value={mult}>{mult}x</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className={cx("border-b", theme === "dark" ? "border-slate-700" : "border-slate-200")}>
+                        <th className="text-left py-2">EV/EBITDA Multiple</th>
+                        <th className="text-right py-2">Enterprise Value</th>
+                        <th className="text-right py-2">Equity Value</th>
+                        <th className="text-right py-2">EV/Revenue</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {valuationMatrix.map((row, idx) => (
+                        <tr 
+                          key={row.multiple} 
+                          className={cx(
+                            "border-b",
+                            row.multiple === baseEntryMultiple ? (theme === "dark" ? "bg-yellow-900/20" : "bg-yellow-50") : "",
+                            theme === "dark" ? "border-slate-700" : "border-slate-200"
+                          )}
+                        >
+                          <td className="py-2 font-medium">
+                            {row.multiple}x
+                            {row.multiple === baseEntryMultiple && <span className="ml-2 text-xs text-yellow-600">(Base)</span>}
+                          </td>
+                          <td className="text-right py-2 font-mono">{fmt0.format(row.enterpriseValue)}</td>
+                          <td className="text-right py-2 font-mono">{fmt0.format(row.equityValueToSeller)}</td>
+                          <td className="text-right py-2 font-mono">{row.evRevenueRatio.toFixed(1)}x</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </Section>
+
+            {/* EPV Analysis with Assumptions */}
+            <Section title="EPV Analysis & Assumptions">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">EPV Assumptions</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span>EBIT:</span>
+                      <span className="font-mono">{fmt0.format(epvAssumptions.ebit)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Tax Rate:</span>
+                      <span className="font-mono">{pctFmt(epvAssumptions.taxRateUsed)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Reinvestment Rate:</span>
+                      <span className="font-mono">{pctFmt(epvAssumptions.reinvestmentRate)} of EBIT</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>WACC:</span>
+                      <span className="font-mono">{pctFmt(epvAssumptions.wacc)}</span>
+                    </div>
+                    <div className="border-t pt-2 mt-3">
+                      <div className="text-xs text-slate-600 mb-2">
+                        Formula: EPV = (EBIT×(1-T) - Reinvestment) / WACC
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Free Cash Flow:</span>
+                        <span className="font-mono">{fmt0.format(epvAssumptions.fcf)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-emerald-400">{fmt0.format(epvAssumptions.epvEnterprise)}</div>
+                    <div className="text-sm text-slate-500">Enterprise EPV</div>
+                    <div className="text-xs mt-1">Implied Multiple: {(epvAssumptions.epvEnterprise / currentEbitda).toFixed(1)}x</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-indigo-400">{fmt0.format(epvAssumptions.epvEquity)}</div>
+                    <div className="text-sm text-slate-500">Equity EPV</div>
+                    <div className="text-xs mt-1">vs. Multiple: {(epvAssumptions.epvEquity / baseValuation.equityValueToSeller).toFixed(1)}x</div>
+                  </div>
+                </div>
+              </div>
+                         </Section>
+          </div>
+        )}
           </div>
         )}
 
@@ -2750,7 +3043,43 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
             <Section title="LBO Transaction Structure">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
-                  <h4 className="font-semibold mb-3">Entry Valuation</h4>
+                  <h4 className="font-semibold mb-3">Sources & Uses</h4>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <h5 className="font-medium mb-2">Uses</h5>
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span>Enterprise Value:</span>
+                            <span className="font-mono">{fmt0.format(entryEV)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <h5 className="font-medium mb-2">Sources</h5>
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span>New Debt ({(entryDebtPct * 100).toFixed(1)}%):</span>
+                            <span className="font-mono">{fmt0.format(newDebt)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Sponsor Equity:</span>
+                            <span className="font-mono">{fmt0.format(sponsorEquity)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="border-t pt-2 mt-3">
+                      <div className="flex justify-between text-xs text-slate-500">
+                        <span>Equity to Seller:</span>
+                        <span className="font-mono">{fmt0.format(baseValuation.equityValueToSeller)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={cx("p-4 rounded-lg border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-white border-slate-200")}>
+                  <h4 className="font-semibold mb-3">LBO Parameters</h4>
                   <div className="space-y-3">
                     <div>
                       <label className="block text-xs text-slate-500 mb-1">Entry EV Override ($)</label>
@@ -2758,7 +3087,7 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
                         type="number"
                         value={entryEvOverride || ''}
                         onChange={(e) => setEntryEvOverride(parseFloat(e.target.value) || null)}
-                        placeholder={`Use calculated: ${fmt0.format(enterpriseEPV)}`}
+                        placeholder={`Use calculated: ${fmt0.format(baseValuation.enterpriseValue)}`}
                         className={cx("w-full px-3 py-2 rounded border text-sm", 
                           theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
                         )}
@@ -2766,17 +3095,31 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">Transaction Costs %</label>
+                      <label className="block text-xs text-slate-500 mb-1">Debt % of EV</label>
                       <input
                         type="number"
-                        value={transCostsPct * 100}
-                        onChange={(e) => setTransCostsPct(parseFloat(e.target.value) / 100 || 0)}
+                        value={entryDebtPct * 100}
+                        onChange={(e) => setEntryDebtPct(parseFloat(e.target.value) / 100 || 0)}
+                        className={cx("w-full px-3 py-2 rounded border text-sm", 
+                          theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
+                        )}
+                        step="0.5"
+                        min="0"
+                        max="90"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-slate-500 mb-1">Debt Rate (%)</label>
+                      <input
+                        type="number"
+                        value={debtRate * 100}
+                        onChange={(e) => setDebtRate(parseFloat(e.target.value) / 100 || 0)}
                         className={cx("w-full px-3 py-2 rounded border text-sm", 
                           theme === "dark" ? "bg-slate-700 border-slate-600 text-slate-100" : "bg-white border-slate-300"
                         )}
                         step="0.1"
                         min="0"
-                        max="10"
+                        max="20"
                       />
                     </div>
                   </div>
