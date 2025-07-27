@@ -1,5 +1,4 @@
 {
-  "name": "epv-valuation-pro",
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
@@ -32,12 +31,6 @@
           "value": "1; mode=block"
         }
       ]
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
     }
   ]
 } 
