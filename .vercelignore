@@ -1,0 +1,44 @@
+# Local report generation tools - not for deployment
+report-kit/
+cpp_visuals/
+*_exports/
+*_simulation.py
+*_validation.py
+*_visualizations.py
+generate_*.py
+
+# Documentation and summaries - not needed in production
+*.md
+!README.md
+*.txt
+*_summary.*
+*_report.*
+
+# Simulation results and data files
+*_results*.json
+*_valuation*.json
+*.png
+!public/**/*.png
+
+# Python files (local tools only)
+*.py
+
+# Large files and directories
+node_modules/
+.next/
+.cache/
+dist/
+build/
+
+# Development files
+.env.local
+.env.development
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Git files
+.git/
+.gitignore 
