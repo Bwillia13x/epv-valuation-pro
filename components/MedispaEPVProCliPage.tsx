@@ -2690,9 +2690,7 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
                   </div>
                 </div>
               </div>
-                         </Section>
-          </div>
-        )}
+            </Section>
           </div>
         )}
 
@@ -3213,8 +3211,8 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
                 <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
                   <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Entry</div>
                   <div className="flex justify-between"><span>EV (incl. costs)</span><span className="font-semibold">{fmt0.format(entryEV)}</span></div>
-                  <div className="flex justify-between"><span>Debt</span><span className="font-semibold">{fmt0.format(entryDebt)}</span></div>
-                  <div className="flex justify-between"><span>Equity</span><span className="font-semibold">{fmt0.format(entryEquity)}</span></div>
+                  <div className="flex justify-between"><span>Debt</span><span className="font-semibold">{fmt0.format(newDebt)}</span></div>
+                  <div className="flex justify-between"><span>Equity</span><span className="font-semibold">{fmt0.format(sponsorEquity)}</span></div>
                 </div>
                 <div className={cx("rounded-lg p-4 border", theme === "dark" ? "bg-slate-800 border-slate-700" : "bg-slate-50 border-slate-200")}>
                   <div className={cx("text-xs", theme === "dark" ? "text-slate-400" : "text-slate-500")}>Exit</div>
