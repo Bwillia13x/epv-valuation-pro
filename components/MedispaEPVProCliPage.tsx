@@ -19,6 +19,20 @@ import {
   AnalysisResults 
 } from "../lib/financialDataProcessor";
 
+// Enhanced Valuation Imports
+import {
+  MultiYearFinancialData,
+  SynergyAdjustments,
+  HybridValuationResult,
+  calculateHybridValuation,
+  MEDSPA_BENCHMARKS_2025
+} from "../lib/enhancedValuationModels";
+import {
+  MultiYearDataInput,
+  SynergyAdjustmentsComponent,
+  HybridValuationDisplay
+} from "./EnhancedValuationComponents";
+
 // Medispa EPV Valuation Pro (Greenwald) — CLI/ClaudeCode Aesthetic
 // Next.js page with TypeScript + TailwindCSS (no extra deps)
 // Advanced modeling retained; enhanced terminal-style UX with command console and hotkeys.
@@ -51,7 +65,8 @@ type RecommendedMethod =
   | "Asset Reproduction"
   | "Conservative: Min"
   | "Opportunistic: Max"
-  | "Blend: 70% EPV / 30% Asset";
+  | "Blend: 70% EPV / 30% Asset"
+  | "Hybrid: Multi-Method";
 
 interface CliMsg {
   ts: number;
@@ -129,7 +144,7 @@ export default function MedispaEPVProCliPage() {
   }, []);
   // ========================= State =========================
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [activeTab, setActiveTab] = useState<"inputs" | "capacity" | "model" | "valuation" | "calculations" | "analytics" | "montecarlo" | "lbo" | "data" | "notes">("inputs");
+  const [activeTab, setActiveTab] = useState<"inputs" | "capacity" | "model" | "valuation" | "enhanced" | "calculations" | "analytics" | "montecarlo" | "lbo" | "data" | "notes">("inputs");
   const [scenario, setScenario] = useState<"Base" | "Bull" | "Bear">("Base");
 
   // Service lines
@@ -257,6 +272,21 @@ export default function MedispaEPVProCliPage() {
   const [financialData, setFinancialData] = useState<CompanyFinancialData | null>(null);
   const [financialAnalysis, setFinancialAnalysis] = useState<AnalysisResults | null>(null);
   const [useHistoricalData, setUseHistoricalData] = useState(false);
+
+  // Enhanced Valuation State
+  const [useEnhancedValuation, setUseEnhancedValuation] = useState(false);
+  const [multiYearData, setMultiYearData] = useState<MultiYearFinancialData[]>([]);
+  const [synergyAdjustments, setSynergyAdjustments] = useState<SynergyAdjustments>({
+    operationalEfficiencies: 0.05, // 5% default
+    scaleEconomies: 0.03,
+    marketingOptimization: 0.02,
+    technologyIntegration: 0.04,
+    crossSelling: 0.06,
+    totalSynergies: 0.20, // 20% total
+  });
+  const [hybridResults, setHybridResults] = useState<HybridValuationResult | null>(null);
+  const [companySize, setCompanySize] = useState<'small' | 'medium' | 'large'>('small');
+  const [geographicRisk, setGeographicRisk] = useState<'low' | 'medium' | 'high'>('medium');
 
   // Calculation tab state
   const [activeCalculationCategory, setActiveCalculationCategory] = useState<string>('All');
@@ -530,12 +560,67 @@ export default function MedispaEPVProCliPage() {
   const enterpriseEPV = useMemo(() => (scenarioWacc > 0 ? adjustedEarningsScenario / scenarioWacc : 0), [adjustedEarningsScenario, scenarioWacc]);
   const equityEPV = useMemo(() => enterpriseEPV + cashNonOperating - debtInterestBearing, [enterpriseEPV, cashNonOperating, debtInterestBearing]);
 
+  // Working capital calculation first
+  const totalCOGSForWC = useMemo(() => totalCOGS + clinicalLaborCost, [totalCOGS, clinicalLaborCost]);
+  const accountsReceivable = useMemo(() => totalRevenueBase * (dsoDays / 365), [totalRevenueBase, dsoDays]);
+  const inventory = useMemo(() => totalCOGSForWC * (dsiDays / 365), [totalCOGSForWC, dsiDays]);
+  const accountsPayable = useMemo(() => totalCOGSForWC * (dpoDays / 365), [totalCOGSForWC, dpoDays]);
+  const netWorkingCapital = useMemo(() => accountsReceivable + inventory - accountsPayable, [accountsReceivable, inventory, accountsPayable]);
+
+  // Enhanced Valuation Calculation
+  const calculateEnhancedValuation = useMemo(() => {
+    if (!useEnhancedValuation || multiYearData.length === 0) return null;
+
+    try {
+      const customInputs = {
+        riskFreeRate: rfRate,
+        marketRiskPremium: erp,
+        terminalGrowthRate: 0.03, // 3% long-term growth
+        capexAsPercentRevenue: totalRevenue > 0 ? maintCapexScenario / totalRevenue : 0.03,
+        workingCapitalAsPercentRevenue: totalRevenueBase > 0 ? netWorkingCapital / totalRevenueBase : 0.05,
+        taxRate: taxRate,
+      };
+
+      return calculateHybridValuation(
+        multiYearData,
+        synergyAdjustments,
+        companySize,
+        geographicRisk,
+        customInputs
+      );
+    } catch (error) {
+      console.error('Enhanced valuation calculation error:', error);
+      return null;
+    }
+  }, [
+    useEnhancedValuation,
+    multiYearData,
+    synergyAdjustments,
+    companySize,
+    geographicRisk,
+    rfRate,
+    erp,
+    taxRate,
+    maintCapexScenario,
+    totalRevenue,
+    netWorkingCapital,
+    totalRevenueBase
+  ]);
+
+  // Update hybrid results when calculation changes
+  useEffect(() => {
+    if (calculateEnhancedValuation) {
+      setHybridResults(calculateEnhancedValuation);
+    }
+  }, [calculateEnhancedValuation]);
+
   // ========================= Additional State for Full Interface =========================
   const tabs: { key: any; label: string }[] = [
     { key: "inputs", label: "Inputs" },
     { key: "capacity", label: "Capacity" },
     { key: "model", label: "Model" },
     { key: "valuation", label: "Valuation" },
+    { key: "enhanced", label: "Enhanced" },
     { key: "calculations", label: "Calculations" },
     { key: "analytics", label: "Analytics" },
     { key: "montecarlo", label: "MonteCarlo" },
@@ -549,7 +634,7 @@ export default function MedispaEPVProCliPage() {
   const logRef = useRef<HTMLDivElement>(null);
   
   // Additional state for full interface
-  const [recoMethod, setRecoMethod] = useState<RecommendedMethod>("EPV Only");
+  const [recoMethod, setRecoMethod] = useState<RecommendedMethod>(useEnhancedValuation ? "Hybrid: Multi-Method" : "EPV Only");
   
   // Asset reproduction values
   const totalAssetReproduction = useMemo(() => equipmentAssets + buildoutAssets + ffneAssets, [equipmentAssets, buildoutAssets, ffneAssets]);
@@ -561,12 +646,7 @@ export default function MedispaEPVProCliPage() {
   }, [serviceLines, effectiveVolumesOverall, membershipCac]);
   const totalIntangibles = useMemo(() => (brandRebuildCost + trainingIntangible + membershipIntangible) * locations, [brandRebuildCost, trainingIntangible, membershipIntangible, locations]);
   
-  // Working capital
-  const totalCOGSForWC = useMemo(() => totalCOGS + clinicalLaborCost, [totalCOGS, clinicalLaborCost]);
-  const accountsReceivable = useMemo(() => totalRevenueBase * (dsoDays / 365), [totalRevenueBase, dsoDays]);
-  const inventory = useMemo(() => totalCOGSForWC * (dsiDays / 365), [totalCOGSForWC, dsiDays]);
-  const accountsPayable = useMemo(() => totalCOGSForWC * (dpoDays / 365), [totalCOGSForWC, dpoDays]);
-  const netWorkingCapital = useMemo(() => accountsReceivable + inventory - accountsPayable, [accountsReceivable, inventory, accountsPayable]);
+  // Working capital (calculated above)
   
   const totalReproductionValue = useMemo(() => totalAssetReproduction * locations + netWorkingCapital + totalIntangibles, [totalAssetReproduction, locations, netWorkingCapital, totalIntangibles]);
   const franchiseFactor = useMemo(() => (totalReproductionValue > 0 ? enterpriseEPV / totalReproductionValue : 0), [enterpriseEPV, totalReproductionValue]);
@@ -836,6 +916,7 @@ export default function MedispaEPVProCliPage() {
           const t = tokens[1];
           const map: Record<string, typeof activeTab> = {
             inputs: "inputs", capacity: "capacity", model: "model", valuation: "valuation", 
+            enhanced: "enhanced", hybrid: "enhanced", 
             sensitivity: "analytics", analytics: "analytics", montecarlo: "montecarlo", 
             lbo: "lbo", data: "data", notes: "notes",
           };
@@ -3459,7 +3540,7 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
         )}
 
         {/* Default/fallback tabs */}
-        {!["inputs", "model", "valuation", "montecarlo", "lbo", "data", "notes"].includes(activeTab) && (
+        {!["inputs", "model", "valuation", "enhanced", "montecarlo", "lbo", "data", "notes"].includes(activeTab) && (
           <Section title={`${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Tab`}>
             <div className="text-center py-8">
               <div className="text-lg font-semibold mb-2">Tab Under Development</div>
@@ -3808,6 +3889,232 @@ const exportChartData = (data: any, filename: string, type: 'csv' | 'json' = 'cs
                   </div>
                 </div>
               </Section>
+            )}
+          </div>
+        )}
+
+        {activeTab === "enhanced" && (
+          <div className="space-y-6">
+            {/* Enhanced Valuation Header */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-green-400">🚀 Enhanced Valuation Platform</h2>
+                <p className="text-sm text-gray-300 mt-1">
+                  Multi-year analysis, DCF projections, synergy modeling, and hybrid valuation approach
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={useEnhancedValuation}
+                    onChange={(e) => setUseEnhancedValuation(e.target.checked)}
+                    className="rounded"
+                  />
+                  <span className="text-sm text-gray-300">Enable Enhanced Valuation</span>
+                </label>
+              </div>
+            </div>
+
+            {!useEnhancedValuation && (
+              <div className="text-center py-12 bg-gray-800/50 rounded-lg border border-gray-600 border-dashed">
+                <div className="text-6xl mb-4">🔓</div>
+                <h3 className="text-xl font-semibold text-gray-300 mb-2">Enhanced Valuation Disabled</h3>
+                <p className="text-gray-400 mb-4">
+                  Enable enhanced valuation to access multi-year analysis, DCF modeling, and hybrid approaches
+                </p>
+                <button
+                  onClick={() => setUseEnhancedValuation(true)}
+                  className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Enable Enhanced Features
+                </button>
+              </div>
+            )}
+
+            {useEnhancedValuation && (
+              <>
+                {/* Company Profile Settings */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-gray-800 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-blue-300 mb-4">🏢 Company Profile</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm text-gray-300 mb-2">Company Size</label>
+                        <select
+                          value={companySize}
+                          onChange={(e) => setCompanySize(e.target.value as 'small' | 'medium' | 'large')}
+                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+                        >
+                          <option value="small">Small (&lt;$2M revenue)</option>
+                          <option value="medium">Medium ($2-5M revenue)</option>
+                          <option value="large">Large (&gt;$5M revenue)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm text-gray-300 mb-2">Geographic Risk</label>
+                        <select
+                          value={geographicRisk}
+                          onChange={(e) => setGeographicRisk(e.target.value as 'low' | 'medium' | 'high')}
+                          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+                        >
+                          <option value="low">Low (Major metro markets)</option>
+                          <option value="medium">Medium (Secondary markets)</option>
+                          <option value="high">High (Rural/emerging markets)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-800 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-yellow-300 mb-4">📊 Industry Benchmarks</h3>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">EBITDA Margin Range:</span>
+                        <span className="text-white">
+                          {(MEDSPA_BENCHMARKS_2025.ebitdaMarginRange[0] * 100).toFixed(0)}% - 
+                          {(MEDSPA_BENCHMARKS_2025.ebitdaMarginRange[1] * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Industry Growth (CAGR):</span>
+                        <span className="text-green-300">
+                          {(MEDSPA_BENCHMARKS_2025.growthRates.cagr * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-300">Exit Multiple Range:</span>
+                        <span className="text-blue-300">
+                          {MEDSPA_BENCHMARKS_2025.exitMultiples[companySize][0]}x - 
+                          {MEDSPA_BENCHMARKS_2025.exitMultiples[companySize][1]}x
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Multi-Year Data Input */}
+                <MultiYearDataInput
+                  data={multiYearData}
+                  onChange={setMultiYearData}
+                  maxYears={5}
+                />
+
+                {/* Synergy Adjustments */}
+                {multiYearData.length > 0 && (
+                  <SynergyAdjustmentsComponent
+                    synergies={synergyAdjustments}
+                    onChange={setSynergyAdjustments}
+                    baseEbitda={multiYearData.reduce((sum, d) => sum + d.adjustedEbitda, 0) / multiYearData.length}
+                  />
+                )}
+
+                {/* Hybrid Valuation Results */}
+                {hybridResults && (
+                  <HybridValuationDisplay result={hybridResults} />
+                )}
+
+                {/* Comparison with Traditional EPV */}
+                {hybridResults && (
+                  <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-6">
+                    <h3 className="text-lg font-semibold text-blue-300 mb-4">⚖️ Valuation Comparison</h3>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div className="text-center">
+                        <div className="text-sm text-gray-300 mb-1">Traditional EPV</div>
+                        <div className="text-2xl font-bold text-orange-300">
+                          {fmt0.format(equityEPV)}
+                        </div>
+                        <div className="text-xs text-gray-400">Single-year, zero growth</div>
+                      </div>
+
+                      <div className="text-center">
+                        <div className="text-sm text-gray-300 mb-1">Enhanced Hybrid</div>
+                        <div className="text-2xl font-bold text-green-300">
+                          {fmt0.format(hybridResults.hybridValuation)}
+                        </div>
+                        <div className="text-xs text-gray-400">Multi-method, growth-adjusted</div>
+                      </div>
+
+                      <div className="text-center">
+                        <div className="text-sm text-gray-300 mb-1">Value Uplift</div>
+                        <div className="text-2xl font-bold text-yellow-300">
+                          {equityEPV > 0 ? 
+                            `${(((hybridResults.hybridValuation - equityEPV) / equityEPV) * 100).toFixed(1)}%` : 
+                            'N/A'}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {fmt0.format(hybridResults.hybridValuation - equityEPV)} difference
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Quick Actions */}
+                <div className="bg-gray-800 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-purple-300 mb-4">🎯 Quick Actions</h3>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button
+                      onClick={() => {
+                        const currentYear = new Date().getFullYear();
+                        const sampleData: MultiYearFinancialData[] = Array.from({ length: 3 }, (_, i) => ({
+                          year: currentYear - 2 + i,
+                          revenue: totalRevenueBase * (0.9 + i * 0.1),
+                          ebitda: ebitdaReported * (0.85 + i * 0.15),
+                          ebit: ebitNormalized * (0.85 + i * 0.15),
+                          adjustedEbitda: ebitdaNormalized * (0.85 + i * 0.15),
+                          normalizations: {
+                            ownerCompensation: ownerAddBack,
+                            personalExpenses: otherAddBack * 0.3,
+                            oneTimeItems: otherAddBack * 0.7,
+                            synergies: 0,
+                          },
+                        }));
+                        setMultiYearData(sampleData);
+                      }}
+                      className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+                    >
+                      📊 Load Sample Data
+                    </button>
+
+                    <button
+                      onClick={() => setMultiYearData([])}
+                      className="px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
+                    >
+                      🗑️ Clear Data
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        if (hybridResults) {
+                          const exportData = {
+                            ...hybridResults,
+                            traditional_epv: equityEPV,
+                            uplift_percentage: equityEPV > 0 ? ((hybridResults.hybridValuation - equityEPV) / equityEPV) * 100 : 0,
+                            company_profile: { companySize, geographicRisk },
+                            multi_year_data: multiYearData,
+                            synergies: synergyAdjustments,
+                            timestamp: new Date().toISOString()
+                          };
+                          exportChartData(exportData, 'enhanced_valuation_results', 'json');
+                        }
+                      }}
+                      disabled={!hybridResults}
+                      className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm"
+                    >
+                      💾 Export Results
+                    </button>
+
+                    <button
+                      onClick={() => window.print()}
+                      className="px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
+                    >
+                      🖨️ Print Report
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
           </div>
         )}

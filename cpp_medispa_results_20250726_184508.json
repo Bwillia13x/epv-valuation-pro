@@ -1,0 +1,366 @@
+{
+  "case_study": {
+    "case_name": "Hypothetical Mid-Sized Medical Aesthetic Clinic",
+    "location": "Urban US Location (Physician-Owned)",
+    "physician_owned": true,
+    "target_profile": "CPP Acquisition Target - Profitable Growth",
+    "revenue_projections": {
+      "2023": {
+        "injectables": 1125000,
+        "lasers_treatments": 625000,
+        "memberships": 500000,
+        "other_services": 250000,
+        "total": 2500000
+      },
+      "2024": {
+        "injectables": 1280625,
+        "lasers_treatments": 711458,
+        "memberships": 569167,
+        "other_services": 284583,
+        "total": 2845833
+      },
+      "2025": {
+        "injectables": 1473844,
+        "lasers_treatments": 819358,
+        "memberships": 655486,
+        "other_services": 327743,
+        "total": 3276431
+      },
+      "2026": {
+        "injectables": 1674253,
+        "lasers_treatments": 930140,
+        "memberships": 744112,
+        "other_services": 372056,
+        "total": 3720561
+      },
+      "2027": {
+        "injectables": 1922390,
+        "lasers_treatments": 1067994,
+        "memberships": 854395,
+        "other_services": 427198,
+        "total": 4271977
+      }
+    },
+    "expense_projections": {
+      "2023": {
+        "cogs_supplies": 612500,
+        "salaries_benefits": 700000,
+        "rent_utilities": 250000,
+        "marketing": 300000,
+        "administrative": 200000,
+        "other_expenses": 175000,
+        "total": 2237500
+      },
+      "2024": {
+        "cogs_supplies": 711458,
+        "salaries_benefits": 796633,
+        "rent_utilities": 284583,
+        "marketing": 341500,
+        "administrative": 227667,
+        "other_expenses": 199208,
+        "total": 2561049
+      },
+      "2025": {
+        "cogs_supplies": 819358,
+        "salaries_benefits": 917401,
+        "rent_utilities": 327743,
+        "marketing": 393172,
+        "administrative": 262145,
+        "other_expenses": 229350,
+        "total": 2949169
+      },
+      "2026": {
+        "cogs_supplies": 930140,
+        "salaries_benefits": 1041757,
+        "rent_utilities": 372056,
+        "marketing": 446467,
+        "administrative": 297645,
+        "other_expenses": 260439,
+        "total": 3348504
+      },
+      "2027": {
+        "cogs_supplies": 1067994,
+        "salaries_benefits": 1196153,
+        "rent_utilities": 427198,
+        "marketing": 512637,
+        "administrative": 341758,
+        "other_expenses": 299038,
+        "total": 3844778
+      }
+    },
+    "cpp_adjustments": {
+      "2023": {
+        "owner_compensation_addback": 125000,
+        "personal_expenses": 62500,
+        "one_time_costs": 37500,
+        "synergies_network": 62500,
+        "total": 287500
+      },
+      "2024": {
+        "owner_compensation_addback": 142292,
+        "personal_expenses": 71146,
+        "one_time_costs": 42687,
+        "synergies_network": 71146,
+        "total": 327271
+      },
+      "2025": {
+        "owner_compensation_addback": 163822,
+        "personal_expenses": 81911,
+        "one_time_costs": 49146,
+        "synergies_network": 81911,
+        "total": 376790
+      },
+      "2026": {
+        "owner_compensation_addback": 186028,
+        "personal_expenses": 93014,
+        "one_time_costs": 55808,
+        "synergies_network": 93014,
+        "total": 427864
+      },
+      "2027": {
+        "owner_compensation_addback": 213599,
+        "personal_expenses": 106799,
+        "one_time_costs": 64080,
+        "synergies_network": 106799,
+        "total": 491277
+      }
+    },
+    "industry_multiples": {
+      "ev_ebitda": [
+        5.0,
+        8.0
+      ],
+      "ev_revenue": [
+        1.5,
+        3.2
+      ],
+      "price_earnings": [
+        12.0,
+        18.0
+      ]
+    },
+    "industry_margins": {
+      "gross_margin": [
+        0.71,
+        0.75
+      ],
+      "ebitda_margin": [
+        0.2,
+        0.25
+      ],
+      "adjusted_ebitda_margin": [
+        0.22,
+        0.26
+      ]
+    },
+    "growth_benchmarks": {
+      "cagr_range_low": 0.11,
+      "cagr_range_high": 0.15,
+      "medp_growth": 0.14,
+      "avg_industry_growth": 0.13
+    },
+    "synergy_profile": {
+      "operational_efficiencies": 0.08,
+      "bulk_purchasing": 0.05,
+      "marketing_optimization": 0.04,
+      "technology_integration": 0.06,
+      "cross_selling": 0.07,
+      "total_potential": 0.3
+    },
+    "monte_carlo_runs": 1000,
+    "confidence_interval": 0.95
+  },
+  "epv_inputs": {
+    "service_lines": [
+      {
+        "id": "injectables",
+        "name": "Injectables (Botox/Fillers)",
+        "price": 650,
+        "volume": 2267,
+        "cogs_pct": 0.28,
+        "kind": "service",
+        "growth_rate": 0.14,
+        "margin_adjustment": 0.0
+      },
+      {
+        "id": "lasers",
+        "name": "Laser & Advanced Treatments",
+        "price": 1200,
+        "volume": 682,
+        "cogs_pct": 0.22,
+        "kind": "service",
+        "growth_rate": 0.12,
+        "margin_adjustment": 0.0
+      },
+      {
+        "id": "memberships",
+        "name": "Annual Memberships",
+        "price": 299,
+        "volume": 2192,
+        "cogs_pct": 0.1,
+        "kind": "service",
+        "growth_rate": 0.15,
+        "margin_adjustment": 0.0
+      },
+      {
+        "id": "other_services",
+        "name": "Consultations & Other Services",
+        "price": 450,
+        "volume": 728,
+        "cogs_pct": 0.15,
+        "kind": "service",
+        "growth_rate": 0.1,
+        "margin_adjustment": 0.0
+      }
+    ],
+    "use_real_data": false,
+    "ticker": "",
+    "years": 5,
+    "margin_method": "median",
+    "normalized_margin": null,
+    "clinical_labor_pct": 0.27998792883598617,
+    "marketing_pct": 0.11999998555504905,
+    "admin_pct": 0.0800018561761976,
+    "other_opex_pct": 0.06999993138648297,
+    "rent_annual": 332316.0,
+    "med_director_annual": 45000,
+    "insurance_annual": 24000,
+    "software_annual": 30000,
+    "utilities_annual": 18000,
+    "owner_add_back": 166148.2,
+    "other_add_back": 132918.2,
+    "da_annual": 95000,
+    "maintenance_method": "depr_factor",
+    "maint_factor": 1.0,
+    "capital_intensity_years": 5,
+    "maintenance_capex_amount": 120000,
+    "dso_days": 8,
+    "dsi_days": 35,
+    "dpo_days": 25,
+    "cash_non_operating": 180000,
+    "debt_interest_bearing": 950000,
+    "excess_cash_pct": 1.0,
+    "tax_rate": 0.25,
+    "rf_rate": 0.042,
+    "mrp": 0.055,
+    "beta": 1.15,
+    "size_premium": 0.035,
+    "specific_premium": 0.005,
+    "cost_debt": 0.075,
+    "target_debt_weight": 0.3,
+    "wacc_override": null,
+    "epv_method": "Owner Earnings",
+    "buildout_improvements": 850000,
+    "equipment_devices": 650000,
+    "ffne": 180000,
+    "startup_intangibles": 150000,
+    "other_repro": 0,
+    "rd_capitalize": false,
+    "rd_years": 5,
+    "sga_capitalize": false,
+    "sga_years": 5,
+    "other_adjustments": 0,
+    "scenario": "Base",
+    "mc_runs": 500
+  },
+  "epv_outputs": {
+    "enterprise_epv": 3297294.974709383,
+    "equity_epv": 2527294.974709383,
+    "total_revenue": 3274958,
+    "ebitda_normalized": 616192.4256690632,
+    "ev_to_ebitda": 5.351080015514913,
+    "ev_to_revenue": 1.0068205377624333,
+    "franchise_ratio": 1.6941519943343846,
+    "wacc": 0.11855
+  },
+  "monte_carlo_statistics": {
+    "enterprise_epv": {
+      "mean": 3294919.336724455,
+      "median": 3298966.645316406,
+      "std": 152241.41479517877,
+      "min": 2918854.5076249284,
+      "max": 3732166.1655242923,
+      "ci_lower": 2990276.7007280225,
+      "ci_upper": 3587023.872121626,
+      "cv": 0.04620489888730478
+    },
+    "equity_epv": {
+      "mean": 2524919.336724455,
+      "median": 2528966.645316406,
+      "std": 152241.41479517877,
+      "min": 2148854.5076249284,
+      "max": 2962166.1655242923,
+      "ci_lower": 2220276.7007280225,
+      "ci_upper": 2817023.872121626,
+      "cv": 0.060295555814737264
+    },
+    "ebitda_normalized": {
+      "mean": 615544.1132170234,
+      "median": 615606.9255405405,
+      "std": 22658.125280485896,
+      "min": 553023.1297122765,
+      "max": 678726.4602275041,
+      "ci_lower": 570963.5419621401,
+      "ci_upper": 657474.1614435129,
+      "cv": 0.03680991304111016
+    },
+    "ev_ebitda_multiple": {
+      "mean": 5.351590747518467,
+      "median": 5.349842354091878,
+      "std": 0.09374465304854132,
+      "min": 5.09117919011476,
+      "max": 5.605908679518066,
+      "ci_lower": 5.175621753930997,
+      "ci_upper": 5.537174592032924,
+      "cv": 0.017517156574801747
+    },
+    "franchise_ratio": {
+      "mean": 1.6930372097838549,
+      "median": 1.6957524877884116,
+      "std": 0.07752285488374956,
+      "min": 1.5011848015171714,
+      "max": 1.9176504069446831,
+      "ci_lower": 1.5377140729275087,
+      "ci_upper": 1.8408470222430653,
+      "cv": 0.04578922095495271
+    },
+    "total_revenue": {
+      "mean": 3270662.3386635245,
+      "median": 3266028.878448883,
+      "std": 56097.38984750374,
+      "min": 3177302.85360889,
+      "max": 3372555.0124723045,
+      "ci_lower": 3182880.452447558,
+      "ci_upper": 3366697.6119721923,
+      "cv": 0.017151691015106916
+    }
+  },
+  "multiples_valuation": {
+    "ev_ebitda": {
+      "low": 4037415.0,
+      "mid": 5248639.5,
+      "high": 6459864.0,
+      "multiple_low": 5.0,
+      "multiple_high": 8.0
+    },
+    "ev_revenue": {
+      "low": 5634484.5,
+      "mid": 8827359.05,
+      "high": 12020233.600000001,
+      "multiple_low": 1.5,
+      "multiple_high": 3.2
+    },
+    "summary": {
+      "avg_revenue": 3756323.0,
+      "avg_raw_ebitda": 375506.0,
+      "avg_adjusted_ebitda": 807483.0,
+      "avg_adjustments": 431977.0,
+      "ebitda_margin": 0.21496633809179883,
+      "years_analyzed": [
+        2025,
+        2026,
+        2027
+      ]
+    }
+  }
+}
