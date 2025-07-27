@@ -283,6 +283,9 @@ export default function MedispaEPVProCliPage() {
     technologyIntegration: 0.04,
     crossSelling: 0.06,
     totalSynergies: 0.20, // 20% total
+    phasingYears: 3, // 3-year ramp
+    yearOneRealization: 0.40, // 40% in year 1
+    moatScore: 0.75, // 75% moat score for physician-owned clinic
   });
   const [hybridResults, setHybridResults] = useState<HybridValuationResult | null>(null);
   const [companySize, setCompanySize] = useState<'small' | 'medium' | 'large'>('small');
