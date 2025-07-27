@@ -1,0 +1,17 @@
+IRR Distribution by Case
+==================================================
+
+Case: sample
+Count: 14417
+Mean IRR: 23.3%
+Min IRR: 6.1%
+Max IRR: 41.2%
+------------------------------
+
+Case: vistabelle
+Count: 14417
+Mean IRR: 23.1%
+Min IRR: 6.0%
+Max IRR: 41.1%
+------------------------------
+
