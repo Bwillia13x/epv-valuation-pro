@@ -1,0 +1,28 @@
+SCREENSHOT SIMULATION: Company Profile & Financial Inputs
+============================================================
+
+Company: SapphireDerm & Laser, PLLC
+Location: Sunbelt Metro, US
+Treatment Rooms: 7
+
+FINANCIAL SUMMARY:
+TTM Revenue: $7,431,000
+TTM Adj EBITDA: $2,211,000
+EBITDA Margin: 29.8%
+
+SERVICE LINE BREAKDOWN:
+• Botox Units: $1,560,000 (130k units @ $12)
+• Fillers: $1,260,000 (1,800 syringes @ $700)
+• Bio-stimulators: $342,000 (380 units @ $900)
+• Laser/IPL: $1,625,000 (5,000 treatments @ $325)
+• Body Contouring: $500,000 (400 treatments @ $1,250)
+• RF Microneedling: $680,000 (1,600 treatments @ $425)
+• Memberships: $819,000 (1,050 members @ $65/mo)
+• Facials/Peels: $300,000 (2,000 treatments @ $150)
+• Retail: $345,000 (3,000 products @ $115)
+
+KEY ASSUMPTIONS:
+• Tax Rate: 27%
+• Maintenance Capex: $240,000
+• Net Debt: $850,000
+• Addbacks: $290,000

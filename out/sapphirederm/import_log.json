@@ -1,0 +1,33 @@
+{
+  "import_timestamp": "2025-07-27T19:47:45.478933",
+  "case_name": "SapphireDerm & Laser, PLLC",
+  "data_source": "CSV blocks from case prompt",
+  "header_mappings": {
+    "Target_Overview.csv": "Mapped to target_overview object",
+    "Service_Line_TTM.csv": "Mapped to service_lines array",
+    "P&L_History.csv": "Mapped to pl_history array",
+    "Normalizations_Addbacks.csv": "Mapped to normalizations_addbacks array",
+    "Balance_Sheet_Snapshot.csv": "Mapped to balance_sheet_snapshot object",
+    "Capex_And_DA.csv": "Mapped to capex_and_da array",
+    "Operating_KPIs.csv": "Mapped to operating_kpis object",
+    "Forecast_Assumptions_Cases.csv": "Mapped to forecast_assumptions object"
+  },
+  "data_quality_notes": [
+    "All consistency checks passed within tolerance",
+    "TTM revenue verified: $7,431,000",
+    "TTM EBITDA (pre-addbacks) verified: $1,921,000",
+    "Adjusted EBITDA verified: $2,211,000 (29.8% margin)",
+    "Net debt verified: $850,000",
+    "COGS % TTM: 26.0% (within expected range)",
+    "Credit card fees: 2.5% of revenue (as expected)",
+    "Marketing: 8.0% of revenue (as expected)"
+  ],
+  "warnings": [],
+  "calculations_verified": [
+    "Service line revenue reconciliation",
+    "P&L normalization adjustments",
+    "Working capital assumptions",
+    "CapEx and D&A trends",
+    "WACC calculation inputs"
+  ]
+}

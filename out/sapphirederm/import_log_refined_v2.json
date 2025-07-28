@@ -1,0 +1,24 @@
+{
+  "refinement_v2_log": {
+    "run_date": "2025-07-27T20:11:08.986612",
+    "methodology_changes": [
+      "Implemented dual DSCR calculation (pre/post tax shield)",
+      "Added comprehensive term-structure sensitivity analysis",
+      "Developed price-to-pass solver with constraint optimization",
+      "Enhanced feasible structure testing with 4 debt structures",
+      "Added operational uplift threshold analysis",
+      "Applied EPV discipline overlay with strategic premium"
+    ],
+    "parameters_used": {
+      "default_rate": "10.0%",
+      "default_tenor": "7 years",
+      "max_leverage_constraint": "2.5x",
+      "base_dscr_threshold": "1.70x",
+      "low_dscr_threshold": "1.50x",
+      "strategic_premium": "12.5%"
+    },
+    "assertion_results": {
+      "epv_assertions_passed": true
+    }
+  }
+}

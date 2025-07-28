@@ -1,0 +1,364 @@
+{
+  "case_name": "SapphireDerm & Laser, PLLC",
+  "case_type": "Single-Site MedSpa",
+  "target_overview": {
+    "target_name": "SapphireDerm & Laser, PLLC",
+    "location": "Sunbelt Metro, US",
+    "site_type": "Single-site",
+    "treatment_rooms": 7,
+    "open_days_per_week": 6,
+    "square_feet": 5000,
+    "ttm_revenue": 7431000,
+    "ttm_ebitda_pre_addbacks": 1921000,
+    "ttm_ebitda_margin_pre_addbacks": 0.258,
+    "normalized_addbacks": 290000,
+    "ttm_adj_ebitda": 2211000,
+    "ttm_adj_ebitda_margin": 0.2975,
+    "payor_mix_cash_credit": 1.00,
+    "tax_rate": 0.27,
+    "wacc_scenarios": {
+      "low": 0.105,
+      "base": 0.115,
+      "high": 0.12
+    },
+    "lease_remaining_years": 6,
+    "annual_rent_cam_ttm": 230000,
+    "rent_escalator": 0.03,
+    "net_debt": 850000
+  },
+  "service_lines": [
+    {
+      "category": "Injectables",
+      "sub_line": "Botox Units",
+      "avg_price": 12,
+      "annual_volume": 130000,
+      "revenue": 1560000,
+      "cogs_percent": 0.30,
+      "notes": "COGS = toxin/needles"
+    },
+    {
+      "category": "Injectables", 
+      "sub_line": "Fillers (syringes)",
+      "avg_price": 700,
+      "annual_volume": 1800,
+      "revenue": 1260000,
+      "cogs_percent": 0.32,
+      "notes": "Hyaluronic acid"
+    },
+    {
+      "category": "Injectables",
+      "sub_line": "Bio-stimulators", 
+      "avg_price": 900,
+      "annual_volume": 380,
+      "revenue": 342000,
+      "cogs_percent": 0.34,
+      "notes": "Sculptra/Kybella etc."
+    },
+    {
+      "category": "Devices",
+      "sub_line": "Laser/IPL/Resurfacing",
+      "avg_price": 325,
+      "annual_volume": 5000,
+      "revenue": 1625000,
+      "cogs_percent": 0.18,
+      "notes": "Consumables + tips"
+    },
+    {
+      "category": "Devices",
+      "sub_line": "Body Contouring",
+      "avg_price": 1250,
+      "annual_volume": 400,
+      "revenue": 500000,
+      "cogs_percent": 0.20,
+      "notes": "Applicators"
+    },
+    {
+      "category": "Devices",
+      "sub_line": "RF Microneedling", 
+      "avg_price": 425,
+      "annual_volume": 1600,
+      "revenue": 680000,
+      "cogs_percent": 0.22,
+      "notes": "Cartridges"
+    },
+    {
+      "category": "Memberships/Facials",
+      "sub_line": "Membership Dues (subs)",
+      "avg_price": 65,
+      "annual_volume": 12600,
+      "revenue": 819000,
+      "cogs_percent": 0.28,
+      "notes": "Monthly; churn 2.7%/mo, 1050 members * 12"
+    },
+    {
+      "category": "Memberships/Facials",
+      "sub_line": "Facials/Peels/Add-ons",
+      "avg_price": 150,
+      "annual_volume": 2000,
+      "revenue": 300000,
+      "cogs_percent": 0.40,
+      "notes": "Backbar + room supplies"
+    },
+    {
+      "category": "Retail",
+      "sub_line": "Skin Care Retail",
+      "avg_price": 115,
+      "annual_volume": 3000,
+      "revenue": 345000,
+      "cogs_percent": 0.55,
+      "notes": "Wholesale COGS"
+    }
+  ],
+  "pl_history": [
+    {
+      "year": "2022",
+      "revenue": 5050000,
+      "cogs_supplies": 1313000,
+      "gross_profit": 3737000,
+      "payroll_incl_benefits": 1530000,
+      "marketing": 360000,
+      "rent_cam": 215000,
+      "credit_card_fees": 125000,
+      "insurance_licenses": 52000,
+      "it_software": 46000,
+      "utilities": 56000,
+      "laundry_supplies": 70000,
+      "professional_fees": 80000,
+      "misc_travel": 26000,
+      "total_opex": 2559000,
+      "ebitda": 1178000,
+      "da": 235000,
+      "ebit": 943000,
+      "interest": 130000,
+      "pre_tax_income": 813000
+    },
+    {
+      "year": "2023", 
+      "revenue": 6350000,
+      "cogs_supplies": 1651000,
+      "gross_profit": 4699000,
+      "payroll_incl_benefits": 1850000,
+      "marketing": 480000,
+      "rent_cam": 220000,
+      "credit_card_fees": 158000,
+      "insurance_licenses": 54000,
+      "it_software": 50000,
+      "utilities": 58000,
+      "laundry_supplies": 76000,
+      "professional_fees": 86000,
+      "misc_travel": 28000,
+      "total_opex": 2842000,
+      "ebitda": 1857000,
+      "da": 245000,
+      "ebit": 1612000,
+      "interest": 150000,
+      "pre_tax_income": 1462000
+    },
+    {
+      "year": "2024",
+      "revenue": 7120000,
+      "cogs_supplies": 1851000,
+      "gross_profit": 5269000,
+      "payroll_incl_benefits": 2080000,
+      "marketing": 560000,
+      "rent_cam": 225000,
+      "credit_card_fees": 178000,
+      "insurance_licenses": 56000,
+      "it_software": 54000,
+      "utilities": 60000,
+      "laundry_supplies": 82000,
+      "professional_fees": 98000,
+      "misc_travel": 30000,
+      "total_opex": 3234000,
+      "ebitda": 2035000,
+      "da": 255000,
+      "ebit": 1780000,
+      "interest": 165000,
+      "pre_tax_income": 1615000,
+      "notes": "Includes $45k one-time IT migration in Prof. Fees"
+    },
+    {
+      "year": "TTM_2025",
+      "revenue": 7431000,
+      "cogs_supplies": 1935000,
+      "gross_profit": 5496000,
+      "payroll_incl_benefits": 2190000,
+      "marketing": 594000,
+      "rent_cam": 230000,
+      "credit_card_fees": 186000,
+      "insurance_licenses": 55000,
+      "it_software": 58000,
+      "utilities": 62000,
+      "laundry_supplies": 78000,
+      "professional_fees": 90000,
+      "misc_travel": 32000,
+      "total_opex": 3575000,
+      "ebitda": 1921000,
+      "da": 255000,
+      "ebit": 1666000,
+      "interest": 160000,
+      "pre_tax_income": 1506000,
+      "notes": "One-time IT only in 2024"
+    }
+  ],
+  "normalizations_addbacks": [
+    {
+      "item": "Owner Overcomp",
+      "direction": "Add back", 
+      "amount": 150000,
+      "recurring": false,
+      "comment": "Replace with market comp in pro forma"
+    },
+    {
+      "item": "Owner Vehicle/Perqs",
+      "direction": "Add back",
+      "amount": 20000,
+      "recurring": false,
+      "comment": "Non-operating"
+    },
+    {
+      "item": "Family Wages (non-working)",
+      "direction": "Add back",
+      "amount": 30000,
+      "recurring": false,
+      "comment": "Remove"
+    },
+    {
+      "item": "One-time IT Migration (2024)",
+      "direction": "Add back",
+      "amount": 45000,
+      "recurring": false,
+      "comment": "Non-recurring; already flagged"
+    },
+    {
+      "item": "Above-market Rent",
+      "direction": "Add back",
+      "amount": 45000,
+      "recurring": true,
+      "comment": "Normalize to area comps"
+    }
+  ],
+  "balance_sheet_snapshot": {
+    "cash": 450000,
+    "accounts_receivable": 128000,
+    "inventory": 110000,
+    "accounts_payable_cogs": 140000,
+    "deferred_revenue_memberships": 140000,
+    "term_loan_current_lt": 950000,
+    "equipment_leases_npv": 350000,
+    "other_current_liabilities": 90000,
+    "notes": {
+      "cash": "Operating cash",
+      "ar": "~6 days sales",
+      "inventory": "~17 days on COGS supplies",
+      "ap": "~26 days on COGS supplies", 
+      "deferred_revenue": "Unserved services",
+      "term_loan": "8.0% fixed",
+      "equipment_leases": "Various devices",
+      "other_liabilities": "Accrued payroll/tax"
+    }
+  },
+  "capex_and_da": [
+    {
+      "year": "2022",
+      "maintenance_capex": 210000,
+      "growth_capex": 0,
+      "da": 235000,
+      "notes": "Maintenance ≈ Depreciation"
+    },
+    {
+      "year": "2023",
+      "maintenance_capex": 225000,
+      "growth_capex": 120000,
+      "da": 245000,
+      "notes": "Added IPL FY23 Q3"
+    },
+    {
+      "year": "2024",
+      "maintenance_capex": 240000,
+      "growth_capex": 180000,
+      "da": 255000,
+      "notes": "Added RF microneedling"
+    },
+    {
+      "year": "TTM_2025",
+      "maintenance_capex": 240000,
+      "growth_capex": 0,
+      "da": 255000,
+      "notes": "No growth CapEx this TTM"
+    }
+  ],
+  "operating_kpis": {
+    "provider_count_injectors": 2.5,
+    "laser_techs": 2,
+    "aestheticians": 2,
+    "front_desk": 4,
+    "practice_manager": 1,
+    "capacity_utilization_injectables": 0.80,
+    "capacity_utilization_devices": 0.68,
+    "avg_tickets_per_day": 70,
+    "members_eop": 1050,
+    "monthly_membership_churn": 0.027,
+    "marketing_as_percent_revenue": 0.08,
+    "credit_card_fees_as_percent_revenue": 0.025,
+    "revenue_per_room_ttm": 1061571,
+    "revenue_per_injector_ttm": 1480000,
+    "notes": {
+      "provider_count": "2 FT + 1 PT",
+      "revenue_per_room": "= 7,431,000 / 7",
+      "revenue_per_injector": "Injectables + upsell attribution"
+    }
+  },
+  "forecast_assumptions": {
+    "low_case": {
+      "yoy_revenue_growth": 0.02,
+      "gross_margin_percent": 0.71,
+      "payroll_percent_rev": 0.30,
+      "marketing_percent_rev": 0.085,
+      "rent_next_fy": 236000,
+      "other_opex_percent_rev": 0.085,
+      "maintenance_capex_percent_rev": 0.032,
+      "tax_rate": 0.27,
+      "wacc": 0.12
+    },
+    "base_case": {
+      "yoy_revenue_growth": 0.05,
+      "gross_margin_percent": 0.72,
+      "payroll_percent_rev": 0.29,
+      "marketing_percent_rev": 0.080,
+      "rent_next_fy": 236000,
+      "other_opex_percent_rev": 0.082,
+      "maintenance_capex_percent_rev": 0.032,
+      "tax_rate": 0.27,
+      "wacc": 0.115
+    },
+    "high_case": {
+      "yoy_revenue_growth": 0.08,
+      "gross_margin_percent": 0.73,
+      "payroll_percent_rev": 0.285,
+      "marketing_percent_rev": 0.075,
+      "rent_next_fy": 236000,
+      "other_opex_percent_rev": 0.080,
+      "maintenance_capex_percent_rev": 0.034,
+      "tax_rate": 0.27,
+      "wacc": 0.105
+    }
+  },
+  "consistency_checks": {
+    "cogs_percent_ttm": 0.260,
+    "credit_card_fees_percent": 0.025,
+    "marketing_percent": 0.080,
+    "net_debt_calculation": {
+      "term_loan": 950000,
+      "equipment_leases": 350000,
+      "less_cash": -450000,
+      "net_debt": 850000
+    },
+    "adj_ebitda_calculation": {
+      "reported_ebitda": 1921000,
+      "addbacks": 290000,
+      "adj_ebitda": 2211000,
+      "adj_margin": 0.2975
+    }
+  }
+} 

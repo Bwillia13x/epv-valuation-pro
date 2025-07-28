@@ -1,0 +1,331 @@
+{
+  "refinement_timestamp": "2025-07-27T20:01:18.654752",
+  "baseline_comparison": {
+    "low": {
+      "owner_earnings": {
+        "old": 1193671.58,
+        "new": 1193671.5839999998,
+        "delta": 0.003999999724328518,
+        "delta_pct": 3.3510052510621335e-09
+      },
+      "enterprise_value": {
+        "old": 12879088.14,
+        "new": 9947263.2,
+        "delta": -2931824.9400000013,
+        "delta_pct": -0.22764227623338562
+      },
+      "equity_value": {
+        "old": 12029088.14,
+        "new": 9097263.2,
+        "delta": -2931824.9400000013,
+        "delta_pct": -0.24372794561633337
+      },
+      "implied_cap_rate": {
+        "old": 0.0927,
+        "new": 0.12,
+        "delta": 0.02729999999999999
+      }
+    },
+    "base": {
+      "owner_earnings": {
+        "old": 1385079.28,
+        "new": 1385079.282,
+        "delta": 0.001999999862164259,
+        "delta_pct": 1.443960506719577e-09
+      },
+      "enterprise_value": {
+        "old": 15774514.04,
+        "new": 12044167.669565216,
+        "delta": -3730346.3704347834,
+        "delta_pct": -0.23647932107294145
+      },
+      "equity_value": {
+        "old": 14924514.04,
+        "new": 11194167.669565216,
+        "delta": -3730346.3704347834,
+        "delta_pct": -0.24994759363265562
+      },
+      "implied_cap_rate": {
+        "old": 0.0878,
+        "new": 0.115,
+        "delta": 0.027200000000000002
+      }
+    },
+    "high": {
+      "owner_earnings": {
+        "old": 1534397.8,
+        "new": 1534397.796,
+        "delta": -0.003999999957159162,
+        "delta_pct": -2.6068859293459923e-09
+      },
+      "enterprise_value": {
+        "old": 19659471.76,
+        "new": 14613312.342857145,
+        "delta": -5046159.417142857,
+        "delta_pct": -0.25667828102126267
+      },
+      "equity_value": {
+        "old": 18809471.76,
+        "new": 13763312.342857145,
+        "delta": -5046159.417142857,
+        "delta_pct": -0.26827757214713277
+      },
+      "implied_cap_rate": {
+        "old": 0.0781,
+        "new": 0.105,
+        "delta": 0.026899999999999993
+      }
+    }
+  },
+  "epv_corrected": {
+    "low": {
+      "owner_earnings": 1193671.5839999998,
+      "wacc": 0.12,
+      "terminal_growth": 0.0,
+      "enterprise_value": 9947263.2,
+      "equity_value": 9097263.2,
+      "implied_cap_rate": 0.12,
+      "earnings_detail": {
+        "normalized_revenue": 7579620.0,
+        "gross_profit": 5381530.2,
+        "adjusted_ebitda": 1873108.7999999998,
+        "ebit": 1618108.7999999998,
+        "nopat": 1181219.4239999999,
+        "maintenance_capex": 242547.84,
+        "owner_earnings": 1193671.5839999998,
+        "wacc": 0.12
+      }
+    },
+    "base": {
+      "owner_earnings": 1385079.282,
+      "wacc": 0.115,
+      "terminal_growth": 0.0,
+      "enterprise_value": 12044167.669565216,
+      "equity_value": 11194167.669565216,
+      "implied_cap_rate": 0.115,
+      "earnings_detail": {
+        "normalized_revenue": 7802550.0,
+        "gross_profit": 5617836.0,
+        "adjusted_ebitda": 2145083.4,
+        "ebit": 1890083.4,
+        "nopat": 1379760.882,
+        "maintenance_capex": 249681.6,
+        "owner_earnings": 1385079.282,
+        "wacc": 0.115
+      }
+    },
+    "high": {
+      "owner_earnings": 1534397.796,
+      "wacc": 0.105,
+      "terminal_growth": 0.0,
+      "enterprise_value": 14613312.342857145,
+      "equity_value": 13763312.342857145,
+      "implied_cap_rate": 0.105,
+      "earnings_detail": {
+        "normalized_revenue": 8025480.000000001,
+        "gross_profit": 5858600.4,
+        "adjusted_ebitda": 2381389.2,
+        "ebit": 2126389.2,
+        "nopat": 1552264.1160000002,
+        "maintenance_capex": 272866.32000000007,
+        "owner_earnings": 1534397.796,
+        "wacc": 0.105
+      }
+    }
+  },
+  "lbo_sweep": {
+    "sweep_results": {
+      "1.50x": {
+        "leverage": 1.5,
+        "debt_amount": 3316500.0,
+        "annual_debt_service": 660693.921902007,
+        "cash_dscr": 2.0964008235653675,
+        "base_threshold_pass": "True",
+        "low_threshold_pass": "True",
+        "viable": "True"
+      },
+      "1.75x": {
+        "leverage": 1.75,
+        "debt_amount": 3869250.0,
+        "annual_debt_service": 770809.5755523414,
+        "cash_dscr": 1.7969149916274578,
+        "base_threshold_pass": "True",
+        "low_threshold_pass": "True",
+        "viable": "True"
+      },
+      "2.00x": {
+        "leverage": 2.0,
+        "debt_amount": 4422000.0,
+        "annual_debt_service": 880925.2292026759,
+        "cash_dscr": 1.5723006176740257,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "True",
+        "viable": "False"
+      },
+      "2.25x": {
+        "leverage": 2.25,
+        "debt_amount": 4974750.0,
+        "annual_debt_service": 991040.8828530104,
+        "cash_dscr": 1.3976005490435783,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "2.50x": {
+        "leverage": 2.5,
+        "debt_amount": 5527500.0,
+        "annual_debt_service": 1101156.5365033448,
+        "cash_dscr": 1.2578404941392205,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "2.75x": {
+        "leverage": 2.75,
+        "debt_amount": 6080250.0,
+        "annual_debt_service": 1211272.1901536793,
+        "cash_dscr": 1.1434913583083823,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "3.00x": {
+        "leverage": 3.0,
+        "debt_amount": 6633000.0,
+        "annual_debt_service": 1321387.843804014,
+        "cash_dscr": 1.0482004117826837,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "3.25x": {
+        "leverage": 3.25,
+        "debt_amount": 7185750.0,
+        "annual_debt_service": 1431503.4974543483,
+        "cash_dscr": 0.9675696108763235,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "3.50x": {
+        "leverage": 3.5,
+        "debt_amount": 7738500.0,
+        "annual_debt_service": 1541619.1511046828,
+        "cash_dscr": 0.8984574958137289,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "3.75x": {
+        "leverage": 3.75,
+        "debt_amount": 8291250.0,
+        "annual_debt_service": 1651734.8047550172,
+        "cash_dscr": 0.8385603294261471,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "4.00x": {
+        "leverage": 4.0,
+        "debt_amount": 8844000.0,
+        "annual_debt_service": 1761850.4584053517,
+        "cash_dscr": 0.7861503088370129,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "4.25x": {
+        "leverage": 4.25,
+        "debt_amount": 9396750.0,
+        "annual_debt_service": 1871966.1120556863,
+        "cash_dscr": 0.7399061730230708,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      },
+      "4.50x": {
+        "leverage": 4.5,
+        "debt_amount": 9949500.0,
+        "annual_debt_service": 1982081.7657060209,
+        "cash_dscr": 0.6988002745217892,
+        "base_threshold_pass": "False",
+        "low_threshold_pass": "False",
+        "viable": "False"
+      }
+    },
+    "max_sustainable_leverage": {
+      "base_case": 1.75,
+      "low_case": 2.0
+    },
+    "default_terms": {
+      "rate": 0.1,
+      "tenor": 7,
+      "amortization": "level_annuity"
+    }
+  },
+  "deal_structures": {
+    "all_combinations": 18,
+    "feasible_deals": [],
+    "top_3_deals": []
+  },
+  "price_discipline": {
+    "epv_base_equity": 11194167.669565216,
+    "strategic_premium": 0.125,
+    "max_disciplined_price": 12593438.628260868,
+    "multiples_equity": {
+      "8.0x": {
+        "enterprise_value": 17688000.0,
+        "equity_value": 16838000.0,
+        "premium_vs_epv": 0.5041761475289741,
+        "discipline_ok": false
+      },
+      "8.5x": {
+        "enterprise_value": 18793500.0,
+        "equity_value": 17943500.0,
+        "premium_vs_epv": 0.6029329316537682,
+        "discipline_ok": false
+      },
+      "9.0x": {
+        "enterprise_value": 19899000.0,
+        "equity_value": 19049000.0,
+        "premium_vs_epv": 0.701689715778562,
+        "discipline_ok": false
+      },
+      "9.5x": {
+        "enterprise_value": 21004500.0,
+        "equity_value": 20154500.0,
+        "premium_vs_epv": 0.800446499903356,
+        "discipline_ok": false
+      },
+      "10.0x": {
+        "enterprise_value": 22110000.0,
+        "equity_value": 21260000.0,
+        "premium_vs_epv": 0.8992032840281499,
+        "discipline_ok": false
+      },
+      "10.5x": {
+        "enterprise_value": 23215500.0,
+        "equity_value": 22365500.0,
+        "premium_vs_epv": 0.9979600681529439,
+        "discipline_ok": false
+      }
+    }
+  },
+  "assertions": {
+    "low_epv_check": {
+      "tolerance": 0.0,
+      "threshold": 0.03,
+      "pass": true
+    },
+    "base_epv_check": {
+      "tolerance": 0.0,
+      "threshold": 0.03,
+      "pass": true
+    },
+    "high_epv_check": {
+      "tolerance": 0.0,
+      "threshold": 0.03,
+      "pass": true
+    }
+  }
+}

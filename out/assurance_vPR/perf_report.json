@@ -1,0 +1,19 @@
+{
+  "total_elapsed_seconds": 0.005432844161987305,
+  "budget_seconds": 90,
+  "within_budget": true,
+  "within_tolerance": true,
+  "module_times": {
+    "0_Meta": 0.0003459453582763672,
+    "1_Determinism": 0.0001289844512939453,
+    "2_EPV_Correctness": 0.00013899803161621094,
+    "3_DSCR_Engine": 0.0003211498260498047,
+    "4_Term_Sensitivity": 0.0026810169219970703,
+    "5_Price_to_Pass": 0.00037598609924316406,
+    "6_Structure_Pack": 0.0001220703125,
+    "7_Discipline": 0.00016188621520996094,
+    "8_Shock_Tests": 0.0001690387725830078
+  },
+  "total_module_time": 0.004445075988769531,
+  "overhead_time": 0.0009877681732177734
+}

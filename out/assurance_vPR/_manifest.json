@@ -1,0 +1,28 @@
+{
+  "manifest": {
+    "generated_files": [
+      "meta.json",
+      "determinism_report.md",
+      "epv_assertions.json",
+      "dscr_table.csv",
+      "dscr_curve.png",
+      "dscr_assertions.json",
+      "term_sensitivity.csv",
+      "term_heatmap.png",
+      "term_assertions.json",
+      "price_to_pass.md",
+      "price_to_pass.json",
+      "feasible_deal_pack.md",
+      "price_vs_epv_recon.md",
+      "discipline_assertions.json",
+      "shock_tests.md",
+      "edge_assertions.json",
+      "perf_report.json",
+      "assurance_report.md",
+      "assurance_summary.json"
+    ],
+    "test_completion": "2025-07-27T20:23:19.101748",
+    "production_ready": true,
+    "total_files": 19
+  }
+}

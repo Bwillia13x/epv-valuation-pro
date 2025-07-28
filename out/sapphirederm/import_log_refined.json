@@ -1,0 +1,42 @@
+{
+  "refinement_timestamp": "2025-07-27T20:01:18.909373",
+  "case_name": "SapphireDerm & Laser, PLLC",
+  "refinement_changes": [
+    "Applied strict EPV (g=0) methodology: EV = OE / WACC",
+    "Standardized Cash DSCR formula: (EBITDA - Cash Taxes - Maint CapEx) / Debt Service",
+    "Implemented leverage sweep from 1.5x to 4.5x in 0.25x increments",
+    "Added price-structure testing with 3 debt structures",
+    "Created EPV discipline framework with strategic premium threshold",
+    "Enhanced LBO analysis with comprehensive returns modeling"
+  ],
+  "formula_corrections": {
+    "epv_prior": "OE * (1 + g) / (WACC - g) with g=2.5%",
+    "epv_corrected": "OE / WACC with g=0 (strict perpetuity)",
+    "dscr_prior": "EBITDA / Debt Service (simplified)",
+    "dscr_corrected": "(EBITDA - Cash Taxes - Maint CapEx) / Debt Service"
+  },
+  "data_quality_validation": [
+    "No changes to underlying case data inputs",
+    "All calculations use normalized forward-looking metrics",
+    "Maintenance CapEx based on revenue percentage method",
+    "Working capital changes assumed zero (steady state)",
+    "Deferred revenue treated as normalized liability"
+  ],
+  "assertions_status": {
+    "low_epv_check": {
+      "tolerance": 0.0,
+      "threshold": 0.03,
+      "pass": true
+    },
+    "base_epv_check": {
+      "tolerance": 0.0,
+      "threshold": 0.03,
+      "pass": true
+    },
+    "high_epv_check": {
+      "tolerance": 0.0,
+      "threshold": 0.03,
+      "pass": true
+    }
+  }
+}

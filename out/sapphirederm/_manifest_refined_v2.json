@@ -1,0 +1,29 @@
+{
+  "manifest_v2": {
+    "run_date": "2025-07-27T20:11:08.986721",
+    "generated_files": [
+      "_baseline_prior_metrics_v2.json",
+      "epv_fix_compare_v2.md",
+      "lbo_dscr_table_v2.csv",
+      "lbo_dscr_curve_v2.png",
+      "term_sensitivity.csv",
+      "term_sensitivity_heatmap.png",
+      "price_to_pass.md",
+      "feasible_deal_pack_v2.md",
+      "ops_uplift_thresholds_v2.md",
+      "price_vs_epv_recon_v2.md",
+      "results_summary_refined_v2.md",
+      "import_log_refined_v2.json"
+    ],
+    "success_criteria": {
+      "epv_assertion_passed": true,
+      "dual_dscr_generated": true,
+      "term_sensitivity_completed": true,
+      "price_to_pass_solved": true,
+      "structure_pack_evaluated": true,
+      "discipline_overlay_applied": true,
+      "final_summary_written": true
+    },
+    "analysis_complete": true
+  }
+}

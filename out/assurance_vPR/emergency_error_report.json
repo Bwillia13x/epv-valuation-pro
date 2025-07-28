@@ -1,0 +1,323 @@
+{
+  "critical_error": true,
+  "error_message": "Object of type bool_ is not JSON serializable",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/benjaminwilliams/Desktop/epv_valuation_pro (for CPP)/epv-valuation-pro/out/assurance_vPR/production_ready_assurance_suite.py\", line 1286, in run_full_assurance_suite\n    results.append(self.time_module_execution(\"8_Shock_Tests\", self.module_8_shock_edge_tests))\n  File \"/Users/benjaminwilliams/Desktop/epv_valuation_pro (for CPP)/epv-valuation-pro/out/assurance_vPR/production_ready_assurance_suite.py\", line 111, in time_module_execution\n    result = func()\n  File \"/Users/benjaminwilliams/Desktop/epv_valuation_pro (for CPP)/epv-valuation-pro/out/assurance_vPR/production_ready_assurance_suite.py\", line 1098, in module_8_shock_edge_tests\n    json.dump(edge_assertions, f, indent=2)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/__init__.py\", line 179, in dump\n    for chunk in iterable:\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/encoder.py\", line 431, in _iterencode\n    yield from _iterencode_dict(o, _current_indent_level)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/encoder.py\", line 405, in _iterencode_dict\n    yield from chunks\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/encoder.py\", line 438, in _iterencode\n    o = _default(o)\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/json/encoder.py\", line 179, in default\n    raise TypeError(f'Object of type {o.__class__.__name__} '\nTypeError: Object of type bool_ is not JSON serializable\n",
+  "partial_results": {
+    "determinism": [
+      {
+        "test": "EPV_EV_low",
+        "result": true,
+        "message": "Enterprise Value deviation: 0.0000%",
+        "expected": "\u22640.1%",
+        "actual": "0.0000%",
+        "timestamp": "2025-07-27T20:20:51.988308"
+      },
+      {
+        "test": "EPV_Equity_low",
+        "result": true,
+        "message": "Equity Value deviation: 0.0000%",
+        "expected": "\u22640.1%",
+        "actual": "0.0000%",
+        "timestamp": "2025-07-27T20:20:51.988313"
+      },
+      {
+        "test": "EPV_EV_base",
+        "result": true,
+        "message": "Enterprise Value deviation: 0.0000%",
+        "expected": "\u22640.1%",
+        "actual": "0.0000%",
+        "timestamp": "2025-07-27T20:20:51.988316"
+      },
+      {
+        "test": "EPV_Equity_base",
+        "result": true,
+        "message": "Equity Value deviation: 0.0000%",
+        "expected": "\u22640.1%",
+        "actual": "0.0000%",
+        "timestamp": "2025-07-27T20:20:51.988319"
+      },
+      {
+        "test": "EPV_EV_high",
+        "result": true,
+        "message": "Enterprise Value deviation: 0.0000%",
+        "expected": "\u22640.1%",
+        "actual": "0.0000%",
+        "timestamp": "2025-07-27T20:20:51.988321"
+      },
+      {
+        "test": "EPV_Equity_high",
+        "result": true,
+        "message": "Equity Value deviation: 0.0000%",
+        "expected": "\u22640.1%",
+        "actual": "0.0000%",
+        "timestamp": "2025-07-27T20:20:51.988323"
+      }
+    ],
+    "epv_correctness": [
+      {
+        "test": "EV_formula_low",
+        "result": true,
+        "message": "EV = OE/WACC assertion",
+        "expected": "\u22643.0%",
+        "actual": "0.00%",
+        "timestamp": "2025-07-27T20:20:51.988420"
+      },
+      {
+        "test": "OE_components_low",
+        "result": true,
+        "message": "OE = NOPAT + D&A - MaintCapEx",
+        "expected": "1351227",
+        "actual": "1351227",
+        "timestamp": "2025-07-27T20:20:51.988424"
+      },
+      {
+        "test": "NOPAT_aftertax_low",
+        "result": true,
+        "message": "NOPAT = EBIT \u00d7 (1 - tax_rate)",
+        "expected": "1321227",
+        "actual": "1321227",
+        "timestamp": "2025-07-27T20:20:51.988427"
+      },
+      {
+        "test": "no_growth_low",
+        "result": true,
+        "message": "g=0 assumption enforced",
+        "expected": "No growth",
+        "actual": "No growth",
+        "timestamp": "2025-07-27T20:20:51.988429"
+      },
+      {
+        "test": "EV_formula_base",
+        "result": true,
+        "message": "EV = OE/WACC assertion",
+        "expected": "\u22643.0%",
+        "actual": "0.00%",
+        "timestamp": "2025-07-27T20:20:51.988432"
+      },
+      {
+        "test": "OE_components_base",
+        "result": true,
+        "message": "OE = NOPAT + D&A - MaintCapEx",
+        "expected": "1512630",
+        "actual": "1512630",
+        "timestamp": "2025-07-27T20:20:51.988435"
+      },
+      {
+        "test": "NOPAT_aftertax_base",
+        "result": true,
+        "message": "NOPAT = EBIT \u00d7 (1 - tax_rate)",
+        "expected": "1482630",
+        "actual": "1482630",
+        "timestamp": "2025-07-27T20:20:51.988437"
+      },
+      {
+        "test": "no_growth_base",
+        "result": true,
+        "message": "g=0 assumption enforced",
+        "expected": "No growth",
+        "actual": "No growth",
+        "timestamp": "2025-07-27T20:20:51.988439"
+      },
+      {
+        "test": "EV_formula_high",
+        "result": true,
+        "message": "EV = OE/WACC assertion",
+        "expected": "\u22643.0%",
+        "actual": "0.00%",
+        "timestamp": "2025-07-27T20:20:51.988441"
+      },
+      {
+        "test": "OE_components_high",
+        "result": true,
+        "message": "OE = NOPAT + D&A - MaintCapEx",
+        "expected": "1674033",
+        "actual": "1674033",
+        "timestamp": "2025-07-27T20:20:51.988444"
+      },
+      {
+        "test": "NOPAT_aftertax_high",
+        "result": true,
+        "message": "NOPAT = EBIT \u00d7 (1 - tax_rate)",
+        "expected": "1644033",
+        "actual": "1644033",
+        "timestamp": "2025-07-27T20:20:51.988446"
+      },
+      {
+        "test": "no_growth_high",
+        "result": true,
+        "message": "g=0 assumption enforced",
+        "expected": "No growth",
+        "actual": "No growth",
+        "timestamp": "2025-07-27T20:20:51.988448"
+      }
+    ],
+    "dscr_engine": [
+      {
+        "test": "monotonic_base",
+        "result": true,
+        "message": "DSCR curve weakly decreasing",
+        "expected": "Monotonic",
+        "actual": "Monotonic",
+        "timestamp": "2025-07-27T20:20:51.988598"
+      },
+      {
+        "test": "monotonic_low",
+        "result": true,
+        "message": "DSCR curve weakly decreasing",
+        "expected": "Monotonic",
+        "actual": "Monotonic",
+        "timestamp": "2025-07-27T20:20:51.988626"
+      }
+    ],
+    "term_sensitivity": [
+      {
+        "test": "io_monotonic_base_1.5",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.988889"
+      },
+      {
+        "test": "io_monotonic_base_1.75",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.988970"
+      },
+      {
+        "test": "io_monotonic_base_2.0",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989052"
+      },
+      {
+        "test": "io_monotonic_base_2.25",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989133"
+      },
+      {
+        "test": "io_monotonic_base_2.5",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989213"
+      },
+      {
+        "test": "io_monotonic_base_2.75",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989319"
+      },
+      {
+        "test": "io_monotonic_base_3.0",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989402"
+      },
+      {
+        "test": "io_monotonic_low_1.5",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989489"
+      },
+      {
+        "test": "io_monotonic_low_1.75",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989570"
+      },
+      {
+        "test": "io_monotonic_low_2.0",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989653"
+      },
+      {
+        "test": "io_monotonic_low_2.25",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989735"
+      },
+      {
+        "test": "io_monotonic_low_2.5",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989816"
+      },
+      {
+        "test": "io_monotonic_low_2.75",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989903"
+      },
+      {
+        "test": "io_monotonic_low_3.0",
+        "result": false,
+        "message": "IO sensitivity not monotonic",
+        "expected": "Increasing DSCR",
+        "actual": "Non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.989986"
+      },
+      {
+        "test": "overall_monotonicity",
+        "result": false,
+        "message": "All term sensitivity monotonic",
+        "expected": "All monotonic",
+        "actual": "Some non-monotonic",
+        "timestamp": "2025-07-27T20:20:51.990819"
+      }
+    ],
+    "price_to_pass": [
+      {
+        "test": "solver_convergence",
+        "result": true,
+        "message": "Solver converged in 11 iterations",
+        "expected": "< 100 iterations",
+        "actual": "11 iterations",
+        "timestamp": "2025-07-27T20:20:51.990927"
+      },
+      {
+        "test": "solution_exists",
+        "result": true,
+        "message": "Viable solution found",
+        "expected": "Solution exists",
+        "actual": "Solution found",
+        "timestamp": "2025-07-27T20:20:51.990929"
+      },
+      {
+        "test": "sanity_ordering",
+        "result": true,
+        "message": "Tighter constraints reduce viable multiple",
+        "expected": "Lower or none",
+        "actual": "Tight: None, Original: 19.99072265625",
+        "timestamp": "2025-07-27T20:20:51.990950"
+      }
+    ],
+    "structure_pack": [
+      {
+        "test": "pass_criteria_senior_2x_8.0x",
+        "result": 

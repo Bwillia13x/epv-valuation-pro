@@ -1,0 +1,27 @@
+{
+  "epv_assertions": {
+    "low": {
+      "ev_formula_pass": true,
+      "ev_error_pct": 0.0,
+      "oe_components_pass": true,
+      "nopat_pass": true,
+      "no_growth_pass": true
+    },
+    "base": {
+      "ev_formula_pass": true,
+      "ev_error_pct": 0.0,
+      "oe_components_pass": true,
+      "nopat_pass": true,
+      "no_growth_pass": true
+    },
+    "high": {
+      "ev_formula_pass": true,
+      "ev_error_pct": 0.0,
+      "oe_components_pass": true,
+      "nopat_pass": true,
+      "no_growth_pass": true
+    }
+  },
+  "overall_pass": true,
+  "test_timestamp": "2025-07-27T20:23:19.097390"
+}

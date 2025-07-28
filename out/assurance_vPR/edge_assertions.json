@@ -1,0 +1,5 @@
+{
+  "all_shocks_stable": true,
+  "downside_shock_pass": true,
+  "operational_shock_pass": true
+}

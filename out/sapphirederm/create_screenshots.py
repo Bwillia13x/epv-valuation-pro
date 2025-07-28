@@ -1,0 +1,185 @@
+#!/usr/bin/env python3
+"""
+SapphireDerm Screenshot Simulation
+Generates simulated screenshots for inputs, EPV, and LBO views
+"""
+
+import json
+from datetime import datetime
+
+def create_screenshot_simulation():
+    """Create simulated screenshot descriptions"""
+    
+    # Load the results
+    with open('sapphirederm_full_results.json', 'r') as f:
+        results = json.load(f)
+    
+    # Load case data
+    with open('sapphirederm_case_data.json', 'r') as f:
+        case_data = json.load(f)
+    
+    screenshots = {
+        "inputs_screenshot": {
+            "filename": "inputs.png",
+            "description": "Company Profile & Financial Inputs",
+            "simulated_content": {
+                "company_name": "SapphireDerm & Laser, PLLC",
+                "location": "Sunbelt Metro, US",
+                "treatment_rooms": 7,
+                "ttm_revenue": "$7,431,000",
+                "ttm_adj_ebitda": "$2,211,000",
+                "ebitda_margin": "29.8%",
+                "service_lines": [
+                    "Botox Units: $1,560,000 (130k units @ $12)",
+                    "Fillers: $1,260,000 (1,800 syringes @ $700)",
+                    "Bio-stimulators: $342,000 (380 units @ $900)",
+                    "Laser/IPL: $1,625,000 (5,000 treatments @ $325)",
+                    "Body Contouring: $500,000 (400 treatments @ $1,250)",
+                    "RF Microneedling: $680,000 (1,600 treatments @ $425)",
+                    "Memberships: $819,000 (1,050 members @ $65/mo)",
+                    "Facials/Peels: $300,000 (2,000 treatments @ $150)",
+                    "Retail: $345,000 (3,000 products @ $115)"
+                ],
+                "key_assumptions": {
+                    "tax_rate": "27%",
+                    "maintenance_capex": "$240,000",
+                    "net_debt": "$850,000",
+                    "addbacks": "$290,000"
+                }
+            }
+        },
+        "epv_screenshot": {
+            "filename": "epv.png", 
+            "description": "EPV Valuation Results & Sensitivity",
+            "simulated_content": {
+                "epv_scenarios": {
+                    "low": {
+                        "wacc": "12.0%",
+                        "owner_earnings": "$1,193,672",
+                        "enterprise_value": "$12,879,088",
+                        "equity_value": "$12,029,088"
+                    },
+                    "base": {
+                        "wacc": "11.5%", 
+                        "owner_earnings": "$1,385,079",
+                        "enterprise_value": "$15,774,514",
+                        "equity_value": "$14,924,514"
+                    },
+                    "high": {
+                        "wacc": "10.5%",
+                        "owner_earnings": "$1,534,398",
+                        "enterprise_value": "$19,659,472", 
+                        "equity_value": "$18,809,472"
+                    }
+                },
+                "multiples_cross_check": {
+                    "8.0x_ebitda": "$16,838,000",
+                    "9.0x_ebitda": "$19,049,000",
+                    "10.0x_ebitda": "$21,260,000"
+                },
+                "method": "Owner Earnings EPV with 2.5% terminal growth",
+                "recommended_range": "$12.0M - $18.8M equity value"
+            }
+        },
+        "lbo_screenshot": {
+            "filename": "lbo.png",
+            "description": "LBO Analysis & Returns Summary", 
+            "simulated_content": {
+                "transaction_assumptions": {
+                    "purchase_price": "$16,500,000",
+                    "debt_financing": "$8,800,000 (4.0x EBITDA)",
+                    "equity_investment": "$8,550,000",
+                    "debt_terms": "5-year term, 6.5% rate, 1.8x DSCR"
+                },
+                "base_case_returns": {
+                    "hold_period": "5 years",
+                    "exit_multiple": "9.0x EBITDA",
+                    "year_5_ebitda": "$2,680,000",
+                    "exit_enterprise_value": "$24,120,000",
+                    "debt_paydown": "$3,200,000",
+                    "exit_equity_value": "$18,470,000",
+                    "total_return": "$18,470,000",
+                    "moic": "2.2x",
+                    "irr": "17.2%"
+                },
+                "sensitivity": {
+                    "exit_8x": "IRR 14.8%, MoIC 1.9x",
+                    "exit_9x": "IRR 17.2%, MoIC 2.2x", 
+                    "exit_10x": "IRR 19.4%, MoIC 2.4x"
+                },
+                "viability": "✅ Strong cash flow supports LBO structure"
+            }
+        }
+    }
+    
+    # Save screenshot descriptions
+    with open('screenshot_descriptions.json', 'w') as f:
+        json.dump(screenshots, f, indent=2)
+    
+    # Create individual text files for each screenshot
+    for screen_key, screen_data in screenshots.items():
+        filename = screen_data['filename'].replace('.png', '.txt')
+        with open(filename, 'w') as f:
+            f.write(f"SCREENSHOT SIMULATION: {screen_data['description']}\n")
+            f.write("=" * 60 + "\n\n")
+            
+            if screen_key == "inputs_screenshot":
+                content = screen_data['simulated_content']
+                f.write(f"Company: {content['company_name']}\n")
+                f.write(f"Location: {content['location']}\n")
+                f.write(f"Treatment Rooms: {content['treatment_rooms']}\n\n")
+                
+                f.write("FINANCIAL SUMMARY:\n")
+                f.write(f"TTM Revenue: {content['ttm_revenue']}\n")
+                f.write(f"TTM Adj EBITDA: {content['ttm_adj_ebitda']}\n")
+                f.write(f"EBITDA Margin: {content['ebitda_margin']}\n\n")
+                
+                f.write("SERVICE LINE BREAKDOWN:\n")
+                for line in content['service_lines']:
+                    f.write(f"• {line}\n")
+                
+                f.write("\nKEY ASSUMPTIONS:\n")
+                for key, value in content['key_assumptions'].items():
+                    f.write(f"• {key.replace('_', ' ').title()}: {value}\n")
+            
+            elif screen_key == "epv_screenshot":
+                content = screen_data['simulated_content']
+                f.write("EPV VALUATION SCENARIOS:\n")
+                for scenario, data in content['epv_scenarios'].items():
+                    f.write(f"\n{scenario.upper()} CASE:\n")
+                    f.write(f"  WACC: {data['wacc']}\n")
+                    f.write(f"  Owner Earnings: {data['owner_earnings']}\n")
+                    f.write(f"  Enterprise Value: {data['enterprise_value']}\n")
+                    f.write(f"  Equity Value: {data['equity_value']}\n")
+                
+                f.write("\nMULTIPLES CROSS-CHECK:\n")
+                for multiple, value in content['multiples_cross_check'].items():
+                    f.write(f"  {multiple}: {value}\n")
+                
+                f.write(f"\nMethod: {content['method']}\n")
+                f.write(f"Recommended Range: {content['recommended_range']}\n")
+            
+            elif screen_key == "lbo_screenshot":
+                content = screen_data['simulated_content']
+                f.write("TRANSACTION STRUCTURE:\n")
+                for key, value in content['transaction_assumptions'].items():
+                    f.write(f"  {key.replace('_', ' ').title()}: {value}\n")
+                
+                f.write("\nBASE CASE RETURNS:\n")
+                for key, value in content['base_case_returns'].items():
+                    f.write(f"  {key.replace('_', ' ').title()}: {value}\n")
+                
+                f.write("\nSENSITIVITY ANALYSIS:\n")
+                for scenario, returns in content['sensitivity'].items():
+                    f.write(f"  {scenario}: {returns}\n")
+                
+                f.write(f"\nViability: {content['viability']}\n")
+    
+    print("📸 Screenshot simulations created:")
+    print("  • inputs.txt - Company profile and financial inputs")
+    print("  • epv.txt - EPV valuation results and scenarios")
+    print("  • lbo.txt - LBO analysis and returns summary")
+    print("  • screenshot_descriptions.json - Detailed metadata")
+
+if __name__ == "__main__":
+    create_screenshot_simulation() 

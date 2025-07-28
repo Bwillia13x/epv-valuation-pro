@@ -1,0 +1,26 @@
+{
+  "refinement_run": {
+    "timestamp": "2025-07-27T20:01:18.909376",
+    "methodology": "Strict EPV (g=0) + Standardized DSCR + Leverage Sweep",
+    "success_criteria_met": true
+  },
+  "generated_files": [
+    "epv_fix_compare.md",
+    "lbo_dscr_table.csv",
+    "lbo_dscr_curve.png",
+    "feasible_deal_pack.md",
+    "price_vs_epv_recon.md",
+    "results_summary_refined.md",
+    "sapphirederm_refinement_results.json",
+    "import_log_refined.json",
+    "_manifest_refined.json"
+  ],
+  "key_findings": {
+    "max_sustainable_leverage": {
+      "base_case": 1.75,
+      "low_case": 2.0
+    },
+    "feasible_deals_count": 0,
+    "epv_assertions_passed": true
+  }
+}

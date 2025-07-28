@@ -1,0 +1,22 @@
+{
+  "baseline_snapshot_v2": {
+    "run_date": "2025-07-27T20:11:08.983683",
+    "case_name": "SapphireDerm & Laser, PLLC",
+    "prior_baseline_reference": "2025-07-27T19:47:45.478549",
+    "ttm_metrics": {
+      "revenue": 7431000,
+      "adj_ebitda": 2211000,
+      "adj_margin": 0.297537343560759,
+      "net_debt": 850000,
+      "da": 180000,
+      "maintenance_capex": 150000
+    },
+    "methodology_changes": [
+      "Dual DSCR calculation (pre/post tax shield)",
+      "Term-structure sensitivity analysis",
+      "Price-to-pass solver implementation",
+      "Operational uplift threshold analysis",
+      "Enhanced feasible structure testing"
+    ]
+  }
+}

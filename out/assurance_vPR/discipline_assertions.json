@@ -1,0 +1,9 @@
+{
+  "epv_base_equity": 12303304.347826086,
+  "max_disciplined_price": 13841217.391304348,
+  "test_equity_check": 16838000.0,
+  "premium_vs_epv_pct": 36.85754268913266,
+  "discipline_pass": false,
+  "above_line_test": true,
+  "below_line_test": true
+}

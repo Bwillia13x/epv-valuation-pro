@@ -1,0 +1,9 @@
+{
+  "viable": true,
+  "max_multiple": 19.99072265625,
+  "enterprise_value": 44199487.79296875,
+  "equity_value": 43349487.79296875,
+  "binding_constraint": "Base Case DSCR (\u22651.70x)",
+  "solver_iterations": 11,
+  "converged": true
+}

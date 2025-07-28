@@ -1,0 +1,59 @@
+{
+  "baseline_snapshot": {
+    "run_date": "2025-07-27T19:47:45.478549",
+    "case_name": "SapphireDerm & Laser, PLLC",
+    "ttm_metrics": {
+      "revenue": 7431000,
+      "adj_ebitda": 2211000,
+      "adj_margin": 0.2975,
+      "net_debt": 850000
+    },
+    "epv_prior": {
+      "method": "Gordon Growth Model (g=2.5%)",
+      "low": {
+        "owner_earnings": 1193671.58,
+        "wacc": 0.12,
+        "terminal_growth": 0.025,
+        "enterprise_value": 12879088.14,
+        "equity_value": 12029088.14,
+        "implied_cap_rate": 0.0927
+      },
+      "base": {
+        "owner_earnings": 1385079.28,
+        "wacc": 0.115,
+        "terminal_growth": 0.025,
+        "enterprise_value": 15774514.04,
+        "equity_value": 14924514.04,
+        "implied_cap_rate": 0.0878
+      },
+      "high": {
+        "owner_earnings": 1534397.80,
+        "wacc": 0.105,
+        "terminal_growth": 0.025,
+        "enterprise_value": 19659471.76,
+        "equity_value": 18809471.76,
+        "implied_cap_rate": 0.0781
+      }
+    },
+    "multiples_prior": {
+      "8.0x": {"enterprise_value": 17688000, "equity_value": 16838000},
+      "8.5x": {"enterprise_value": 18793500, "equity_value": 17943500},
+      "9.0x": {"enterprise_value": 19899000, "equity_value": 19049000},
+      "9.5x": {"enterprise_value": 21004500, "equity_value": 20154500},
+      "10.0x": {"enterprise_value": 22110000, "equity_value": 21260000},
+      "10.5x": {"enterprise_value": 23215500, "equity_value": 22365500}
+    },
+    "lbo_prior": {
+      "4.0x": {"dscr": 1.34, "viable": false, "reason": "Below 1.7x threshold"},
+      "4.25x": {"dscr": 1.26, "viable": false, "reason": "Below 1.7x threshold"}, 
+      "4.5x": {"dscr": 1.19, "viable": false, "reason": "Below 1.7x threshold"}
+    },
+    "issues_identified": [
+      "EPV used 2.5% terminal growth instead of g=0",
+      "DSCR calculations may not follow standard cash DSCR formula",
+      "All LBO structures failed DSCR test - need leverage sweep",
+      "No price-structure reconciliation performed",
+      "EPV discipline check missing"
+    ]
+  }
+} 

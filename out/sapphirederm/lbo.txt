@@ -1,0 +1,26 @@
+SCREENSHOT SIMULATION: LBO Analysis & Returns Summary
+============================================================
+
+TRANSACTION STRUCTURE:
+  Purchase Price: $16,500,000
+  Debt Financing: $8,800,000 (4.0x EBITDA)
+  Equity Investment: $8,550,000
+  Debt Terms: 5-year term, 6.5% rate, 1.8x DSCR
+
+BASE CASE RETURNS:
+  Hold Period: 5 years
+  Exit Multiple: 9.0x EBITDA
+  Year 5 Ebitda: $2,680,000
+  Exit Enterprise Value: $24,120,000
+  Debt Paydown: $3,200,000
+  Exit Equity Value: $18,470,000
+  Total Return: $18,470,000
+  Moic: 2.2x
+  Irr: 17.2%
+
+SENSITIVITY ANALYSIS:
+  exit_8x: IRR 14.8%, MoIC 1.9x
+  exit_9x: IRR 17.2%, MoIC 2.2x
+  exit_10x: IRR 19.4%, MoIC 2.4x
+
+Viability: ✅ Strong cash flow supports LBO structure

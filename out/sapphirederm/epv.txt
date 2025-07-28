@@ -1,0 +1,30 @@
+SCREENSHOT SIMULATION: EPV Valuation Results & Sensitivity
+============================================================
+
+EPV VALUATION SCENARIOS:
+
+LOW CASE:
+  WACC: 12.0%
+  Owner Earnings: $1,193,672
+  Enterprise Value: $12,879,088
+  Equity Value: $12,029,088
+
+BASE CASE:
+  WACC: 11.5%
+  Owner Earnings: $1,385,079
+  Enterprise Value: $15,774,514
+  Equity Value: $14,924,514
+
+HIGH CASE:
+  WACC: 10.5%
+  Owner Earnings: $1,534,398
+  Enterprise Value: $19,659,472
+  Equity Value: $18,809,472
+
+MULTIPLES CROSS-CHECK:
+  8.0x_ebitda: $16,838,000
+  9.0x_ebitda: $19,049,000
+  10.0x_ebitda: $21,260,000
+
+Method: Owner Earnings EPV with 2.5% terminal growth
+Recommended Range: $12.0M - $18.8M equity value

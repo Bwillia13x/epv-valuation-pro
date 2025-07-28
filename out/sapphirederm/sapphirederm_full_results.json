@@ -1,0 +1,156 @@
+{
+  "case_name": "SapphireDerm & Laser, PLLC",
+  "analysis_date": "2025-07-27T19:47:45.478549",
+  "consistency_checks": {
+    "cogs_percent": {
+      "actual": 0.26039563988696,
+      "expected": 0.26,
+      "variance": 0.0003956398869600086,
+      "pass": true
+    },
+    "credit_card_fees": {
+      "actual": 0.025030278562777553,
+      "expected": 0.025,
+      "variance": 3.0278562777551893e-05,
+      "pass": true
+    },
+    "marketing_percent": {
+      "actual": 0.07993540573274122,
+      "expected": 0.08,
+      "variance": 6.45942672587857e-05,
+      "pass": true
+    },
+    "adj_ebitda": {
+      "calculated": 2211000,
+      "expected": 2211000,
+      "variance": 0,
+      "pass": true
+    }
+  },
+  "epv_valuation": {
+    "low": {
+      "owner_earnings": 1193671.5839999998,
+      "wacc": 0.12,
+      "terminal_growth": 0.025,
+      "terminal_value": 12879088.14315789,
+      "enterprise_value": 12879088.14315789,
+      "equity_value": 12029088.14315789,
+      "earnings_detail": {
+        "normalized_revenue": 7579620.0,
+        "gross_profit": 5381530.2,
+        "adjusted_ebitda": 1873108.7999999998,
+        "ebit": 1618108.7999999998,
+        "nopat": 1181219.4239999999,
+        "maintenance_capex": 242547.84,
+        "owner_earnings": 1193671.5839999998,
+        "wacc": 0.12
+      }
+    },
+    "base": {
+      "owner_earnings": 1385079.282,
+      "wacc": 0.115,
+      "terminal_growth": 0.025,
+      "terminal_value": 15774514.044999996,
+      "enterprise_value": 15774514.044999996,
+      "equity_value": 14924514.044999996,
+      "earnings_detail": {
+        "normalized_revenue": 7802550.0,
+        "gross_profit": 5617836.0,
+        "adjusted_ebitda": 2145083.4,
+        "ebit": 1890083.4,
+        "nopat": 1379760.882,
+        "maintenance_capex": 249681.6,
+        "owner_earnings": 1385079.282,
+        "wacc": 0.115
+      }
+    },
+    "high": {
+      "owner_earnings": 1534397.796,
+      "wacc": 0.105,
+      "terminal_growth": 0.025,
+      "terminal_value": 19659471.76125,
+      "enterprise_value": 19659471.76125,
+      "equity_value": 18809471.76125,
+      "earnings_detail": {
+        "normalized_revenue": 8025480.000000001,
+        "gross_profit": 5858600.4,
+        "adjusted_ebitda": 2381389.2,
+        "ebit": 2126389.2,
+        "nopat": 1552264.1160000002,
+        "maintenance_capex": 272866.32000000007,
+        "owner_earnings": 1534397.796,
+        "wacc": 0.105
+      }
+    }
+  },
+  "multiples_analysis": {
+    "8.0x": {
+      "multiple": 8.0,
+      "enterprise_value": 17688000.0,
+      "equity_value": 16838000.0,
+      "implied_ev_revenue": 2.380298748486072
+    },
+    "8.5x": {
+      "multiple": 8.5,
+      "enterprise_value": 18793500.0,
+      "equity_value": 17943500.0,
+      "implied_ev_revenue": 2.5290674202664514
+    },
+    "9.0x": {
+      "multiple": 9.0,
+      "enterprise_value": 19899000.0,
+      "equity_value": 19049000.0,
+      "implied_ev_revenue": 2.6778360920468307
+    },
+    "9.5x": {
+      "multiple": 9.5,
+      "enterprise_value": 21004500.0,
+      "equity_value": 20154500.0,
+      "implied_ev_revenue": 2.8266047638272105
+    },
+    "10.0x": {
+      "multiple": 10.0,
+      "enterprise_value": 22110000.0,
+      "equity_value": 21260000.0,
+      "implied_ev_revenue": 2.97537343560759
+    },
+    "10.5x": {
+      "multiple": 10.5,
+      "enterprise_value": 23215500.0,
+      "equity_value": 22365500.0,
+      "implied_ev_revenue": 3.124142107387969
+    }
+  },
+  "lbo_analysis": {
+    "4.0x": {
+      "debt_multiple": 4.0,
+      "debt_amount": 8844000.0,
+      "dscr": 1.3366512736899685,
+      "annual_debt_service": 1654133.7621265256,
+      "viable": false,
+      "reason": "DSCR 1.34x below 1.7x minimum"
+    },
+    "4.25x": {
+      "debt_multiple": 4.25,
+      "debt_amount": 9396750.0,
+      "dscr": 1.258024728178794,
+      "annual_debt_service": 1757517.1222594336,
+      "viable": false,
+      "reason": "DSCR 1.26x below 1.7x minimum"
+    },
+    "4.5x": {
+      "debt_multiple": 4.5,
+      "debt_amount": 9949500.0,
+      "dscr": 1.1881344655021944,
+      "annual_debt_service": 1860900.4823923414,
+      "viable": false,
+      "reason": "DSCR 1.19x below 1.7x minimum"
+    }
+  },
+  "summary_metrics": {
+    "ttm_revenue": 7431000,
+    "ttm_adj_ebitda": 2211000,
+    "ttm_adj_margin": 0.297537343560759,
+    "net_debt": 850000
+  }
+}

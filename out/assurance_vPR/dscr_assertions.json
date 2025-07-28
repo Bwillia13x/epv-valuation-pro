@@ -1,0 +1,7 @@
+{
+  "base_monotonic": true,
+  "low_monotonic": true,
+  "base_max_leverage": 2.0,
+  "low_max_leverage": 2.0,
+  "overall_pass": true
+}
