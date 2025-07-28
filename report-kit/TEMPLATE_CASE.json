@@ -1,0 +1,361 @@
+{
+  "company_info": {
+    "name": "Template Company LLC",
+    "location": "City, State", 
+    "ttm_window": "2024-Q3 → 2025-Q2",
+    "sector": "Healthcare Services",
+    "investment_type": "Platform"
+  },
+  "ttm_metrics": {
+    "ttm_revenue": 10000000,
+    "ttm_ebitda_reported": 2000000,
+    "ttm_ebitda_adjusted": 2200000,
+    "ttm_margin": 0.22
+  },
+  "ebitda_bridge": {
+    "reported_ebitda": 2000000,
+    "owner_addback": 150000,
+    "onetime_addback": 75000,
+    "rent_normalization": -25000,
+    "adjusted_ebitda": 2200000
+  },
+  "valuation_matrix": [
+    {
+      "multiple": 7.0,
+      "enterprise_value": 15400000,
+      "equity_value_to_seller": 13400000,
+      "ev_revenue_ratio": 1.54
+    },
+    {
+      "multiple": 7.5,
+      "enterprise_value": 16500000,
+      "equity_value_to_seller": 14500000,
+      "ev_revenue_ratio": 1.65
+    },
+    {
+      "multiple": 8.0,
+      "enterprise_value": 17600000,
+      "equity_value_to_seller": 15600000,
+      "ev_revenue_ratio": 1.76
+    },
+    {
+      "multiple": 8.5,
+      "enterprise_value": 18700000,
+      "equity_value_to_seller": 16700000,
+      "ev_revenue_ratio": 1.87
+    },
+    {
+      "multiple": 9.0,
+      "enterprise_value": 19800000,
+      "equity_value_to_seller": 17800000,
+      "ev_revenue_ratio": 1.98
+    },
+    {
+      "multiple": 9.5,
+      "enterprise_value": 20900000,
+      "equity_value_to_seller": 18900000,
+      "ev_revenue_ratio": 2.09
+    },
+    {
+      "multiple": 10.0,
+      "enterprise_value": 22000000,
+      "equity_value_to_seller": 20000000,
+      "ev_revenue_ratio": 2.20
+    }
+  ],
+  "epv_analysis": {
+    "ebit": 2100000,
+    "nopat": 1554000,
+    "reinvestment": 189000,
+    "fcf": 1365000,
+    "wacc": 0.12,
+    "epv_enterprise": 11375000,
+    "epv_equity": 9375000,
+    "epv_implied_multiple": 5.2,
+    "tax_rate": 0.26,
+    "reinvestment_rate": 0.09
+  },
+  "epv_sensitivity": [
+    [
+      {
+        "wacc": 0.11,
+        "reinvestment_rate": 0.07,
+        "epv_enterprise": 12954545,
+        "epv_equity": 10954545
+      },
+      {
+        "wacc": 0.11,
+        "reinvestment_rate": 0.09,
+        "epv_enterprise": 12409091,
+        "epv_equity": 10409091
+      },
+      {
+        "wacc": 0.11,
+        "reinvestment_rate": 0.11,
+        "epv_enterprise": 11590909,
+        "epv_equity": 9590909
+      }
+    ],
+    [
+      {
+        "wacc": 0.12,
+        "reinvestment_rate": 0.07,
+        "epv_enterprise": 11895833,
+        "epv_equity": 9895833
+      },
+      {
+        "wacc": 0.12,
+        "reinvestment_rate": 0.09,
+        "epv_enterprise": 11375000,
+        "epv_equity": 9375000
+      },
+      {
+        "wacc": 0.12,
+        "reinvestment_rate": 0.11,
+        "epv_enterprise": 10625000,
+        "epv_equity": 8625000
+      }
+    ],
+    [
+      {
+        "wacc": 0.13,
+        "reinvestment_rate": 0.07,
+        "epv_enterprise": 11048077,
+        "epv_equity": 9048077
+      },
+      {
+        "wacc": 0.13,
+        "reinvestment_rate": 0.09,
+        "epv_enterprise": 10576923,
+        "epv_equity": 8576923
+      },
+      {
+        "wacc": 0.13,
+        "reinvestment_rate": 0.11,
+        "epv_enterprise": 9884615,
+        "epv_equity": 7884615
+      }
+    ]
+  ],
+  "sources_uses": {
+    "entry_multiple": 8.5,
+    "entry_ev": 18700000,
+    "new_debt": 13562500,
+    "sponsor_equity": 5137500,
+    "debt_pct": 72.5,
+    "interest_rate": 8.75,
+    "fcf_sweep_pct": 75.0
+  },
+  "irr_analysis": {
+    "exit_multiple": 8.0,
+    "exit_ebitda": 3200000,
+    "exit_ev": 25600000,
+    "exit_debt": 8500000,
+    "exit_equity": 17100000,
+    "irr": 0.25,
+    "moic": 3.3
+  },
+  "debt_schedule": [
+    {
+      "year": 1,
+      "beginning_balance": 13562500,
+      "interest": 1187227,
+      "principal_payment": 800000,
+      "ending_balance": 12762500
+    },
+    {
+      "year": 2,
+      "beginning_balance": 12762500,
+      "interest": 1116719,
+      "principal_payment": 900000,
+      "ending_balance": 11862500
+    },
+    {
+      "year": 3,
+      "beginning_balance": 11862500,
+      "interest": 1037969,
+      "principal_payment": 1000000,
+      "ending_balance": 10862500
+    },
+    {
+      "year": 4,
+      "beginning_balance": 10862500,
+      "interest": 950469,
+      "principal_payment": 1100000,
+      "ending_balance": 9762500
+    },
+    {
+      "year": 5,
+      "beginning_balance": 9762500,
+      "interest": 853969,
+      "principal_payment": 1262500,
+      "ending_balance": 8500000
+    }
+  ],
+  "operating_kpis": {
+    "revenue_growth": {
+      "current": 12.5,
+      "target": 15.0,
+      "unit": "%"
+    },
+    "ebitda_margin": {
+      "current": 22.0,
+      "target": 25.0,
+      "unit": "%"
+    },
+    "sponsor_irr": {
+      "current": 25.0,
+      "target": 20.0,
+      "unit": "%"
+    },
+    "moic": {
+      "current": 3.3,
+      "target": 2.5,
+      "unit": "x"
+    },
+    "debt_to_ebitda": {
+      "current": 6.2,
+      "target": 5.5,
+      "unit": "x"
+    },
+    "coverage_ratio": {
+      "current": 1.9,
+      "target": 1.5,
+      "unit": "x"
+    }
+  },
+  "monte_carlo": {
+    "iterations": 10000,
+    "variables": {
+      "entry_multiple": {
+        "mean": 8.5,
+        "std": 0.5
+      },
+      "exit_multiple": {
+        "mean": 8.0,
+        "std": 0.3
+      },
+      "ebitda_margin": {
+        "mean": 22.0,
+        "std": 1.5
+      },
+      "revenue_growth": {
+        "mean": 12.0,
+        "std": 2.0
+      }
+    },
+    "results": {
+      "irr_distribution": [
+        15.2,
+        18.1,
+        20.8,
+        22.5,
+        25.0,
+        27.1,
+        29.9,
+        32.2,
+        35.1
+      ],
+      "percentiles": {
+        "p10": 20.5,
+        "p25": 22.1,
+        "p50": 25.0,
+        "p75": 27.8,
+        "p90": 30.1
+      },
+      "probability_above_20": 0.82
+    },
+    "equity_value_distribution": {
+      "p10": 13500000,
+      "p25": 15200000,
+      "p50": 17100000,
+      "p75": 19500000,
+      "p90": 22800000
+    }
+  },
+  "scenario_analysis": {
+    "base": {
+      "revenue": 10000000,
+      "ebitda_margin": 22.0,
+      "multiple": 8.5,
+      "equity_value": 16700000
+    },
+    "downside": {
+      "revenue": 9500000,
+      "ebitda_margin": 20.0,
+      "multiple": 7.5,
+      "equity_value": 12250000
+    },
+    "upside": {
+      "revenue": 10500000,
+      "ebitda_margin": 24.0,
+      "multiple": 9.5,
+      "equity_value": 21880000
+    }
+  },
+  "sensitivity_analysis": {
+    "base_irr": 25.0,
+    "variables": [
+      {
+        "name": "Entry Multiple",
+        "base_value": 8.5,
+        "low_value": 7.5,
+        "high_value": 9.5,
+        "low_irr": 30.2,
+        "high_irr": 20.1,
+        "impact": 5.1
+      },
+      {
+        "name": "Exit Multiple",
+        "base_value": 8.0,
+        "low_value": 7.5,
+        "high_value": 8.5,
+        "low_irr": 22.8,
+        "high_irr": 27.2,
+        "impact": 2.2
+      },
+      {
+        "name": "EBITDA Margin",
+        "base_value": 22.0,
+        "low_value": 20.0,
+        "high_value": 24.0,
+        "low_irr": 23.1,
+        "high_irr": 26.9,
+        "impact": 1.9
+      },
+      {
+        "name": "Revenue Growth",
+        "base_value": 12.0,
+        "low_value": 10.0,
+        "high_value": 14.0,
+        "low_irr": 24.2,
+        "high_irr": 25.8,
+        "impact": 0.8
+      },
+      {
+        "name": "Interest Rate",
+        "base_value": 8.75,
+        "low_value": 8.0,
+        "high_value": 9.5,
+        "low_irr": 26.1,
+        "high_irr": 23.9,
+        "impact": 1.1
+      }
+    ]
+  },
+  "assumptions": {
+    "net_debt": 2000000,
+    "ar_days": 11,
+    "inventory_days": 65,
+    "ap_days": 40,
+    "maintenance_capex_pct": 0.018,
+    "da_annual": 100000,
+    "tax_rate": 0.26,
+    "reinvestment_rate": 0.09,
+    "wacc": 0.12,
+    "debt_pct": 0.725,
+    "debt_rate": 0.0875,
+    "exit_multiple": 8.0,
+    "fcf_sweep": 0.75
+  }
+} 

@@ -1,0 +1,311 @@
+{
+  "target_overview": {
+    "name": "AuroraSkin & Laser, LLC",
+    "location": "Miami, FL",
+    "site_type": "Single-site",
+    "treatment_rooms": 6,
+    "staff": {
+      "injectors": 2,
+      "laser_tech": 1,
+      "estheticians": 2
+    },
+    "payor_mix": "100% cash/credit",
+    "service_mix_ttm": {
+      "injectables": 0.62,
+      "devices": 0.23,
+      "memberships_facials": 0.1,
+      "retail": 0.05
+    }
+  },
+  "analysis_date": "2025-07-26 20:50:19",
+  "ttm_window": "2024-Q3 to 2025-Q2",
+  "ttm_metrics": {
+    "ttm_revenue": "8750000",
+    "ttm_ebitda_reported": 1610000.0,
+    "ttm_ebitda_adjusted": 1806000.0,
+    "ttm_margin": 0.2064
+  },
+  "ebitda_bridge": {
+    "reported_ebitda": 1610000.0,
+    "owner_addback": 200000,
+    "onetime_addback": 80000,
+    "rent_normalization": -84000,
+    "adjusted_ebitda": 1806000.0
+  },
+  "valuation_matrix": [
+    {
+      "multiple": 7.0,
+      "enterprise_value": 12642000.0,
+      "equity_value_to_seller": 10612000.0,
+      "ev_revenue_ratio": 1.4448
+    },
+    {
+      "multiple": 7.5,
+      "enterprise_value": 13545000.0,
+      "equity_value_to_seller": 11515000.0,
+      "ev_revenue_ratio": 1.548
+    },
+    {
+      "multiple": 8.0,
+      "enterprise_value": 14448000.0,
+      "equity_value_to_seller": 12418000.0,
+      "ev_revenue_ratio": 1.6512
+    },
+    {
+      "multiple": 8.5,
+      "enterprise_value": 15351000.0,
+      "equity_value_to_seller": 13321000.0,
+      "ev_revenue_ratio": 1.7544
+    },
+    {
+      "multiple": 9.0,
+      "enterprise_value": 16254000.0,
+      "equity_value_to_seller": 14224000.0,
+      "ev_revenue_ratio": 1.8576
+    },
+    {
+      "multiple": 9.5,
+      "enterprise_value": 17157000.0,
+      "equity_value_to_seller": 15127000.0,
+      "ev_revenue_ratio": 1.9608
+    },
+    {
+      "multiple": 10.0,
+      "enterprise_value": 18060000.0,
+      "equity_value_to_seller": 16030000.0,
+      "ev_revenue_ratio": 2.064
+    }
+  ],
+  "epv_analysis": {
+    "ebit": 1686000.0,
+    "nopat": 1247640.0,
+    "reinvestment": 151740.0,
+    "epv_fcf": 1095900.0,
+    "wacc": 0.12,
+    "epv_enterprise_value": 9132500.0,
+    "epv_equity_value": 7102500.0,
+    "epv_implied_multiple": 5.056755260243633
+  },
+  "lbo_analysis": {
+    "entry_multiple": 8.5,
+    "entry_ev": 15351000.0,
+    "new_debt": 11129475.0,
+    "sponsor_equity": 4221525.0,
+    "debt_pct": 72.5,
+    "interest_rate": 8.75,
+    "fcf_sweep_pct": 75.0,
+    "exit_multiple": 8.0,
+    "exit_ebitda": 2653606.5067008007,
+    "exit_equity_proceeds": 11778406.841353329,
+    "irr": 0.22778814912926082,
+    "moic": 2.7900834038299736
+  },
+  "projections": [
+    {
+      "year": 1,
+      "revenue": 9450000.0,
+      "ebitda": 1950480.0,
+      "ebit": 1830480.0,
+      "nopat": 1354555.2,
+      "maint_capex": 170100.0,
+      "delta_wc": 19561.643835616444,
+      "interest": 973829.0624999999,
+      "fcf_before_debt": 1164893.5561643834,
+      "debt_paydown": 143298.37024828765,
+      "debt_balance": 10986176.629751712
+    },
+    {
+      "year": 2,
+      "revenue": 10206000.0,
+      "ebitda": 2106518.4,
+      "ebit": 1986518.4,
+      "nopat": 1470023.616,
+      "maint_capex": 183708.0,
+      "delta_wc": 22680.0,
+      "interest": 961290.4551032748,
+      "fcf_before_debt": 1263635.616,
+      "debt_paydown": 226758.87067254385,
+      "debt_balance": 10759417.759079168
+    },
+    {
+      "year": 3,
+      "revenue": 11022480.000000002,
+      "ebitda": 2275039.8720000004,
+      "ebit": 2155039.8720000004,
+      "nopat": 1594729.5052800004,
+      "maint_capex": 198404.64,
+      "delta_wc": 24494.400000000056,
+      "interest": 941449.0539194271,
+      "fcf_before_debt": 1371830.4652800004,
+      "debt_paydown": 322786.05852042994,
+      "debt_balance": 10436631.700558737
+    },
+    {
+      "year": 4,
+      "revenue": 11904278.400000002,
+      "ebitda": 2457043.0617600004,
+      "ebit": 2337043.0617600004,
+      "nopat": 1729411.8657024002,
+      "maint_capex": 214277.01120000004,
+      "delta_wc": 26453.95200000001,
+      "interest": 913205.2737988895,
+      "fcf_before_debt": 1488680.9025024,
+      "debt_paydown": 431606.72152763297,
+      "debt_balance": 10005024.979031105
+    },
+    {
+      "year": 5,
+      "revenue": 12856620.672000004,
+      "ebitda": 2653606.5067008007,
+      "ebit": 2533606.5067008007,
+      "nopat": 1874868.8149585924,
+      "maint_capex": 231419.17209600005,
+      "delta_wc": 28570.26816000005,
+      "interest": 875439.6856652217,
+      "fcf_before_debt": 1614879.3747025924,
+      "debt_paydown": 554579.7667780281,
+      "debt_balance": 9450445.212253077
+    }
+  ],
+  "operating_kpis": {
+    "Quarter": [
+      "2024-Q1",
+      "2024-Q2",
+      "2024-Q3",
+      "2024-Q4",
+      "2025-Q1",
+      "2025-Q2"
+    ],
+    "Visits": [
+      2900,
+      3020,
+      3120,
+      3260,
+      3420,
+      3560
+    ],
+    "Avg_Ticket": [
+      540,
+      540,
+      545,
+      550,
+      555,
+      560
+    ],
+    "Injector_Hours": [
+      1260,
+      1310,
+      1360,
+      1420,
+      1480,
+      1540
+    ],
+    "Room_Utilization": [
+      70,
+      71,
+      73,
+      76,
+      80,
+      83
+    ]
+  },
+  "balance_sheet": {
+    "cash": 350000,
+    "accounts_receivable": 265000,
+    "inventory": 250000,
+    "accounts_payable": -270000,
+    "term_debt": 2200000,
+    "finance_leases": 180000,
+    "net_debt": 2030000
+  },
+  "quarterly_data": {
+    "Quarter": [
+      "2024-Q1",
+      "2024-Q2",
+      "2024-Q3",
+      "2024-Q4",
+      "2025-Q1",
+      "2025-Q2"
+    ],
+    "Revenue": [
+      1900000,
+      2000000,
+      2050000,
+      2120000,
+      2250000,
+      2330000
+    ],
+    "Product_COGS": [
+      304000.0,
+      320000.0,
+      328000.0,
+      339200.0,
+      360000.0,
+      372800.0
+    ],
+    "Provider_COGS": [
+      228000.0,
+      240000.0,
+      246000.0,
+      254400.0,
+      270000.0,
+      279600.0
+    ],
+    "GP": [
+      1368000.0,
+      1440000.0,
+      1476000.0,
+      1526400.0,
+      1620000.0,
+      1677600.0
+    ],
+    "Rent": [
+      135000,
+      135000,
+      135000,
+      135000,
+      135000,
+      135000
+    ],
+    "Marketing": [
+      161500.0,
+      170000.0,
+      174250.0,
+      180200.0,
+      191250.0,
+      198050.0
+    ],
+    "Admin_Salaries": [
+      580000,
+      580000,
+      580000,
+      580000,
+      580000,
+      580000
+    ],
+    "Other_Opex": [
+      218500.0,
+      230000.0,
+      235750.0,
+      243800.0,
+      258750.0,
+      267950.0
+    ],
+    "OneTime": [
+      0,
+      0,
+      0,
+      50000,
+      30000,
+      0
+    ],
+    "EBITDA_Reported": [
+      273000.0,
+      325000.0,
+      351000.0,
+      337400.0,
+      425000.0,
+      496600.0
+    ]
+  }
+}

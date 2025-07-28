@@ -672,7 +672,7 @@ export function generateCalculationAuditTrail(inputs: TransparencyInputs): Calcu
     description: "Risk-Adjusted Earnings",
     formula: `${inputs.epvMethod} × (1 - Risk Haircut)`,
     inputs: {
-      [`${inputs.epvMethod}`]: inputs.epvMethod === "Owner Earnings" ? inputs.ownerEarningsScenario / (1 - inputs.riskEarningsHaircut) : inputs.nopatScenario,
+      [`${inputs.epvMethod} (before haircut)`]: inputs.epvMethod === "Owner Earnings" ? inputs.ownerEarningsScenario / (1 - inputs.riskEarningsHaircut) : inputs.nopatScenario,
       "Risk Haircut": inputs.riskEarningsHaircut * 100
     },
     calculation: `$${(inputs.epvMethod === "Owner Earnings" ? inputs.ownerEarningsScenario / (1 - inputs.riskEarningsHaircut) : inputs.nopatScenario).toLocaleString()} × (1 - ${(inputs.riskEarningsHaircut * 100).toFixed(1)}%) = $${inputs.adjustedEarningsScenario.toLocaleString()}`,

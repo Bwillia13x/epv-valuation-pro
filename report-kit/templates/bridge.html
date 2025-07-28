@@ -7,292 +7,368 @@
     <link rel="stylesheet" href="../public/css/report.css">
     <script src="../vendor/echarts.min.js"></script>
     <script src="../public/js/format.js"></script>
+    <script src="../public/js/acceptance.js"></script>
+    <style>
+        .bridge-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-card-lg);
+            font-family: var(--font-family);
+            background: var(--color-background);
+        }
+        
+        .bridge-header {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .bridge-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .bridge-subtitle {
+            font-size: var(--font-size-base-lg);
+            color: var(--color-text-light);
+            font-weight: 500;
+        }
+        
+        .chart-section {
+            flex: 1;
+            min-height: 400px;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .footer-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: var(--spacing-md);
+            padding: var(--spacing-card);
+            background: white;
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--color-border);
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: var(--spacing-sm);
+        }
+        
+        .metric-label {
+            font-size: var(--font-size-caption-lg);
+            color: var(--color-text-light);
+            margin-bottom: var(--spacing-xs);
+            display: block;
+        }
+        
+        .metric-value {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            display: block;
+        }
+        
+        .metric-value.reported { color: var(--color-neutral); }
+        .metric-value.adjusted { color: var(--color-output); }
+        .metric-value.revenue { color: var(--color-linked); }
+        
+        .reconciliation-badge {
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--spacing-xs);
+            font-size: var(--font-size-caption);
+            font-weight: 600;
+        }
+        
+        .reconciliation-badge.pass {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .reconciliation-badge.fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
 </head>
 <body>
-    <div class="chart-container">
-        <div class="bridge-layout">
-            <div class="card-header">
-                <h1 class="card-title" id="chart-title">EBITDA Bridge</h1>
-                <p class="card-subtitle" id="chart-subtitle">TTM Window Loading...</p>
+    <div class="bridge-container">
+        <div class="reconciliation-badge" id="reconciliation-badge">
+            Checking...
+        </div>
+        
+        <div class="bridge-header">
+            <h1 class="bridge-title" id="chart-title">EBITDA Bridge Analysis</h1>
+            <p class="bridge-subtitle" id="chart-subtitle">TTM Window: Loading...</p>
+        </div>
+        
+        <div class="chart-section">
+            <div id="bridge-chart" style="width: 100%; height: 100%;"></div>
+        </div>
+        
+        <div class="footer-metrics">
+            <div class="metric-card">
+                <span class="metric-label">TTM Revenue</span>
+                <span class="metric-value revenue" id="revenue-metric">Loading...</span>
             </div>
-            
-            <div class="bridge-chart" id="bridge-chart"></div>
-            
-            <div class="bridge-details">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div>
-                        <h4 class="text-sm font-semibold mb-2">Bridge Components</h4>
-                        <div class="metric">
-                            <span class="metric-label">Reported EBITDA:</span>
-                            <span class="metric-value linked" id="reported-value">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Owner Add-back:</span>
-                            <span class="metric-value input" id="owner-value">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">One-time Items:</span>
-                            <span class="metric-value input" id="onetime-value">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Rent Normalization:</span>
-                            <span class="metric-value input" id="rent-value">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Adjusted EBITDA:</span>
-                            <span class="metric-value output" id="adjusted-value">Loading...</span>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-semibold mb-2">Margin Analysis</h4>
-                        <div class="metric">
-                            <span class="metric-label">TTM Revenue:</span>
-                            <span class="metric-value linked" id="revenue-value">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Reported Margin:</span>
-                            <span class="metric-value linked" id="reported-margin">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Adjusted Margin:</span>
-                            <span class="metric-value output" id="adjusted-margin">Loading...</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="metric-card">
+                <span class="metric-label">Reported Margin</span>
+                <span class="metric-value reported" id="reported-margin">Loading...</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-label">Adjusted Margin</span>
+                <span class="metric-value adjusted" id="adjusted-margin">Loading...</span>
             </div>
         </div>
     </div>
 
     <script>
-        // Global variables for chart and data
-        let chartInstance = null;
-        let caseData = null;
-        
-        // Wait for data injection
-        function initializeChart() {
-            if (!window.__CASE__) {
-                setTimeout(initializeChart, 100);
-                return;
+    function initializeBridge() {
+        try {
+            // Load case data
+            const caseData = window.__CASE_DATA__;
+            if (!caseData) {
+                throw new Error('Case data not loaded');
             }
             
-            caseData = window.__CASE__;
-            const title = window.__TITLE__ || 'EBITDA Bridge';
-            const ttm = window.__TTM__ || 'TTM Window';
+            const title = window.__CHART_CONFIG__.title || 'Investment Target';
+            const ttmWindow = caseData.company_info.ttm_window || 'TTM';
             
-            // Update title and subtitle
-            document.getElementById('chart-title').textContent = title;
-            document.getElementById('chart-subtitle').textContent = `EBITDA Bridge - ${ttm}`;
+            // Update header
+            document.getElementById('chart-title').textContent = `${title} - EBITDA Bridge`;
+            document.getElementById('chart-subtitle').textContent = `TTM Window: ${ttmWindow}`;
             
-            // Create the waterfall chart
-            createWaterfallChart();
-            
-            // Update detail values
-            updateDetailValues();
-            
-            // Signal that chart is ready
-            window.__READY__ = true;
-        }
-        
-        function createWaterfallChart() {
+            // Extract bridge data
             const bridge = caseData.ebitda_bridge;
-            const revenue = caseData.ttm_metrics.ttm_revenue;
+            const ttm = caseData.ttm_metrics;
             
-            // Prepare waterfall data
-            const categories = ['Reported\nEBITDA', 'Owner\nAdd-back', 'One-time\nItems', 'Rent\nNormalization', 'Adjusted\nEBITDA'];
-            const values = [
-                bridge.reported_ebitda,
-                bridge.owner_addback,
-                bridge.onetime_addback,
-                bridge.rent_normalization,
-                bridge.adjusted_ebitda
-            ];
+            const reported = bridge.reported_ebitda;
+            const ownerAddback = bridge.owner_addback;
+            const onetimeAddback = bridge.onetime_addback;
+            const rentNorm = bridge.rent_normalization;
+            const adjusted = bridge.adjusted_ebitda;
             
-            // Calculate cumulative values for waterfall positioning
-            let cumulative = [values[0]];
-            for (let i = 1; i < values.length - 1; i++) {
-                cumulative.push(cumulative[i-1] + values[i]);
-            }
-            cumulative.push(values[values.length - 1]);
+            // Run acceptance check
+            const calculatedAdjusted = reported + ownerAddback + onetimeAddback + rentNorm;
+            const reconciliationError = Math.abs(calculatedAdjusted - adjusted);
+            const reconciliationTolerance = adjusted * 0.005; // 0.5%
+            const reconciliationPassed = reconciliationError <= reconciliationTolerance;
             
-            // Create chart data for waterfall effect
-            const seriesData = [];
-            
-            // First bar (Reported EBITDA)
-            seriesData.push({
-                name: categories[0],
-                value: values[0],
-                itemStyle: { color: '#1f2937' } // Linked color
-            });
-            
-            // Adjustment bars (floating)
-            for (let i = 1; i < values.length - 1; i++) {
-                const value = values[i];
-                const base = cumulative[i-1];
-                
-                seriesData.push({
-                    name: categories[i],
-                    value: value > 0 ? [base, base + value] : [base + value, base],
-                    itemStyle: { color: '#2563eb' } // Input color
-                });
+            // Update reconciliation badge
+            const badge = document.getElementById('reconciliation-badge');
+            if (reconciliationPassed) {
+                badge.textContent = '✓ Reconciled';
+                badge.className = 'reconciliation-badge pass';
+            } else {
+                badge.textContent = `⚠ Reconcile Δ ${__FORMAT__.moneyM(reconciliationError, 2)}`;
+                badge.className = 'reconciliation-badge fail';
             }
             
-            // Final bar (Adjusted EBITDA)
-            seriesData.push({
-                name: categories[categories.length - 1],
-                value: values[values.length - 1],
-                itemStyle: { color: '#16a34a' } // Output color
-            });
+            // Update footer metrics
+            document.getElementById('revenue-metric').textContent = __FORMAT__.moneyM(ttm.ttm_revenue, 2);
+            document.getElementById('reported-margin').textContent = __FORMAT__.pct(reported / ttm.ttm_revenue, 1);
+            document.getElementById('adjusted-margin').textContent = __FORMAT__.pct(adjusted / ttm.ttm_revenue, 1);
             
-            // Chart configuration
-            const option = {
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: { type: 'shadow' },
-                    formatter: function(params) {
-                        const point = params[0];
-                        const value = Array.isArray(point.value) ? 
-                            point.value[1] - point.value[0] : point.value;
-                        return `${point.name}<br/>Value: ${money(value)}`;
+            // Create waterfall chart
+            createWaterfallChart(reported, ownerAddback, onetimeAddback, rentNorm, adjusted);
+            
+        } catch (error) {
+            console.error('Bridge initialization error:', error);
+            document.getElementById('chart-title').textContent = 'Error Loading Bridge';
+            document.getElementById('chart-subtitle').textContent = error.message;
+        }
+    }
+    
+    function createWaterfallChart(reported, ownerAddback, onetimeAddback, rentNorm, adjusted) {
+        const chart = echarts.init(document.getElementById('bridge-chart'));
+        
+        // Calculate cumulative values for waterfall
+        const step1 = reported;
+        const step2 = step1 + ownerAddback;
+        const step3 = step2 + onetimeAddback; // Subtotal after one-time
+        const step4 = step3 + rentNorm;       // Final adjusted
+        
+        const option = {
+            grid: {
+                left: '8%',
+                right: '8%',
+                top: '15%',
+                bottom: '20%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['Reported\nEBITDA', 'Owner\nAdd-back', 'One-time\nItems', 'Rent\nNormalization', 'Adjusted\nEBITDA'],
+                axisLabel: {
+                    fontSize: 12,
+                    color: '#475569',
+                    interval: 0,
+                    rotate: 0
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#e2e8f0'
                     }
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'EBITDA ($M)',
+                nameLocation: 'middle',
+                nameGap: 50,
+                nameTextStyle: {
+                    fontSize: 12,
+                    color: '#475569'
                 },
-                grid: {
-                    left: '10%',
-                    right: '10%',
-                    bottom: '15%',
-                    top: '10%'
-                },
-                xAxis: {
-                    type: 'category',
-                    data: categories,
-                    axisLabel: {
-                        fontSize: 12,
-                        color: '#1f2937'
+                axisLabel: {
+                    formatter: function(value) {
+                        return __FORMAT__.moneyM(value, 1);
                     },
-                    axisLine: {
-                        lineStyle: { color: '#e5e7eb' }
+                    fontSize: 11,
+                    color: '#475569'
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#e2e8f0',
+                        type: 'dashed'
                     }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        formatter: function(value) {
-                            return money(value);
-                        },
-                        fontSize: 12,
-                        color: '#6b7280'
-                    },
-                    axisLine: {
-                        lineStyle: { color: '#e5e7eb' }
-                    },
-                    splitLine: {
-                        lineStyle: { color: '#f3f4f6' }
-                    }
-                },
-                series: [{
+                }
+            },
+            series: [
+                // Base bars (for waterfall effect)
+                {
                     type: 'bar',
-                    data: seriesData.map((item, index) => {
-                        if (index === 0 || index === seriesData.length - 1) {
-                            return {
-                                value: item.value,
-                                itemStyle: item.itemStyle,
-                                label: {
-                                    show: true,
-                                    position: 'inside',
-                                    formatter: money(item.value),
-                                    fontSize: 11,
-                                    fontWeight: 'bold',
-                                    color: 'white'
-                                }
-                            };
-                        } else {
-                            const value = Array.isArray(item.value) ? 
-                                item.value[1] - item.value[0] : item.value;
-                            return {
-                                value: item.value,
-                                itemStyle: item.itemStyle,
-                                label: {
-                                    show: true,
-                                    position: 'inside',
-                                    formatter: money(value),
-                                    fontSize: 11,
-                                    fontWeight: 'bold',
-                                    color: 'white'
-                                }
-                            };
+                    stack: 'waterfall',
+                    itemStyle: {
+                        borderColor: 'rgba(0,0,0,0)',
+                        color: 'rgba(0,0,0,0)'
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            borderColor: 'rgba(0,0,0,0)',
+                            color: 'rgba(0,0,0,0)'
                         }
-                    }),
-                    barWidth: '60%'
-                }]
-            };
-            
-            // Create chart instance
-            const chartElement = document.getElementById('bridge-chart');
-            chartInstance = echarts.init(chartElement);
-            chartInstance.setOption(option);
-            
-            // Add margin percentages below bars
-            addMarginLabels();
-        }
-        
-        function addMarginLabels() {
-            const bridge = caseData.ebitda_bridge;
-            const revenue = caseData.ttm_metrics.ttm_revenue;
-            
-            const reportedMargin = (bridge.reported_ebitda / revenue) * 100;
-            const adjustedMargin = (bridge.adjusted_ebitda / revenue) * 100;
-            
-            // Update chart to include margin labels (simplified approach)
-            setTimeout(() => {
-                const chartElement = document.getElementById('bridge-chart');
-                const marginDiv = document.createElement('div');
-                marginDiv.style.position = 'absolute';
-                marginDiv.style.bottom = '40px';
-                marginDiv.style.left = '0';
-                marginDiv.style.right = '0';
-                marginDiv.style.display = 'flex';
-                marginDiv.style.justifyContent = 'space-around';
-                marginDiv.style.fontSize = '11px';
-                marginDiv.style.color = '#6b7280';
-                marginDiv.innerHTML = `
-                    <span>${reportedMargin.toFixed(1)}%</span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span>${adjustedMargin.toFixed(1)}%</span>
-                `;
-                chartElement.style.position = 'relative';
-                chartElement.appendChild(marginDiv);
-            }, 500);
-        }
-        
-        function updateDetailValues() {
-            const bridge = caseData.ebitda_bridge;
-            const revenue = caseData.ttm_metrics.ttm_revenue;
-            
-            document.getElementById('reported-value').textContent = money(bridge.reported_ebitda);
-            document.getElementById('owner-value').textContent = money(bridge.owner_addback);
-            document.getElementById('onetime-value').textContent = money(bridge.onetime_addback);
-            document.getElementById('rent-value').textContent = money(bridge.rent_normalization);
-            document.getElementById('adjusted-value').textContent = money(bridge.adjusted_ebitda);
-            
-            document.getElementById('revenue-value').textContent = money(revenue);
-            document.getElementById('reported-margin').textContent = pct(bridge.reported_ebitda / revenue);
-            document.getElementById('adjusted-margin').textContent = pct(bridge.adjusted_ebitda / revenue);
-        }
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (chartInstance) {
-                chartInstance.resize();
+                    },
+                    data: [0, step1, step2, step3, 0],
+                    silent: true
+                },
+                // Visible bars
+                {
+                    type: 'bar',
+                    stack: 'waterfall',
+                    itemStyle: {
+                        color: function(params) {
+                            if (params.dataIndex === 0) return '#64748b'; // Reported - neutral
+                            if (params.dataIndex === 1) return '#2563eb'; // Owner - input blue
+                            if (params.dataIndex === 2) return '#2563eb'; // One-time - input blue
+                            if (params.dataIndex === 3) return '#dc2626'; // Rent - negative red
+                            if (params.dataIndex === 4) return '#16a34a'; // Adjusted - output green
+                        },
+                        borderRadius: [4, 4, 0, 0],
+                        borderWidth: 1,
+                        borderColor: function(params) {
+                            if (params.dataIndex === 0) return '#475569';
+                            if (params.dataIndex === 1) return '#1e40af';
+                            if (params.dataIndex === 2) return '#1e40af';
+                            if (params.dataIndex === 3) return '#b91c1c';
+                            if (params.dataIndex === 4) return '#15803d';
+                        }
+                    },
+                    label: {
+                        show: true,
+                        position: function(params) {
+                            return params.data >= 0 ? 'top' : 'bottom';
+                        },
+                        formatter: function(params) {
+                            if (params.dataIndex === 0) return __FORMAT__.moneyM(reported, 2);
+                            if (params.dataIndex === 1) return `+${__FORMAT__.moneyM(ownerAddback, 2)}`;
+                            if (params.dataIndex === 2) return `+${__FORMAT__.moneyM(onetimeAddback, 2)}`;
+                            if (params.dataIndex === 3) return __FORMAT__.moneyM(rentNorm, 2); // Will show negative
+                            if (params.dataIndex === 4) return __FORMAT__.moneyM(adjusted, 2);
+                        },
+                        fontSize: 11,
+                        fontWeight: 'bold',
+                        color: function(params) {
+                            if (params.dataIndex === 0) return '#475569';
+                            if (params.dataIndex === 1) return '#1e40af';
+                            if (params.dataIndex === 2) return '#1e40af';
+                            if (params.dataIndex === 3) return '#dc2626';
+                            if (params.dataIndex === 4) return '#16a34a';
+                        }
+                    },
+                    data: [reported, ownerAddback, onetimeAddback, rentNorm, adjusted],
+                    markLine: {
+                        silent: true,
+                        symbol: 'none',
+                        lineStyle: {
+                            color: '#94a3b8',
+                            type: 'dashed',
+                            width: 1
+                        },
+                        data: [
+                            // Subtotal line after one-time items
+                            {
+                                xAxis: 2.5,
+                                yAxis: step3,
+                                label: {
+                                    show: true,
+                                    position: 'insideEndTop',
+                                    formatter: `Subtotal: ${__FORMAT__.moneyM(step3, 2)}`,
+                                    fontSize: 10,
+                                    color: '#64748b'
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function(params) {
+                    const dataIndex = params[0].dataIndex;
+                    if (dataIndex === 0) {
+                        return `<strong>Reported EBITDA</strong><br/>${__FORMAT__.moneyM(reported, 2)}`;
+                    } else if (dataIndex === 1) {
+                        return `<strong>Owner Add-back</strong><br/>+${__FORMAT__.moneyM(ownerAddback, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step2, 2)}`;
+                    } else if (dataIndex === 2) {
+                        return `<strong>One-time Items</strong><br/>+${__FORMAT__.moneyM(onetimeAddback, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step3, 2)}`;
+                    } else if (dataIndex === 3) {
+                        return `<strong>Rent Normalization</strong><br/>${__FORMAT__.moneyM(rentNorm, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step4, 2)}`;
+                    } else if (dataIndex === 4) {
+                        return `<strong>Adjusted EBITDA</strong><br/>${__FORMAT__.moneyM(adjusted, 2)}`;
+                    }
+                }
             }
-        });
+        };
         
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeChart);
-        } else {
-            initializeChart();
-        }
+        chart.setOption(option);
+        
+        // Responsive
+        window.addEventListener('resize', function() {
+            chart.resize();
+        });
+    }
+    
+    // Initialize when data is loaded
+    if (window.__CASE_DATA__) {
+        initializeBridge();
+    } else {
+        window.addEventListener('caseDataLoaded', initializeBridge);
+    }
     </script>
 </body>
 </html> 

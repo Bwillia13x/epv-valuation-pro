@@ -3,37 +3,63 @@
  * Print-friendly CSS with CPP color convention and grid layouts
  */
 
-/* CSS Variables for CPP Color Scheme */
+/* CSS Variables for CPP Color Scheme - Enhanced */
 :root {
-  --color-input: #2563eb;        /* Blue for inputs */
-  --color-linked: #1f2937;       /* Black for linked values */
+  --color-input: #2563eb;        /* Blue for inputs/assumptions */
+  --color-linked: #1e293b;       /* Slate-800 for linked values */
   --color-output: #16a34a;       /* Green for outputs */
-  --color-neutral: #6b7280;      /* Grey for neutral */
-  --color-background: #f8f9fa;   /* Light grey background */
+  --color-negative: #dc2626;     /* Red for negative values */
+  --color-neutral: #475569;      /* Slate-600 for neutral text */
+  --color-neutral-dark: #1e293b; /* Slate-800 for emphasis */
+  --color-grid: #e2e8f0;         /* Slate-200 for gridlines */
+  --color-background: #ffffff;   /* White background */
   --color-highlight: #fef3c7;    /* Light yellow for highlights */
-  --color-border: #e5e7eb;       /* Light border */
-  --color-text: #111827;         /* Dark text */
-  --color-text-light: #6b7280;   /* Light text */
+  --color-border: #e2e8f0;       /* Consistent border color */
+  --color-text: #1e293b;         /* Slate-800 primary text */
+  --color-text-light: #475569;   /* Slate-600 secondary text */
   
-  /* Typography */
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-size-base: 14px;
-  --font-size-sm: 12px;
-  --font-size-lg: 16px;
-  --font-size-xl: 18px;
-  --font-size-2xl: 24px;
+  /* Typography - CPP System */
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-caption: 11px;     /* Small captions */
+  --font-size-caption-lg: 12px;  /* Large captions */
+  --font-size-base: 13px;        /* Base text */
+  --font-size-base-lg: 14px;     /* Large base text */
+  --font-size-lg: 16px;          /* Medium headings */
+  --font-size-xl: 18px;          /* Large headings */
+  --font-size-2xl: 22px;         /* Main headings */
   
-  /* Spacing */
+  /* Spacing - CPP System */
   --spacing-xs: 4px;
   --spacing-sm: 8px;
+  --spacing-card: 12px;           /* Inside cards minimum */
+  --spacing-card-lg: 16px;        /* Inside cards preferred */
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
   
-  /* Shadows */
+  /* Radius & Shadows */
+  --radius-card: 14px;            /* Rounded corners for cards */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle card shadow */
   --shadow-md: 0 1px 4px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Print CSS - CPP Requirements */
+@page {
+  size: Letter;
+  margin: 18mm;
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  body {
+    font-size: var(--font-size-base) !important;
+  }
 }
 
 /* Reset and Base Styles */
@@ -45,9 +71,10 @@
 
 html, body {
   font-family: var(--font-family);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-base-lg);
   line-height: 1.5;
   color: var(--color-text);
+  background: var(--color-background);
   background-color: white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -395,18 +422,32 @@ td:first-child, th:first-child {
 .font-semibold { font-weight: 600; }
 .font-medium { font-weight: 500; }
 
-.text-xs { font-size: 10px; }
-.text-sm { font-size: var(--font-size-sm); }
-.text-base { font-size: var(--font-size-base); }
-.text-lg { font-size: var(--font-size-lg); }
-.text-xl { font-size: var(--font-size-xl); }
-.text-2xl { font-size: var(--font-size-2xl); }
+/* CPP Typography Scale */
+.text-caption { font-size: var(--font-size-caption); } /* 11px captions */
+.text-caption-lg { font-size: var(--font-size-caption-lg); } /* 12px captions */
+.text-xs { font-size: var(--font-size-caption); } /* 11px */
+.text-sm { font-size: var(--font-size-caption-lg); } /* 12px */
+.text-base { font-size: var(--font-size-base); } /* 13px */
+.text-base-lg { font-size: var(--font-size-base-lg); } /* 14px */
+.text-lg { font-size: var(--font-size-lg); } /* 16px */
+.text-xl { font-size: var(--font-size-xl); } /* 18px */
+.text-2xl { font-size: var(--font-size-2xl); } /* 22px */
 
-.text-input { color: var(--color-input); }
-.text-linked { color: var(--color-linked); }
-.text-output { color: var(--color-output); }
-.text-neutral { color: var(--color-neutral); }
-.text-light { color: var(--color-text-light); }
+/* CPP Color System */
+.text-input { color: var(--color-input); } /* Blue for inputs/assumptions */
+.text-linked { color: var(--color-linked); } /* Slate-800 for linked values */
+.text-output { color: var(--color-output); } /* Green for outputs */
+.text-negative { color: var(--color-negative); } /* Red for negative values */
+.text-neutral { color: var(--color-neutral); } /* Slate-600 for neutral text */
+.text-neutral-dark { color: var(--color-neutral-dark); } /* Slate-800 for emphasis */
+.text-light { color: var(--color-text-light); } /* Slate-600 secondary text */
+
+.bg-input { background-color: var(--color-input); }
+.bg-output { background-color: var(--color-output); }
+.bg-negative { background-color: var(--color-negative); }
+.bg-neutral { background-color: var(--color-neutral); }
+
+.border-grid { border-color: var(--color-grid); } /* Slate-200 gridlines */
 
 .bg-highlight { background-color: var(--color-highlight); }
 .bg-background { background-color: var(--color-background); }
@@ -415,10 +456,40 @@ td:first-child, th:first-child {
 .border-t { border-top: 1px solid var(--color-border); }
 .border-b { border-bottom: 1px solid var(--color-border); }
 
+/* CPP Card System */
+.card {
+  background: white;
+  border-radius: var(--radius-card); /* 14px rounded corners */
+  box-shadow: var(--shadow-card); /* subtle shadow */
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-card-lg); /* 16px inside cards */
+  margin-bottom: var(--spacing-md);
+}
+
+.card-compact {
+  padding: var(--spacing-card); /* 12px minimum inside cards */
+}
+
+.card-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+}
+
+.card-subtitle {
+  font-size: var(--font-size-caption-lg);
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Legacy Border Radius */
 .rounded { border-radius: 4px; }
 .rounded-lg { border-radius: 8px; }
+.rounded-card { border-radius: var(--radius-card); }
 
 .shadow { box-shadow: var(--shadow-md); }
+.shadow-card { box-shadow: var(--shadow-card); }
 
 .p-0 { padding: 0; }
 .p-2 { padding: var(--spacing-sm); }

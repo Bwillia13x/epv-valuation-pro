@@ -5,43 +5,57 @@
 
 window.__FORMAT__ = {
   /**
-   * Format currency with appropriate scale (K, M, B)
+   * Format currency with CPP-consistent $X.XXM format
    * @param {number} value - The value to format
    * @param {object} options - Formatting options
    * @returns {string} Formatted currency string
    */
   money: function(value, options = {}) {
     if (value === null || value === undefined || isNaN(value)) {
-      return '$0';
+      return '$0.00M';
     }
     
     const abs = Math.abs(value);
     const sign = value < 0 ? '-' : '';
-    const decimals = options.decimals !== undefined ? options.decimals : 'auto';
     const forceUnit = options.unit;
+    const forceDecimals = options.decimals;
     
-    // Determine scale and format
-    if (forceUnit === 'raw' || (abs < 1000 && !forceUnit)) {
-      // Show raw numbers for small values
+    // CPP Standard: Always use $X.XXM format for consistency
+    // No mixing of $K/$M in the same visual
+    
+    if (forceUnit === 'raw') {
+      // Raw numbers only when explicitly requested
       return `${sign}$${abs.toLocaleString()}`;
-    } else if (forceUnit === 'K' || (abs >= 1000 && abs < 1000000 && !forceUnit)) {
-      // Thousands
+    } else if (forceUnit === 'K' || (abs < 100000 && !forceUnit)) {
+      // Use K for values under 100K when no mixing with M
       const scaled = abs / 1000;
-      const dec = decimals === 'auto' ? (scaled >= 100 ? 0 : 1) : decimals;
-      return `${sign}$${scaled.toFixed(dec)}K`;
-    } else if (forceUnit === 'M' || (abs >= 1000000 && abs < 1000000000 && !forceUnit)) {
-      // Millions
+      const decimals = forceDecimals !== undefined ? forceDecimals : (scaled >= 100 ? 0 : 1);
+      return `${sign}$${scaled.toFixed(decimals)}K`;
+    } else {
+      // Default to millions format - CPP standard
       const scaled = abs / 1000000;
-      const dec = decimals === 'auto' ? (scaled >= 100 ? 1 : 2) : decimals;
-      return `${sign}$${scaled.toFixed(dec)}M`;
-    } else if (forceUnit === 'B' || abs >= 1000000000) {
-      // Billions
-      const scaled = abs / 1000000000;
-      const dec = decimals === 'auto' ? (scaled >= 100 ? 1 : 2) : decimals;
-      return `${sign}$${scaled.toFixed(dec)}B`;
+      const decimals = forceDecimals !== undefined ? forceDecimals : 
+                      (scaled >= 100 ? 1 : 2); // $XXX.XM or $XX.XXM
+      return `${sign}$${scaled.toFixed(decimals)}M`;
+    }
+  },
+  
+  /**
+   * CPP-specific money formatting that always uses millions
+   * @param {number} value - The value to format
+   * @param {number} decimals - Number of decimal places (default: 2)
+   * @returns {string} Formatted currency string in $X.XXM format
+   */
+  moneyM: function(value, decimals = 2) {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '$0.00M';
     }
     
-    return `${sign}$${abs.toLocaleString()}`;
+    const abs = Math.abs(value);
+    const sign = value < 0 ? '-' : '';
+    const scaled = abs / 1000000;
+    
+    return `${sign}$${scaled.toFixed(decimals)}M`;
   },
 
   /**
@@ -57,6 +71,36 @@ window.__FORMAT__ = {
     
     const percentage = value * 100;
     return `${percentage.toFixed(decimals)}%`;
+  },
+  
+  /**
+   * CPP-specific percentage formatting for basis points precision
+   * @param {number} value - The decimal value (0.2565 = 25.7%)
+   * @param {number} decimals - Number of decimal places (default: 1)
+   * @returns {string} Formatted percentage string
+   */
+  pctBps: function(value, decimals = 1) {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0.0%';
+    }
+    
+    const percentage = value * 100;
+    const rounded = Math.round(percentage * Math.pow(10, decimals)) / Math.pow(10, decimals);
+    return `${rounded.toFixed(decimals)}%`;
+  },
+  
+  /**
+   * Format multiple with consistent decimal places for valuation
+   * @param {number} value - The multiple value (8.5)
+   * @param {number} decimals - Number of decimal places (default: 1)
+   * @returns {string} Formatted multiple string
+   */
+  multiple: function(value, decimals = 1) {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '0.0×';
+    }
+    
+    return `${value.toFixed(decimals)}×`;
   },
 
   /**

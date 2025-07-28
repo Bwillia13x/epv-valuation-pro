@@ -115,16 +115,16 @@ export interface HybridValuationResult {
 export const MEDSPA_BENCHMARKS_2025: IndustryBenchmarks = {
   ebitdaMarginRange: [0.12, 0.32], // 12-32% for normalized EBITDA
   wacc: {
-    baseBeta: 1.25, // CONSERVATIVE: Increased back to 1.25 (aesthetic volatility)
-    industryPremium: 0.015, // CONSERVATIVE: Increased to 1.5% (regulatory/competition risks)
+    baseBeta: 1.50, // INSTITUTIONAL-GRADE: Updated to 1.50 (reflects true medical aesthetics volatility and concentration risk)
+    industryPremium: 0.015, // CONSERVATIVE: 1.5% (regulatory/competition risks)
     sizePremium: 0.025, // Base size premium
-    geographicPremium: 0.005, // CONSERVATIVE: Increased to 0.5% (market-specific risks)
+    geographicPremium: 0.005, // CONSERVATIVE: 0.5% (market-specific risks)
   },
   growthRates: {
-    stable: 0.025, // REFINED: 2.5% from 3% (more conservative)
+    stable: 0.020, // INSTITUTIONAL-GRADE: 2.0% from 2.5% (maximum conservatism)
     growth: 0.125, // 12.5% aesthetic market CAGR
     cagr: 0.115, // Historical 11.5% industry growth
-    terminal: 0.025, // REFINED: Conservative terminal at 2.5%
+    terminal: 0.020, // INSTITUTIONAL-GRADE: Ultra-conservative terminal at 2.0% (closer to long-term GDP)
   },
   exitMultiples: {
     small: [3.5, 5.5], // Small practices
@@ -247,7 +247,7 @@ export function processMultiYearData(
   };
 }
 
-// REFINED Enhanced WACC Calculation with Market Calibration
+// INSTITUTIONAL-GRADE Enhanced WACC Calculation with Market Calibration
 export function calculateEnhancedWACC(
   riskFreeRate: number,
   marketRiskPremium: number,
@@ -258,6 +258,13 @@ export function calculateEnhancedWACC(
   customAdjustments: number = 0
 ): number {
   const benchmarks = MEDSPA_BENCHMARKS_2025.wacc;
+  
+  // INSTITUTIONAL-GRADE: Beta adjustments for practice concentration risk
+  const adjustedBeta = companySize === 'small' ? 
+    benchmarks.baseBeta * 1.07 : // 1.60x for single-location practices (7% increase from 1.50 base)
+    companySize === 'medium' ?
+    benchmarks.baseBeta * 1.00 : // 1.50x for medium practices (base)
+    benchmarks.baseBeta * 0.93;  // 1.40x for large practices (7% decrease)
   
   // CONSERVATIVE: Increased size-based adjustments for single-location risk
   const sizePremiums = {
@@ -284,7 +291,7 @@ export function calculateEnhancedWACC(
                            companySize === 'medium' ? 0.015 : 0.01; // 2%, 1.5%, 1%
   
   const wacc = riskFreeRate + 
-               (benchmarks.baseBeta * marketRiskPremium) +
+               (adjustedBeta * marketRiskPremium) +
                benchmarks.industryPremium +
                sizePremiums[companySize] +
                geoPremiums[geographicRisk] +
@@ -302,7 +309,12 @@ export function projectDCFCashFlows(inputs: DCFProjectionInputs): {
   terminalValue: number;
   presentValues: number[];
   enterpriseValue: number;
-  growthPath: number[]; // NEW: Track growth rates
+  growthPath: number[]; // Track growth rates
+  terminalValueBreakdown: { // INSTITUTIONAL-GRADE: Terminal value transparency
+    perpetuityValue: number;
+    multipleValue: number;
+    methodUsed: 'perpetuity' | 'multiple' | 'conservative_minimum';
+  };
 } {
   const { historicalData, projectionYears, terminalGrowthRate, discountRate } = inputs;
   
@@ -346,10 +358,20 @@ export function projectDCFCashFlows(inputs: DCFProjectionInputs): {
     projectedCashFlows.push(freeCashFlow);
   }
   
-  // Terminal value using Gordon Growth Model
+  // INSTITUTIONAL-GRADE: Dual terminal value methodology (perpetuity vs exit multiple)
   const terminalCashFlow = projectedCashFlows[projectedCashFlows.length - 1] * 
     (1 + terminalGrowthRate);
-  const terminalValue = terminalCashFlow / (discountRate - terminalGrowthRate);
+  
+  // Method 1: Gordon Growth Model (perpetuity)
+  const perpetuityTerminalValue = terminalCashFlow / (discountRate - terminalGrowthRate);
+  
+  // Method 2: Exit Multiple Approach (conservative)
+  const finalYearEBITDA = currentEbitda;
+  const conservativeExitMultiple = 5.0; // Conservative exit multiple for medical aesthetics
+  const multipleTerminalValue = finalYearEBITDA * conservativeExitMultiple;
+  
+  // INSTITUTIONAL-GRADE: Take minimum for maximum conservatism
+  const terminalValue = Math.min(perpetuityTerminalValue, multipleTerminalValue);
   
   // Present value calculations
   const presentValues = projectedCashFlows.map((cf, i) => 
@@ -360,12 +382,21 @@ export function projectDCFCashFlows(inputs: DCFProjectionInputs): {
   
   const enterpriseValue = presentValues.reduce((sum, pv) => sum + pv, 0) + terminalPresentValue;
   
+  // Determine which method was used
+  const methodUsed = terminalValue === perpetuityTerminalValue ? 'perpetuity' : 
+                     terminalValue === multipleTerminalValue ? 'multiple' : 'conservative_minimum';
+  
   return {
     projectedCashFlows,
     terminalValue,
     presentValues,
     enterpriseValue,
     growthPath,
+    terminalValueBreakdown: {
+      perpetuityValue: perpetuityTerminalValue,
+      multipleValue: multipleTerminalValue,
+      methodUsed
+    },
   };
 }
 

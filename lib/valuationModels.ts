@@ -1,6 +1,8 @@
 // Enhanced valuation helpers with professional risk modeling
 // Pure TS (no React / browser refs) so it can run on server or client.
 
+import { PrecisionMath, calculateEPVWithPrecision } from './precisionUtils';
+
 export function clamp(v: number, min: number, max: number) {
   return Math.min(max, Math.max(min, v));
 }
@@ -228,7 +230,7 @@ export function runMonteCarloEPV(
 
     const adj = nopat + input.da - maint;
     
-    // Clear valuation approach selection
+    // INSTITUTIONAL-GRADE: Enhanced precision valuation approach
     let ev: number;
     const useExitMultiple = input.valuationApproach === 'multiple' || 
                            (input.valuationApproach === undefined && input.exitMultipleTriangular);
@@ -237,15 +239,26 @@ export function runMonteCarloEPV(
       const [min, mode, max] = input.exitMultipleTriangular;
       const exitMultiple = triangular(min, mode, max);
       // Exit multiple on after-tax EBITDA for proper tax treatment
-      const finalEBITDA = rev * margin;
-      const afterTaxEBITDA = finalEBITDA * (1 - input.taxRate);
-      ev = afterTaxEBITDA * exitMultiple;
+      const finalEBITDA = PrecisionMath.multiply(rev, margin);
+      const afterTaxEBITDA = PrecisionMath.multiply(finalEBITDA, (1 - input.taxRate));
+      ev = PrecisionMath.multiply(afterTaxEBITDA, exitMultiple);
       detailedResults.push({
         wacc, revenue: rev, margin, exitMultiple, ev, equity: ev + input.cash - input.debt
       });
     } else {
-      // Traditional DCF approach
-      ev = wacc > 0 ? adj / wacc : 0;
+      // Traditional DCF approach with enhanced precision
+      if (wacc > 0) {
+        const epvResult = calculateEPVWithPrecision(adj, wacc);
+        ev = epvResult.epv;
+        
+        // Log precision warnings for large valuations
+        if (epvResult.precisionMetrics.warnings.length > 0 && Math.abs(adj) > 100000000) {
+          console.warn('Large valuation precision warning:', epvResult.precisionMetrics.warnings);
+        }
+      } else {
+        ev = 0;
+      }
+      
       detailedResults.push({
         wacc, revenue: rev, margin, ev, equity: ev + input.cash - input.debt
       });
@@ -261,9 +274,13 @@ export function runMonteCarloEPV(
   evDist.sort((a, b) => a - b);
   eqDist.sort((a, b) => a - b);
 
-  // Compute volatility with pre-calculated mean
-  const meanEV = sumEV / evDist.length;
-  const volatility = Math.sqrt(evDist.reduce((sum, val) => sum + Math.pow(val - meanEV, 2), 0) / evDist.length);
+  // INSTITUTIONAL-GRADE: Compute statistics with enhanced precision
+  const meanEV = PrecisionMath.divide(sumEV, evDist.length);
+  const variance = PrecisionMath.divide(
+    PrecisionMath.sum(evDist.map(val => Math.pow(val - meanEV, 2))),
+    evDist.length
+  );
+  const volatility = Math.sqrt(variance);
 
   return {
     mean: meanEV,

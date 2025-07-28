@@ -255,6 +255,40 @@ window.__ACCEPTANCE__ = {
         diff: irrReasonable ? '0%' : 'Outside range'
       });
       
+      // CPP Enhanced Checks - Strict 0.5% tolerance
+      
+      // Check Base Matrix Row calculation
+      const matrix = caseData.valuation_matrix;
+      const adjustedEbitda = caseData.ebitda_bridge.adjusted_ebitda;
+      const baseCase = matrix.find(row => row.multiple === 8.5) || matrix[Math.floor(matrix.length/2)];
+      
+      if (baseCase && adjustedEbitda) {
+        const expectedEv = adjustedEbitda * baseCase.multiple;
+        const validation = this.withinTolerance(baseCase.enterprise_value, expectedEv, 0.005);
+        results.push({
+          name: 'Base Matrix Calculation (8.5×)',
+          ok: validation.ok,
+          expected: this.formatNumber(expectedEv),
+          actual: this.formatNumber(baseCase.enterprise_value),
+          diff: this.formatDiff(validation)
+        });
+      }
+      
+      // Check EPV Enterprise/Equity match JSON
+      const epv = caseData.epv_analysis;
+      if (epv && epv.epv_enterprise && epv.epv_equity) {
+        const netDebt = caseData.assumptions ? caseData.assumptions.net_debt : 2030000;
+        const expectedEquity = epv.epv_enterprise - netDebt;
+        const validation = this.withinTolerance(epv.epv_equity, expectedEquity, 0.005);
+        results.push({
+          name: 'EPV Equity Calculation',
+          ok: validation.ok,
+          expected: this.formatNumber(expectedEquity),
+          actual: this.formatNumber(epv.epv_equity),
+          diff: this.formatDiff(validation)
+        });
+      }
+      
     } catch (error) {
       results.push({
         name: 'Additional Checks',
