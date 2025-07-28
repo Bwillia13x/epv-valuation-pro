@@ -1,28 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FinancialDatasetV1, AgentAnalysis } from '../lib/types';
+import { FinancialDatasetV1, AgentAnalysis, CaseData } from '../lib/types';
 
-interface Case {
-  id: string;
-  name: string;
-  lastModified: Date;
-  financialData: FinancialDatasetV1;
-  analyses: AgentAnalysis[];
-  status: 'draft' | 'analyzing' | 'complete';
-  tags: string[];
-}
-
-interface AgentAnalysis {
-  agentType: 'financial-analyst' | 'financial-analyst-b' | 'quant-finance-modeler' | 'value-investing-pe-analyst';
-  recommendation: 'BUY' | 'HOLD' | 'SELL' | 'CONDITIONAL';
-  enterpriseValue: number;
-  confidence: 'HIGH' | 'MEDIUM' | 'LOW';
-  keyRisks: string[];
-  completedAt: Date;
-}
 
 export const CaseManager: React.FC = () => {
-  const [cases, setCases] = useState<Case[]>([]);
-  const [selectedCase, setSelectedCase] = useState<Case | null>(null);
+  const [cases, setCases] = useState<CaseData[]>([]);
+  const [selectedCase, setSelectedCase] = useState<CaseData | null>(null);
   const [showNewCaseModal, setShowNewCaseModal] = useState(false);
 
   useEffect(() => {
@@ -33,7 +15,7 @@ export const CaseManager: React.FC = () => {
     }
   }, []);
 
-  const saveCase = (caseData: Case) => {
+  const saveCase = (caseData: CaseData) => {
     const updatedCases = cases.map(c => c.id === caseData.id ? caseData : c);
     if (!cases.find(c => c.id === caseData.id)) {
       updatedCases.push(caseData);
@@ -49,7 +31,7 @@ export const CaseManager: React.FC = () => {
   };
 
   const createNewCase = (name: string, financialData: FinancialDatasetV1) => {
-    const newCase: Case = {
+    const newCase: CaseData = {
       id: `case-${Date.now()}`,
       name,
       lastModified: new Date(),
@@ -114,11 +96,11 @@ export const CaseManager: React.FC = () => {
 };
 
 const CaseCard: React.FC<{
-  case: Case;
+  case: CaseData;
   onSelect: () => void;
   onDelete: () => void;
 }> = ({ case: case_, onSelect, onDelete }) => {
-  const getStatusColor = (status: Case['status']) => {
+  const getStatusColor = (status: CaseData['status']) => {
     switch (status) {
       case 'draft': return 'bg-gray-100 text-gray-800';
       case 'analyzing': return 'bg-yellow-100 text-yellow-800';
@@ -200,8 +182,8 @@ const CaseCard: React.FC<{
 };
 
 const CaseDetails: React.FC<{
-  case: Case;
-  onUpdate: (case: Case) => void;
+  case: CaseData;
+  onUpdate: (caseData: CaseData) => void;
   onClose: () => void;
 }> = ({ case: case_, onUpdate, onClose }) => {
   return (
