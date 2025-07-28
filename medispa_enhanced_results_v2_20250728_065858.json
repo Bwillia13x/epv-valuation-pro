@@ -1,0 +1,354 @@
+{
+  "analysis_metadata": {
+    "analysis_date": "2025-07-28",
+    "analysis_version": "Enhanced v2.0",
+    "methodology": "Summit EPV + Enhanced Risk Modeling"
+  },
+  "financial_validation": {
+    "revenue_reconciliation": {
+      "service_line_sum": 3726101.3767,
+      "reported_total": 3726101.3767,
+      "variance": 0.0,
+      "variance_pct": 0.0,
+      "status": "PASS"
+    },
+    "cogs_analysis": {
+      "identified_components": 289789.056,
+      "reported_total": 1103103.123,
+      "unidentified_cogs": 813314.0669999999,
+      "unidentified_pct": 0.7372964957148435,
+      "status": "REVIEWED"
+    },
+    "opex_reconciliation": {
+      "calculated_total": 2230219.036,
+      "reported_total": 1190597.337,
+      "variance": 1039621.6989999998,
+      "variance_pct": 0.8731933683134047,
+      "status": "REVIEW"
+    },
+    "interest_analysis": {
+      "interest_2024": 194812.0,
+      "interest_2023": 212167.0,
+      "interest_2022": 220144.0,
+      "trend": "DECLINING",
+      "in_operating_expenses": true,
+      "should_be_below_line": true
+    }
+  },
+  "service_line_models": [
+    {
+      "name": "Energy Devices",
+      "revenue_trend": [
+        317824.0,
+        270150.4,
+        245836.864
+      ],
+      "margin_profile": {
+        "gross_margin": 0.75,
+        "estimated_operating_margin": 0.4304710294666094,
+        "cogs_percentage": 0.25
+      },
+      "capacity_utilization": 0.65,
+      "growth_potential": "declining",
+      "competitive_position": "WEAK",
+      "capex_requirements": 250000
+    },
+    {
+      "name": "Injectables",
+      "revenue_trend": [
+        1123645.0,
+        1044989.85,
+        930040.9665
+      ],
+      "margin_profile": {
+        "gross_margin": 0.85,
+        "estimated_operating_margin": 0.5304710294666096,
+        "cogs_percentage": 0.15
+      },
+      "capacity_utilization": 0.85,
+      "growth_potential": "declining",
+      "competitive_position": "CHALLENGED",
+      "capex_requirements": 50000
+    },
+    {
+      "name": "Wellness",
+      "revenue_trend": [
+        567666.0,
+        652815.9,
+        763794.603
+      ],
+      "margin_profile": {
+        "gross_margin": 0.8,
+        "estimated_operating_margin": 0.4804710294666095,
+        "cogs_percentage": 0.2
+      },
+      "capacity_utilization": 0.7,
+      "growth_potential": "growing",
+      "competitive_position": "STRONG",
+      "capex_requirements": 150000
+    },
+    {
+      "name": "Weightloss",
+      "revenue_trend": [
+        617213.0,
+        635729.39,
+        718374.2107
+      ],
+      "margin_profile": {
+        "gross_margin": 0.8200000000000001,
+        "estimated_operating_margin": 0.5004710294666095,
+        "cogs_percentage": 0.18
+      },
+      "capacity_utilization": 0.75,
+      "growth_potential": "growing",
+      "competitive_position": "STRONG",
+      "capex_requirements": 100000
+    },
+    {
+      "name": "Retail Sales",
+      "revenue_trend": [
+        322792.0,
+        331660.0,
+        334976.6
+      ],
+      "margin_profile": {
+        "gross_margin": 0.5,
+        "estimated_operating_margin": 0.18047102946660948,
+        "cogs_percentage": 0.5
+      },
+      "capacity_utilization": 0.6,
+      "growth_potential": "stable",
+      "competitive_position": "STABLE",
+      "capex_requirements": 25000
+    },
+    {
+      "name": "Surgery",
+      "revenue_trend": [
+        617225.0,
+        685119.75,
+        733078.1325
+      ],
+      "margin_profile": {
+        "gross_margin": 0.88,
+        "estimated_operating_margin": 0.5604710294666095,
+        "cogs_percentage": 0.12
+      },
+      "capacity_utilization": 0.8,
+      "growth_potential": "growing",
+      "competitive_position": "STRONG",
+      "capex_requirements": 200000
+    }
+  ],
+  "ebitda_analysis": {
+    "reported_ebitda": 1567785.1269999999,
+    "scenario_analysis": {
+      "conservative": {
+        "normalized_ebitda": 1352725.9757959999,
+        "normalized_margin": 0.3630405721795025,
+        "marketing_spend": 447132.16520399996,
+        "marketing_pct": 0.12,
+        "interest_addback": 194812.0
+      },
+      "base_case": {
+        "normalized_ebitda": 1278203.948262,
+        "normalized_margin": 0.3430405721795025,
+        "marketing_spend": 521654.192738,
+        "marketing_pct": 0.14,
+        "interest_addback": 194812.0
+      },
+      "aggressive": {
+        "normalized_ebitda": 1203681.9207279999,
+        "normalized_margin": 0.3230405721795025,
+        "marketing_spend": 596176.220272,
+        "marketing_pct": 0.16,
+        "interest_addback": 194812.0
+      }
+    },
+    "quality_metrics": {
+      "revenue_quality": "HIGH",
+      "cost_structure_sustainability": "MEDIUM",
+      "cash_conversion": 0.85
+    },
+    "primary_scenario": "base_case"
+  },
+  "market_positioning": {
+    "industry_benchmarks": {
+      "revenue_multiples": {
+        "low": 1.2,
+        "median": 1.8,
+        "high": 2.4
+      },
+      "ebitda_multiples": {
+        "low": 4.5,
+        "median": 5.5,
+        "high": 6.5
+      },
+      "gross_margins": {
+        "low": 0.65,
+        "median": 0.72,
+        "high": 0.8
+      },
+      "ebitda_margins": {
+        "low": 0.25,
+        "median": 0.32,
+        "high": 0.4
+      },
+      "marketing_spend": {
+        "low": 0.08,
+        "median": 0.14,
+        "high": 0.2
+      }
+    },
+    "current_positioning": {
+      "gross_margin_percentile": 50,
+      "marketing_spend_percentile": 25,
+      "revenue_scale": "MEDIUM"
+    },
+    "competitive_assessment": {
+      "market_position": "REGIONAL_LEADER",
+      "differentiation": "SERVICE_DIVERSIFICATION",
+      "competitive_moat": "MEDIUM"
+    }
+  },
+  "value_creation_plan": {
+    "opportunities": {
+      "marketing_optimization": {
+        "description": "Optimize marketing ROI and channel mix",
+        "revenue_uplift_pct": 0.12,
+        "ebitda_impact": 156496.25782139998,
+        "investment_required": 150000,
+        "timeline_months": 12
+      },
+      "service_mix_optimization": {
+        "description": "Expand high-margin wellness and surgery services",
+        "revenue_uplift_pct": 0.08,
+        "ebitda_impact": 134139.6495612,
+        "investment_required": 300000,
+        "timeline_months": 18
+      },
+      "operational_efficiency": {
+        "description": "Streamline operations and reduce waste",
+        "revenue_uplift_pct": 0.02,
+        "ebitda_impact": 186305.068835,
+        "investment_required": 75000,
+        "timeline_months": 6
+      },
+      "technology_enhancement": {
+        "description": "Implement CRM and scheduling optimization",
+        "revenue_uplift_pct": 0.05,
+        "ebitda_impact": 74522.02753400001,
+        "investment_required": 100000,
+        "timeline_months": 9
+      }
+    },
+    "total_ebitda_uplift": 551463.0037516,
+    "total_investment": 625000,
+    "projected_ebitda": 1829667.0037516002,
+    "roic": 0.88234080600256
+  },
+  "risk_framework": {
+    "risk_categories": {
+      "market_risks": {
+        "competitive_pressure": {
+          "probability": 0.7,
+          "impact": "MEDIUM",
+          "mitigation": "Service differentiation"
+        },
+        "economic_downturn": {
+          "probability": 0.3,
+          "impact": "HIGH",
+          "mitigation": "Recession-resistant services"
+        },
+        "regulatory_changes": {
+          "probability": 0.4,
+          "impact": "MEDIUM",
+          "mitigation": "Compliance monitoring"
+        }
+      },
+      "operational_risks": {
+        "key_personnel_loss": {
+          "probability": 0.5,
+          "impact": "HIGH",
+          "mitigation": "Retention packages"
+        },
+        "equipment_failure": {
+          "probability": 0.6,
+          "impact": "MEDIUM",
+          "mitigation": "Maintenance contracts"
+        },
+        "service_quality_issues": {
+          "probability": 0.3,
+          "impact": "HIGH",
+          "mitigation": "Quality protocols"
+        }
+      },
+      "financial_risks": {
+        "cash_flow_volatility": {
+          "probability": 0.4,
+          "impact": "MEDIUM",
+          "mitigation": "Working capital mgmt"
+        },
+        "margin_compression": {
+          "probability": 0.6,
+          "impact": "MEDIUM",
+          "mitigation": "Cost optimization"
+        },
+        "debt_service_coverage": {
+          "probability": 0.2,
+          "impact": "HIGH",
+          "mitigation": "Cash reserves"
+        }
+      }
+    },
+    "overall_score": 1.0333333333333332,
+    "risk_rating": "LOW",
+    "key_mitigants": [
+      "Staff retention programs",
+      "Service quality protocols",
+      "Marketing ROI optimization",
+      "Equipment maintenance contracts"
+    ]
+  },
+  "investment_scenarios": {
+    "scenarios": {
+      "bear_case": {
+        "projected_ebitda": 1095900.110141132,
+        "enterprise_value": 4931550.495635094,
+        "equity_value": 3426550.495635094,
+        "irr_estimate": -0.11119023169367515,
+        "probability": 0.15
+      },
+      "base_case": {
+        "projected_ebitda": 1610168.8520730208,
+        "enterprise_value": 8855928.686401615,
+        "equity_value": 7350928.686401615,
+        "irr_estimate": 0.1463146517813183,
+        "probability": 0.6
+      },
+      "bull_case": {
+        "projected_ebitda": 1943988.429812969,
+        "enterprise_value": 12635924.793784298,
+        "equity_value": 11130924.793784298,
+        "irr_estimate": 0.31633629577166666,
+        "probability": 0.25
+      }
+    },
+    "expected_irr": 0.15019433025765638,
+    "recommendation": "CAUTION"
+  },
+  "final_recommendation": {
+    "recommendation": "CAUTION",
+    "confidence_level": "HIGH",
+    "expected_irr": 0.15019433025765638,
+    "key_value_drivers": [
+      "Marketing optimization",
+      "Service mix enhancement",
+      "Operational efficiency"
+    ],
+    "critical_success_factors": [
+      "Staff retention",
+      "Marketing execution",
+      "Service quality maintenance"
+    ]
+  }
+}

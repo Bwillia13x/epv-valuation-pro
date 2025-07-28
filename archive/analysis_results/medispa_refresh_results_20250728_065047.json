@@ -1,0 +1,94 @@
+{
+  "case_name": "Multi-Service Medispa Case",
+  "analysis_date": "2025-07-28",
+  "financial_summary": {
+    "revenue_2024": 3726101.3767000004,
+    "revenue_cagr": 0.022149543020034912,
+    "normalized_ebitda": 1278203.9482065206,
+    "normalized_ebitda_margin": 0.3430405721646131
+  },
+  "investment_recommendation": {
+    "recommendation": "FAVORABLE",
+    "strengths": [
+      "Strong gross margins (>65%)",
+      "Multiple growing service lines",
+      "Healthy EBITDA margins post-normalization"
+    ],
+    "risk_factors": [
+      "Unsustainably low marketing spend",
+      "Multiple declining service lines"
+    ],
+    "key_conditions": [
+      "Normalize marketing spend to sustainable levels",
+      "Verify interest expense classification",
+      "Confirm growth sustainability in wellness/weight loss"
+    ],
+    "enterprise_value": 7030121.715135863,
+    "equity_value": 4880121.715135863,
+    "ev_revenue_multiple": 1.8867231469053718,
+    "ev_ebitda_multiple": 5.5,
+    "net_debt_assumed": 2150000
+  },
+  "service_line_analysis": {
+    "energy_devices": {
+      "revenue_2024": 245836.864,
+      "growth_2023": -0.1500000000000001,
+      "growth_2024": -0.08999999999999987,
+      "avg_growth": -0.12,
+      "market_share_2024": 0.06597696604211127,
+      "trend": "declining"
+    },
+    "injectables": {
+      "revenue_2024": 930040.9665,
+      "growth_2023": -0.07000000000000002,
+      "growth_2024": -0.11,
+      "avg_growth": -0.09000000000000001,
+      "market_share_2024": 0.24960162713653414,
+      "trend": "declining"
+    },
+    "wellness": {
+      "revenue_2024": 763794.603,
+      "growth_2023": 0.15000000000000005,
+      "growth_2024": 0.16999999999999996,
+      "avg_growth": 0.16,
+      "market_share_2024": 0.20498492278716532,
+      "trend": "growing"
+    },
+    "weightloss": {
+      "revenue_2024": 718374.2106999999,
+      "growth_2023": 0.030000000000000023,
+      "growth_2024": 0.12999999999999987,
+      "avg_growth": 0.07999999999999995,
+      "market_share_2024": 0.19279513305572588,
+      "trend": "growing"
+    },
+    "retail_sales": {
+      "revenue_2024": 334976.60000000003,
+      "growth_2023": 0.027472799821556915,
+      "growth_2024": 0.010000000000000106,
+      "avg_growth": 0.01873639991077851,
+      "market_share_2024": 0.08990002314340413,
+      "trend": "stable"
+    },
+    "surgery": {
+      "revenue_2024": 733078.1325000002,
+      "growth_2023": 0.1100000000000002,
+      "growth_2024": 0.07000000000000009,
+      "avg_growth": 0.09000000000000014,
+      "market_share_2024": 0.1967413278350592,
+      "trend": "growing"
+    }
+  },
+  "normalization_impact": {
+    "reported_ebitda": 1567785.1271775207,
+    "normalized_ebitda": 1278203.9482065206,
+    "interest_addback": 194812.0,
+    "marketing_adjustment": 484393.17897100013
+  },
+  "validation_checks": {
+    "revenue_tie_out": true,
+    "gross_profit_tie_out": true,
+    "interest_in_opex": true,
+    "interest_amount_2024": 194812.0
+  }
+}

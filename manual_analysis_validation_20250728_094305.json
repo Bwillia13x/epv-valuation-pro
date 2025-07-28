@@ -1,0 +1,168 @@
+{
+  "timestamp": "2025-07-28 09:43:05",
+  "user_analysis": {
+    "adjusted_ebitda_2024": 687.63,
+    "owner_comp_addback": 300,
+    "revenue_2024": 3726,
+    "gross_profit_2024": 2623,
+    "blended_rates": [
+      8.0,
+      9.0,
+      10.0,
+      11.0,
+      12.0
+    ],
+    "implied_valuations": [
+      4813,
+      4444,
+      3569,
+      860
+    ],
+    "cash_percentages": [
+      66.4,
+      62.6,
+      52.6,
+      81.8
+    ],
+    "equity_percentages": [
+      32,
+      37,
+      47,
+      18
+    ]
+  },
+  "our_baseline": {
+    "normalized_ebitda": 1649,
+    "enterprise_value": 9070,
+    "equity_value": 6920,
+    "expected_irr": 0.138,
+    "recommendation": "STRONG BUY"
+  },
+  "differences_analysis": {
+    "ebitda_variance": {
+      "user_ebitda": 687.63,
+      "our_ebitda": 1649,
+      "variance": 961.37,
+      "variance_pct": 1.39809199714963
+    },
+    "valuation_approach": {
+      "user_method": "Blended rate / cash flow approach",
+      "our_method": "EV/EBITDA multiple with Monte Carlo validation",
+      "user_range": "$860K - $4,813K",
+      "our_valuation": "$6,920K"
+    },
+    "methodology_differences": [
+      "User focuses on cash flow yield approach",
+      "Our analysis uses industry multiple validation",
+      "User appears to model debt/equity structure scenarios",
+      "Our analysis emphasizes risk-adjusted returns"
+    ]
+  },
+  "ebitda_reconciliation": {
+    "base_operating_income": 1432,
+    "our_total_adjustments": 217,
+    "user_total_adjustments": -744.3699999999999,
+    "our_final_ebitda": 1649,
+    "user_final_ebitda": 687.63,
+    "key_difference_source": "Marketing normalization approach"
+  },
+  "valuation_comparison": {
+    "user_methodology": {
+      "approach": "Cash-on-cash / Blended rate methodology",
+      "blended_rates": [
+        8.0,
+        9.0,
+        10.0,
+        11.0,
+        12.0
+      ],
+      "strengths": [
+        "Focuses on actual cash returns to investor",
+        "Models different leverage scenarios",
+        "Provides sensitivity across financing structures"
+      ],
+      "limitations": [
+        "May not capture full business risk profile",
+        "Doesn't account for exit multiple expansion",
+        "Limited consideration of operational improvements"
+      ]
+    },
+    "our_methodology": {
+      "approach": "EV/EBITDA multiple + Monte Carlo validation",
+      "base_multiple": 5.5,
+      "expected_irr": 13.8,
+      "strengths": [
+        "Industry-standard comparative valuation",
+        "Risk-adjusted probabilistic modeling",
+        "Comprehensive operational analysis",
+        "Exit strategy optimization"
+      ],
+      "limitations": [
+        "Multiple-based may not reflect unique value",
+        "Complex model may obscure key drivers"
+      ]
+    },
+    "user_implied_multiples": [
+      6.999403749109259,
+      6.462777947442666,
+      5.190291290374184,
+      1.2506726000901647
+    ],
+    "our_multiple": 5.5,
+    "convergence_analysis": {
+      "ebitda_band": {
+        "low": 687.63,
+        "high": 1649,
+        "midpoint": 1168.315
+      },
+      "valuation_overlap": {
+        "our_val_at_user_ebitda": 3781.965,
+        "user_val_closest_to_ours": 4813,
+        "convergence_range": "$3,782K - $4,813K"
+      },
+      "recommended_synthesis": {
+        "recommended_ebitda": 1168.315,
+        "valuation_approach": "Hybrid multiple + cash flow validation",
+        "key_insights": [
+          "User's cash flow focus validates investment returns",
+          "Our multiple approach provides market context",
+          "EBITDA normalization needs alignment on marketing",
+          "Both approaches support investment viability"
+        ],
+        "action_items": [
+          "Reconcile marketing expense normalization methodology",
+          "Validate owner compensation adjustment amount",
+          "Stress test both approaches under different scenarios",
+          "Combine cash flow discipline with multiple benchmarking"
+        ]
+      }
+    }
+  },
+  "overall_assessment": {
+    "ebitda_accuracy_score": 0,
+    "methodology_soundness_score": 0.85,
+    "overall_grade": "B+",
+    "strengths": [
+      "Systematic owner compensation adjustment",
+      "Cash flow focused approach shows return discipline",
+      "Multiple scenario sensitivity analysis",
+      "Professional Excel structure and layout"
+    ],
+    "improvement_areas": [
+      "Marketing expense normalization methodology",
+      "Industry multiple benchmarking integration",
+      "Risk-adjusted return analysis",
+      "Monte Carlo sensitivity testing"
+    ],
+    "validation_status": "PARTIALLY VALIDATED - NEEDS REFINEMENT"
+  },
+  "recommendations": [
+    "EBITDA Reconciliation: Align marketing normalization to 14% industry standard (+$483K impact)",
+    "Valuation Synthesis: Combine cash flow approach with EV/EBITDA multiple validation",
+    "Risk Analysis: Add Monte Carlo simulation to validate return expectations",
+    "Market Context: Benchmark against recent medispa transaction multiples",
+    "Integration Planning: Incorporate 100-day value creation roadmap",
+    "Due Diligence: Add management retention analysis to cash flow projections",
+    "Exit Strategy: Model different exit scenarios with probability weighting"
+  ]
+}

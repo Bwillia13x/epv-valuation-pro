@@ -1,0 +1,47 @@
+{
+  "4.0%": {
+    "normalized_ebitda": 1456002.084932,
+    "ebitda_margin": 0.39075750703849604,
+    "marketing_spend": 149044.055068
+  },
+  "5.0%": {
+    "normalized_ebitda": 1418741.0711649999,
+    "ebitda_margin": 0.380757507038496,
+    "marketing_spend": 186305.068835
+  },
+  "6.0%": {
+    "normalized_ebitda": 1381480.0573979998,
+    "ebitda_margin": 0.37075750703849597,
+    "marketing_spend": 223566.082602
+  },
+  "7.0%": {
+    "normalized_ebitda": 1344219.043631,
+    "ebitda_margin": 0.360757507038496,
+    "marketing_spend": 260827.096369
+  },
+  "8.0%": {
+    "normalized_ebitda": 1306958.029864,
+    "ebitda_margin": 0.350757507038496,
+    "marketing_spend": 298088.11013600003
+  },
+  "9.0%": {
+    "normalized_ebitda": 1269697.0160969999,
+    "ebitda_margin": 0.340757507038496,
+    "marketing_spend": 335349.123903
+  },
+  "10.0%": {
+    "normalized_ebitda": 1232436.0023299998,
+    "ebitda_margin": 0.330757507038496,
+    "marketing_spend": 372610.13767
+  },
+  "11.0%": {
+    "normalized_ebitda": 1195174.9885629998,
+    "ebitda_margin": 0.320757507038496,
+    "marketing_spend": 409871.151437
+  },
+  "12.0%": {
+    "normalized_ebitda": 1157913.974796,
+    "ebitda_margin": 0.31075750703849603,
+    "marketing_spend": 447132.1652040001
+  }
+}

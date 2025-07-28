@@ -1,0 +1,20 @@
+{
+  "company_info": {
+    "name": "Valuation & Offer Analysis",
+    "location": "Transaction Analysis",
+    "ttm_window": "2024 Financial Data"
+  },
+  "financial_metrics": {
+    "revenue_2024": 3726102,
+    "ebitda_10pct_marketing": 687626,
+    "multiple": 7.0,
+    "enterprise_value": 4813384,
+    "interest_expense": 194812,
+    "blended_rate": 0.1,
+    "net_debt": 1948120,
+    "equity_value": 2865264,
+    "cash_percentage": 0.7,
+    "cash_at_close": 2005685,
+    "rollover": 859579
+  }
+}

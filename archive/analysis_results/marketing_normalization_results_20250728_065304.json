@@ -1,0 +1,85 @@
+{
+  "revenue_2024": 3726101.3767,
+  "actual_marketing_2024": 37261.01,
+  "reported_ebitda_2024": 1567785.13,
+  "medispa_marketing_benchmarks": {
+    "aesthetic_clinics_small": 0.12,
+    "medispa_industry_avg": 0.08,
+    "healthcare_services": 0.06,
+    "mature_medispa": 0.05,
+    "conservative_target": 0.07,
+    "growth_oriented": 0.1,
+    "digital_focused": 0.09
+  },
+  "marketing_scenarios": {
+    "aesthetic_clinics_small": {
+      "marketing_pct": 0.12,
+      "normalized_marketing_spend": 447132.16520399996,
+      "marketing_adjustment": 409871.15520399995,
+      "description": "Small aesthetic clinic benchmark (12.0%) - High growth investment"
+    },
+    "medispa_industry_avg": {
+      "marketing_pct": 0.08,
+      "normalized_marketing_spend": 298088.110136,
+      "marketing_adjustment": 260827.10013599996,
+      "description": "Industry average (8.0%) - Balanced approach"
+    },
+    "healthcare_services": {
+      "marketing_pct": 0.06,
+      "normalized_marketing_spend": 223566.08260199998,
+      "marketing_adjustment": 186305.07260199997,
+      "description": "Healthcare services benchmark (6.0%) - Conservative approach"
+    },
+    "mature_medispa": {
+      "marketing_pct": 0.05,
+      "normalized_marketing_spend": 186305.068835,
+      "marketing_adjustment": 149044.058835,
+      "description": "Mature medispa benchmark (5.0%) - Efficiency focused"
+    },
+    "conservative_target": {
+      "marketing_pct": 0.07,
+      "normalized_marketing_spend": 260827.096369,
+      "marketing_adjustment": 223566.086369,
+      "description": "Conservative normalization (7.0%) - Risk-adjusted target"
+    },
+    "growth_oriented": {
+      "marketing_pct": 0.1,
+      "normalized_marketing_spend": 372610.13767,
+      "marketing_adjustment": 335349.12767,
+      "description": "Growth-oriented spend (10.0%) - Expansion focused"
+    },
+    "digital_focused": {
+      "marketing_pct": 0.09,
+      "normalized_marketing_spend": 335349.12390299997,
+      "marketing_adjustment": 298088.11390299996,
+      "description": "Digital marketing focus (9.0%) - Modern approach"
+    }
+  },
+  "normalized_ebitda_scenarios": {
+    "aesthetic_clinics_small": 1157913.974796,
+    "medispa_industry_avg": 1306958.029864,
+    "healthcare_services": 1381480.0573979998,
+    "mature_medispa": 1418741.0711649999,
+    "conservative_target": 1344219.043631,
+    "growth_oriented": 1232436.0023299998,
+    "digital_focused": 1269697.0160969999
+  },
+  "recommended_scenario": "conservative_target",
+  "recommendation_rationale": [
+    "Historical 14.0% marketing spend (2022) appears unsustainable for long-term profitability",
+    "Current 1.0% spend is abnormally low and likely represents expense reclassification",
+    "Revenue growth remained positive (2.2%) despite marketing reduction",
+    "Diversified revenue streams (6 service lines) reduce marketing dependency vs. single-service clinics",
+    "Strong gross margins (70%+) indicate pricing power and customer loyalty",
+    "Conservative approach warranted given need for sustainable cash generation"
+  ],
+  "analysis_date": "2025-07-28",
+  "key_assumptions": [
+    "2024 revenue base: $3,726,101",
+    "Actual 2024 marketing: $37,261 (1.0%)",
+    "Marketing expense reclassification likely occurred between 2022-2024",
+    "Service line diversification reduces marketing dependency",
+    "Strong gross margins indicate customer retention and pricing power",
+    "Conservative approach prioritizes sustainable cash generation"
+  ]
+}

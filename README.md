@@ -2,6 +2,14 @@
 
 A professional-grade Earnings Power Value (EPV) valuation system with advanced financial modeling capabilities, built with Next.js, TypeScript, and Tailwind CSS.
 
+🚀 **NEW**: Multi-Agent Financial Analysis System with 4 specialized AI analysts providing independent investment recommendations.
+
+## 📊 Recent Case Studies
+- **Multi-Service Medispa Analysis**: Complete $3.7M revenue case with 6 service lines
+- **Financial Dataset V1**: Normalized and validated medispa financials 
+- **4-Agent Analysis**: Independent valuations ranging from $1.58M - $10.4M
+- **Monte Carlo Modeling**: 10,000+ iteration risk analysis
+
 ## 🚀 Features
 
 ### Core Valuation Engine
@@ -17,7 +25,9 @@ A professional-grade Earnings Power Value (EPV) valuation system with advanced f
 - **Monte Carlo Simulation**: Configurable risk analysis with distribution statistics
 
 ### Advanced Analytics
+- **Multi-Agent Analysis**: 4 specialized financial analysts (General, Advanced, Quant, Value Investing)
 - **Sensitivity Analysis**: WACC vs EBIT margin valuation sensitivity tables
+- **Monte Carlo Simulation**: 10,000+ iteration risk modeling with confidence intervals
 - **LBO Modeling**: Deal structuring with transaction costs and exit scenarios
 - **Franchise Factor Analysis**: EPV vs Reproduction value comparison
 - **Real-time Calculations**: Live updates as inputs change

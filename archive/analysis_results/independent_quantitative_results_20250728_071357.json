@@ -1,0 +1,360 @@
+{
+  "analysis_metadata": {
+    "analysis_date": "2025-07-28T07:13:57.012234",
+    "analyst": "Independent Quantitative Finance Team",
+    "methodology": "Advanced Statistical & Monte Carlo Analysis"
+  },
+  "statistical_analysis": {
+    "revenue_growth_volatility": 0.007069375284686868,
+    "ebitda_growth_volatility": 0.17233419041312778,
+    "average_service_correlation": -0.07695115921223983,
+    "revenue_trend_slope": 80.0,
+    "revenue_trend_r2": 0.982847461523027,
+    "ebitda_trend_slope": 375.0,
+    "ebitda_trend_r2": 0.9907423107889369,
+    "revenue_growth_rates": [
+      0.01514301738642737,
+      0.029281767955801105
+    ],
+    "ebitda_growth_rates": [
+      0.5679314565483476,
+      0.2232630757220921
+    ]
+  },
+  "risk_analysis": {
+    "value_at_risk_95": {
+      "revenue_var": 0.015849954914896058,
+      "ebitda_var": 0.2404964947634049,
+      "revenue_cvar": 0.01514301738642737,
+      "ebitda_cvar": 0.2232630757220921,
+      "monte_carlo_var": 0.010804966510919651
+    },
+    "stress_scenarios": {
+      "recession": {
+        "revenue": 2794.5,
+        "ebitda": 1018.5500000000001,
+        "probability": 0.1
+      },
+      "competition": {
+        "revenue": 3167.1,
+        "ebitda": 1253.6000000000001,
+        "probability": 0.2
+      },
+      "marketing_normalization": {
+        "revenue": 3539.7,
+        "ebitda": 1331.95,
+        "probability": 0.7
+      }
+    },
+    "risk_metrics": {
+      "revenue_volatility": 0.007069375284686868,
+      "ebitda_volatility": 0.17233419041312778
+    }
+  },
+  "valuation_analysis": {
+    "dcf_scenarios": {
+      "conservative": {
+        "enterprise_value": 5140.461838234135,
+        "equity_value": 2840.461838234135,
+        "terminal_value": 5769.036843585676,
+        "pv_fcf": 1732.1994820793063
+      },
+      "base_case": {
+        "enterprise_value": 7350.194558796218,
+        "equity_value": 5050.194558796218,
+        "terminal_value": 8345.894703226286,
+        "pv_fcf": 2419.56237240885
+      },
+      "optimistic": {
+        "enterprise_value": 10102.08893587086,
+        "equity_value": 7802.088935870859,
+        "terminal_value": 11639.166048283032,
+        "pv_fcf": 3225.8403392780147
+      }
+    },
+    "weighted_valuation": {
+      "enterprise_value": 7485.734972924358,
+      "equity_value": 5185.734972924358,
+      "weights": {
+        "conservative": 0.25,
+        "base_case": 0.5,
+        "optimistic": 0.25
+      }
+    },
+    "real_options": {
+      "expansion_option_value": 484.40907468981845
+    },
+    "valuation_multiples": {
+      "ev_revenue": 2.0090539379829195,
+      "ev_ebitda": 4.77711229924975
+    },
+    "assumptions": {
+      "wacc": 0.111,
+      "terminal_growth": 0.025,
+      "tax_rate": 0.25
+    }
+  },
+  "monte_carlo_analysis": {
+    "simulation_parameters": {
+      "n_simulations": 10000,
+      "growth_mean": 0.022212392671114238,
+      "growth_std": 0.007069375284686868
+    },
+    "enterprise_value_results": {
+      "mean": 9861.833285780831,
+      "std": 2169.629673889929,
+      "percentiles": {
+        "p5": 6367.646587285465,
+        "p10": 7066.24006426846,
+        "p25": 8321.03927407549,
+        "p50": 9791.207372310453,
+        "p75": 11324.84655660625,
+        "p90": 12696.287615894202,
+        "p95": 13589.345238438338
+      },
+      "confidence_intervals": {
+        "90_percent": [
+          6367.646587285465,
+          13589.345238438338
+        ],
+        "50_percent": [
+          8321.03927407549,
+          11324.84655660625
+        ]
+      }
+    },
+    "equity_value_results": {
+      "mean": 7562.712347553114,
+      "std": 2188.9034350178777,
+      "percentiles": {
+        "p5": 4046.469651174103,
+        "p25": 6020.929638291454,
+        "p50": 7479.07933133299,
+        "p75": 9026.277678172948,
+        "p95": 11312.735645005141
+      },
+      "confidence_intervals": {
+        "90_percent": [
+          4046.469651174103,
+          11312.735645005141
+        ]
+      }
+    },
+    "risk_probabilities": {
+      "probability_positive_equity": 1.0,
+      "probability_ev_above_5000": 0.996
+    }
+  },
+  "portfolio_analysis": {
+    "current_portfolio": {
+      "weights": {
+        "energy_devices": 0.06602254428341385,
+        "injectables": 0.249597423510467,
+        "wellness": 0.2050456253354804,
+        "weightloss": 0.19269994632313472,
+        "retail_sales": 0.08990874932903918,
+        "surgery": 0.19672571121846485
+      },
+      "return": 0.0371287216360063,
+      "volatility": 0.00541942813277396,
+      "sharpe_ratio": 6.159085574758096
+    },
+    "optimal_portfolio": {
+      "weights": {
+        "energy_devices": 0.06602254428341385,
+        "injectables": 0.249597423510467,
+        "wellness": 0.2050456253354804,
+        "weightloss": 0.19269994632313472,
+        "retail_sales": 0.08990874932903918,
+        "surgery": 0.19672571121846485
+      },
+      "return": 0.0371287216360063,
+      "volatility": 0.00541942813277396
+    },
+    "diversification_metrics": {
+      "diversification_ratio": 0.3251782507212922,
+      "effective_number_assets": 5.191584615672269,
+      "concentration_risk": 0.249597423510467
+    }
+  },
+  "sensitivity_analysis": {
+    "base_enterprise_value": 9402.0,
+    "sensitivity_results": {
+      "ebitda_multiple": {
+        "base_value": 6.0,
+        "ev_range": 7835.0,
+        "impact_percentage": 0.8333333333333334,
+        "enterprise_values": [
+          6268.0,
+          6659.75,
+          7051.5,
+          7443.25,
+          7835.0,
+          8226.75,
+          8618.5,
+          9010.25,
+          9402.0,
+          9793.75,
+          10185.5,
+          10577.25,
+          10969.0,
+          11360.75,
+          11752.5,
+          12144.25,
+          12536.0,
+          12927.75,
+          13319.5,
+          13711.25,
+          14103.0
+        ]
+      },
+      "ebitda_margin": {
+        "base_value": 0.4205582393988191,
+        "ev_range": 5589.000000000002,
+        "impact_percentage": 0.5944479897894067,
+        "enterprise_values": [
+          3353.3999999999996,
+          3632.8500000000004,
+          3912.2999999999997,
+          4191.75,
+          4471.200000000001,
+          4750.65,
+          5030.1,
+          5309.549999999999,
+          5589.0,
+          5868.450000000001,
+          6147.900000000001,
+          6427.349999999999,
+          6706.800000000001,
+          6986.25,
+          7265.700000000001,
+          7545.150000000001,
+          7824.599999999999,
+          8104.050000000001,
+          8383.5,
+          8662.95,
+          8942.400000000001
+        ]
+      },
+      "revenue_growth": {
+        "base_value": 0.04,
+        "ev_range": 6238.226999999997,
+        "impact_percentage": 0.6634999999999996,
+        "enterprise_values": [
+          8061.039749999998,
+          8318.287871999999,
+          8580.951546,
+          8849.087184,
+          9122.751198,
+          9402.0,
+          9686.890002000002,
+          9977.477616,
+          10273.819254,
+          10575.971328,
+          10883.99025,
+          11197.932432000001,
+          11517.854286000002,
+          11843.812224000001,
+          12175.862658,
+          12514.062000000004,
+          12858.466662000003,
+          13209.133056000002,
+          13566.117594,
+          13929.476688000002,
+          14299.266749999995
+        ]
+      },
+      "marketing_pct": {
+        "base_value": 0.08,
+        "ev_range": 2682.7199999999993,
+        "impact_percentage": 0.28533503509891506,
+        "enterprise_values": [
+          10519.8,
+          10385.664,
+          10251.528,
+          10117.392,
+          9983.256,
+          9849.119999999999,
+          9714.984,
+          9580.848,
+          9446.712,
+          9312.576000000001,
+          9178.44,
+          9044.304,
+          8910.168,
+          8776.032,
+          8641.896,
+          8507.76,
+          8373.624,
+          8239.488000000001,
+          8105.352000000001,
+          7971.216,
+          7837.08
+        ]
+      }
+    },
+    "ranked_impact": [
+      [
+        "ebitda_multiple",
+        0.8333333333333334
+      ],
+      [
+        "revenue_growth",
+        0.6634999999999996
+      ],
+      [
+        "ebitda_margin",
+        0.5944479897894067
+      ],
+      [
+        "marketing_pct",
+        0.28533503509891506
+      ]
+    ],
+    "tornado_chart_data": {
+      "variables": [
+        "ebitda_multiple",
+        "revenue_growth",
+        "ebitda_margin",
+        "marketing_pct"
+      ],
+      "impacts": [
+        0.8333333333333334,
+        0.6634999999999996,
+        0.5944479897894067,
+        0.28533503509891506
+      ]
+    }
+  },
+  "investment_recommendation": {
+    "recommendation": "BUY",
+    "confidence_level": "MODERATE",
+    "target_enterprise_value": 7485.734972924358,
+    "target_equity_value": 5185.734972924358,
+    "monte_carlo_median_ev": 9791.207372310453,
+    "valuation_multiples": {
+      "ev_revenue": 2.0090539379829195,
+      "ev_ebitda": 4.77711229924975
+    },
+    "risk_return_profile": {
+      "probability_positive_equity": 1.0,
+      "sharpe_ratio": 6.159085574758096,
+      "revenue_var_95": 0.015849954914896058,
+      "ebitda_var_95": 0.2404964947634049
+    },
+    "strengths": [
+      "Excellent risk-adjusted returns",
+      "Well-diversified revenue streams",
+      "Strong revenue growth trend"
+    ],
+    "risks": [
+      "High EBITDA volatility"
+    ],
+    "key_conditions": [
+      "Marketing expense normalization is critical",
+      "EBITDA margin sustainability must be verified",
+      "Service line diversification should be maintained",
+      "Regular monitoring of competitive dynamics required"
+    ]
+  }
+}

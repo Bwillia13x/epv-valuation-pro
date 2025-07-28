@@ -1,0 +1,291 @@
+{
+  "executive_summary": {
+    "case_name": "Multi-Service Medispa Case",
+    "analysis_date": "2025-07-28",
+    "analyst": "Independent Analyst B",
+    "recommendation": "HOLD",
+    "enterprise_value": 10356556.383944487,
+    "key_finding": "Operationally sound business with marketing normalization opportunity"
+  },
+  "financial_performance": {
+    "revenue": {
+      "total": [
+        3566365.0,
+        3620465.29,
+        3726101.3767
+      ],
+      "growth_rates": [
+        0.01516958864277774,
+        0.029177489145324708
+      ],
+      "cagr": 0.022149543020034912
+    },
+    "profitability": {
+      "gross_profit": [
+        2488685.47,
+        2548721.61,
+        2622998.25
+      ],
+      "gross_margin": [
+        0.6978213026428871,
+        0.7039762588084362,
+        0.7039524652770031
+      ],
+      "ebitda": [
+        817443.6,
+        1281076.2999999998,
+        1567785.13
+      ],
+      "ebitda_margin": [
+        0.22920918077650493,
+        0.3538430001078673,
+        0.42075750804947226
+      ],
+      "operating_income": [
+        650302.6,
+        1130649.4,
+        1432400.92
+      ]
+    },
+    "cost_structure": {
+      "total_opex": [
+        1838382.87,
+        1418072.21,
+        1190597.34
+      ],
+      "payroll": [
+        1308396.7,
+        1195511.2,
+        1039621.7
+      ],
+      "marketing": [
+        499291.1,
+        253432.57,
+        37261.01
+      ],
+      "interest_expense": [
+        220144.0,
+        212167.0,
+        194812.0
+      ],
+      "depreciation": [
+        167141.0,
+        150426.9,
+        135384.21
+      ]
+    }
+  },
+  "service_line_analysis": {
+    "energy_devices": {
+      "revenue_2024": 245836.864,
+      "growth_rates": [
+        -0.14999999999999994,
+        -0.09000000000000008
+      ],
+      "avg_growth": -0.12000000000000001,
+      "market_share_2024": 0.06597696604211128,
+      "trend_classification": "declining",
+      "revenue_trajectory": [
+        317824.0,
+        270150.4,
+        245836.864
+      ]
+    },
+    "injectables": {
+      "revenue_2024": 930040.9665,
+      "growth_rates": [
+        -0.07000000000000002,
+        -0.11
+      ],
+      "avg_growth": -0.09000000000000001,
+      "market_share_2024": 0.24960162713653417,
+      "trend_classification": "declining",
+      "revenue_trajectory": [
+        1123645.0,
+        1044989.85,
+        930040.9665
+      ]
+    },
+    "wellness": {
+      "revenue_2024": 763794.603,
+      "growth_rates": [
+        0.15000000000000005,
+        0.16999999999999996
+      ],
+      "avg_growth": 0.16,
+      "market_share_2024": 0.20498492278716535,
+      "trend_classification": "strong_growth",
+      "revenue_trajectory": [
+        567666.0,
+        652815.9,
+        763794.603
+      ]
+    },
+    "weightloss": {
+      "revenue_2024": 718374.2107,
+      "growth_rates": [
+        0.030000000000000023,
+        0.13000000000000006
+      ],
+      "avg_growth": 0.08000000000000004,
+      "market_share_2024": 0.19279513305572593,
+      "trend_classification": "strong_growth",
+      "revenue_trajectory": [
+        617213.0,
+        635729.39,
+        718374.2107
+      ]
+    },
+    "retail_sales": {
+      "revenue_2024": 334976.6,
+      "growth_rates": [
+        0.027472799821556915,
+        0.009999999999999929
+      ],
+      "avg_growth": 0.018736399910778422,
+      "market_share_2024": 0.08990002314340413,
+      "trend_classification": "moderate_growth",
+      "revenue_trajectory": [
+        322792.0,
+        331660.0,
+        334976.6
+      ]
+    },
+    "surgery": {
+      "revenue_2024": 733078.1325,
+      "growth_rates": [
+        0.11,
+        0.06999999999999992
+      ],
+      "avg_growth": 0.08999999999999997,
+      "market_share_2024": 0.19674132783505915,
+      "trend_classification": "strong_growth",
+      "revenue_trajectory": [
+        617225.0,
+        685119.75,
+        733078.1325
+      ]
+    }
+  },
+  "marketing_normalization": {
+    "reported_marketing": [
+      499291.1,
+      253432.57,
+      37261.01
+    ],
+    "marketing_pct_revenue": [
+      0.13999999999999999,
+      0.06999999991713772,
+      0.00999999898902375
+    ],
+    "normalized_pct": 0.08,
+    "normalized_marketing_2024": 298088.110136,
+    "adjustment_required": 260827.10013599996,
+    "anomaly_detected": true,
+    "impact_on_ebitda": -260827.10013599996
+  },
+  "normalized_ebitda_analysis": {
+    "reported_ebitda_2024": 1567785.13,
+    "normalized_ebitda_2024": 1306958.029864,
+    "normalization_impact": -260827.10013599996,
+    "normalized_margin": 0.350757507038496
+  },
+  "valuation_analysis": {
+    "valuation_approaches": {
+      "revenue_multiple": {
+        "low": 4471321.65204,
+        "mid": 6706982.47806,
+        "high": 9315253.44175
+      },
+      "ebitda_multiple": {
+        "low": 5227832.119456,
+        "mid": 8495227.194116,
+        "high": 11109143.253843999
+      },
+      "dcf": {
+        "enterprise_value": 15867459.479657458,
+        "assumptions": {
+          "wacc": 0.12,
+          "terminal_growth": 0.025,
+          "projection_years": 5
+        }
+      }
+    },
+    "valuation_summary": {
+      "ev_range_low": 4471321.65204,
+      "ev_range_mid": 10356556.383944487,
+      "ev_range_high": 18247578.401606075,
+      "estimated_net_debt": 2150000
+    }
+  },
+  "risk_assessment": {
+    "risk_categories": {
+      "high_risk": [
+        "Marketing spend anomaly suggests potential operational instability",
+        "Declining performance in core service lines (injectables, energy devices)",
+        "High interest expense suggests leverage concerns",
+        "Small practice size limits scalability and market power"
+      ],
+      "medium_risk": [
+        "Revenue growth deceleration (from 1.5% to 2.9% annually)",
+        "Dependence on labor-intensive service delivery model",
+        "Regulatory risk in aesthetic medical industry",
+        "Competition from larger medical practice consolidators"
+      ],
+      "low_risk": [
+        "Diversified revenue streams across 6 service lines",
+        "Strong gross margins indicate pricing power",
+        "Recession-resistant wellness and aesthetic services",
+        "Established patient base and recurring revenue potential"
+      ]
+    },
+    "overall_risk_score": 0.33333333333333337,
+    "risk_rating": "MODERATE-HIGH"
+  },
+  "investment_thesis": {
+    "investment_recommendation": "HOLD",
+    "valuation_metrics": {
+      "enterprise_value": 10356556.383944487,
+      "ev_revenue_multiple": 2.7794617850995538,
+      "ev_ebitda_multiple": 7.924169060748014,
+      "normalized_ebitda_margin": 0.350757507038496
+    },
+    "key_value_drivers": [
+      "Service line diversification and growth potential",
+      "Strong gross margins and pricing power",
+      "Operational efficiency improvements through normalization",
+      "Market position in growing wellness/aesthetic sector"
+    ],
+    "critical_risk_factors": [
+      "Marketing spend normalization and sustainability",
+      "Performance recovery in core service lines",
+      "Interest expense and leverage management",
+      "Competitive positioning and market share defense"
+    ],
+    "strategic_recommendations": [
+      "Normalize and optimize marketing spend for sustainable growth",
+      "Focus investment on high-growth service lines (wellness, weight loss)",
+      "Implement cost optimization in declining service lines",
+      "Evaluate debt refinancing to reduce interest expense burden",
+      "Develop recurring revenue programs to improve cash flow predictability"
+    ],
+    "investment_conditions": [
+      "Verify marketing normalization strategy and implementation",
+      "Confirm sustainable operating margin targets",
+      "Validate revenue growth assumptions for wellness/weight loss",
+      "Assess management capability for operational improvements"
+    ]
+  },
+  "methodology_notes": {
+    "valuation_approaches": [
+      "Revenue Multiples",
+      "EBITDA Multiples",
+      "DCF Analysis"
+    ],
+    "normalization_adjustments": [
+      "Marketing spend normalization"
+    ],
+    "industry_benchmarks": "Aesthetic medical practice comparables",
+    "risk_framework": "Multi-factor risk assessment model"
+  }
+}

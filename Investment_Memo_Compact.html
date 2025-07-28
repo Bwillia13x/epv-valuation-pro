@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Investment Committee Memorandum — Multi-Service Medispa</title>
+<style>
+  :root{
+    --ink:#0f172a; --muted:#475569; --accent:#0f766e; --accent-ink:#0b5c56; 
+    --bg:#ffffff; --rule:#e2e8f0; --light:#f8fafc;
+  }
+  @page{ size: Letter; margin: 15mm 12mm; }
+  @media print{
+    .no-print{ display:none !important; }
+    header, footer { position: fixed; left:0; right:0; }
+    header { top: 5mm; } footer { bottom: 5mm; }
+    .pb { page-break-before: always; }
+  }
+  body{
+    font: 11.5px/1.4 "Inter", system-ui, -apple-system, Arial, sans-serif;
+    color: var(--ink); background: var(--bg); margin: 0; padding: 12px;
+  }
+  .header{
+    display: grid; grid-template-columns: 1fr auto; align-items: end;
+    border-bottom: 2px solid var(--accent); padding-bottom: 6px; margin-bottom: 12px;
+  }
+  .brand{ font-weight: 700; color: var(--accent); font-size: 12px; text-transform: uppercase; }
+  .doc-title{ font-weight: 800; font-size: 16px; color: var(--ink); margin: 2px 0 0 0; }
+  .meta{ text-align: right; color: var(--muted); font-size: 10px; }
+  
+  .recommendation{
+    background: linear-gradient(90deg, var(--light) 0, transparent 100%);
+    border-left: 4px solid var(--accent); padding: 8px 12px; margin: 8px 0;
+    border-radius: 4px;
+  }
+  .rec-badge{
+    background: var(--accent); color: white; padding: 3px 8px; border-radius: 12px;
+    font-weight: 600; font-size: 10px; margin-right: 8px;
+  }
+  
+  .kpi-row{ display: flex; gap: 8px; margin: 8px 0; flex-wrap: wrap; }
+  .kpi{ border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; min-width: 110px; flex: 1; }
+  .kpi-label{ color: var(--muted); font-size: 9px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .kpi-value{ font-weight: 700; color: var(--ink); font-size: 13px; }
+  
+  .grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+  .grid-3{ display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 8px 0; }
+  
+  h2{ font-size: 12px; font-weight: 700; color: var(--accent-ink); margin: 12px 0 6px 0; 
+      border-bottom: 1px solid var(--rule); padding-bottom: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+  h3{ font-size: 11px; font-weight: 600; margin: 8px 0 4px 0; color: var(--ink); }
+  p{ margin: 4px 0; font-size: 11px; }
+  .small{ font-size: 10px; color: var(--muted); }
+  
+  .table{ width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 10px; }
+  .table th{ text-align: left; color: var(--muted); font-weight: 600; font-size: 9px; 
+             border-bottom: 1px solid var(--rule); padding: 4px 4px 4px 0; }
+  .table td{ padding: 3px 4px 3px 0; border-bottom: 1px dashed #eef2f7; }
+  .num{ text-align: right; font-variant-numeric: tabular-nums; }
+  .bold{ font-weight: 700; }
+  
+  .callout{ border: 1px solid var(--rule); border-left: 3px solid var(--accent);
+            border-radius: 4px; padding: 6px 8px; background: #fbfdff; margin: 6px 0; font-size: 10px; }
+  
+  ul{ margin: 4px 0 6px 14px; font-size: 10px; }
+  li{ margin: 2px 0; }
+  
+  .terms-table{ font-size: 10px; }
+  .terms-table td{ padding: 2px 4px 2px 0; border-bottom: 1px dashed var(--rule); }
+  
+  .footer-note{ margin-top: 8px; color: var(--muted); font-size: 9px; font-style: italic; 
+                border-top: 1px solid var(--rule); padding-top: 6px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand">CPP Investment Committee</div>
+    <div class="doc-title">Investment Memorandum — Multi-Service Medispa</div>
+    <div class="small">Single-Site Healthcare Services • All figures in <strong>$000s</strong></div>
+  </div>
+  <div class="meta">
+    <div><strong>From:</strong> Drew Williams (M&A)</div>
+    <div><strong>Date:</strong> July 28, 2025</div>
+    <div><strong>Subject:</strong> IOI Recommendation</div>
+  </div>
+</div>
+
+<!-- RECOMMENDATION -->
+<div class="recommendation">
+  <span class="rec-badge">RECOMMENDATION</span>
+  <strong>Submit IOI at 7.0× Adj. EBITDA ($688), structured 70% Cash / 30% Roll</strong>, contingent upon QoE confirmation and verification of debt-like items.
+</div>
+
+<!-- KEY METRICS -->
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-label">Enterprise Value</div><div class="kpi-value">$4,813</div></div>
+  <div class="kpi"><div class="kpi-label">Net Debt (inferred)</div><div class="kpi-value">$1,948</div></div>
+  <div class="kpi"><div class="kpi-label">Equity Value</div><div class="kpi-value">$2,865</div></div>
+  <div class="kpi"><div class="kpi-label">Cash at Close</div><div class="kpi-value">$2,006</div></div>
+  <div class="kpi"><div class="kpi-label">Rollover</div><div class="kpi-value">$860</div></div>
+  <div class="kpi"><div class="kpi-label">Multiple</div><div class="kpi-value">7.0×</div></div>
+</div>
+
+<div class="grid">
+  <!-- LEFT COLUMN -->
+  <div>
+    <h2>Financial Normalization</h2>
+    <table class="table">
+      <thead><tr><th>Bridge to Adj. EBITDA (2024)</th><th class="num">Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue</td><td class="num">$3,726</td></tr>
+        <tr><td>Gross Profit (~70%)</td><td class="num">$2,623</td></tr>
+        <tr><td>S&M (normalized to 10% rev)</td><td class="num">($373)</td></tr>
+        <tr><td>Owner add-back</td><td class="num">+300</td></tr>
+        <tr><td>Interest reclass + Depreciation</td><td class="num">+330</td></tr>
+        <tr><td class="bold">Adjusted EBITDA</td><td class="num bold">$688</td></tr>
+      </tbody>
+    </table>
+    
+    <div class="callout">
+      <strong>Coverage:</strong> ND/EBITDA = 2.8×; EBITDA/Interest = 3.5×<br>
+      <strong>Net debt basis:</strong> Interest $195 ÷ 10% cost = $1,948 (replaced by actual schedules in DD)
+    </div>
+
+    <h2>Valuation Sensitivity</h2>
+    <table class="table">
+      <thead>
+        <tr><th>EBITDA × Multiple</th><th class="num">6×</th><th class="num">7×</th><th class="num">8×</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Base ($688)</td><td class="num">2,180</td><td class="num bold">2,865</td><td class="num">3,556</td></tr>
+        <tr><td>±10% ($619-$757)</td><td class="num">1,767-2,593</td><td class="num">2,386-3,350</td><td class="num">3,006-4,106</td></tr>
+      </tbody>
+    </table>
+    
+    <div class="callout">
+      <strong>Marketing sensitivity:</strong> ΔEquity per 1% = Multiple × (1% × Revenue)<br>
+      At 7×: ≈$261 per 1% marketing increase (assumes no revenue response)
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div>
+    <h2>Investment Rationale</h2>
+    <p><strong>Supports 7× multiple:</strong> Cash-pay revenue model, ~70% gross margins, recurring injectables mix, established patient base.</p>
+    <p><strong>Risk factors:</strong> Single-site concentration, key provider dependency, device uptime requirements limit to mid-range multiple.</p>
+    <p><strong>70/30 structure:</strong> Balances seller liquidity with management retention/alignment for near-term execution.</p>
+
+    <h2>Key Risks & Mitigations</h2>
+    <div class="grid-3">
+      <div>
+        <h3>Provider Risk</h3>
+        <ul>
+          <li>Rollover alignment (30%)</li>
+          <li>Employment contracts</li>
+          <li>Stay bonuses</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Device Risk</h3>
+        <ul>
+          <li>Uptime SLAs</li>
+          <li>Maintenance reserves</li>
+          <li>Downtime KPIs</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Market Risk</h3>
+        <ul>
+          <li>Pricing governance</li>
+          <li>Marketing ROAS</li>
+          <li>Membership programs</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Critical DD Priorities (30-45 Days)</h2>
+    <ul>
+      <li><strong>QoE:</strong> Validate $688 EBITDA; seasonality; revenue recognition</li>
+      <li><strong>Debt/NWC:</strong> Loan schedules; payoff letters; working capital peg</li>
+      <li><strong>Operations:</strong> Provider agreements; device uptime logs; marketing analytics</li>
+    </ul>
+
+    <h2>Proposed IOI Terms</h2>
+    <table class="terms-table">
+      <tr><td><strong>Valuation:</strong></td><td>7.0× Adjusted EBITDA (base $688)</td></tr>
+      <tr><td><strong>Consideration:</strong></td><td>70% Cash / 30% Roll (off equity at close)</td></tr>
+      <tr><td><strong>Conditions:</strong></td><td>QoE confirmation; debt verification</td></tr>
+      <tr><td><strong>Exclusivity:</strong></td><td>45 days for confirmatory diligence</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE BREAK FOR PAGE 2 IF NEEDED -->
+<div class="pb"></div>
+
+<h2>Executive Summary — Key Decision Points</h2>
+
+<div class="grid">
+  <div>
+    <h3>✅ Investment Thesis</h3>
+    <ul>
+      <li><strong>Attractive financials:</strong> 18.5% EBITDA margin, 70% GP, cash-pay model</li>
+      <li><strong>Defensive characteristics:</strong> Recurring revenue, established patient base</li>
+      <li><strong>Operational leverage:</strong> Provider productivity, pricing optimization opportunities</li>
+    </ul>
+
+    <h3>⚠️ Key Concerns</h3>
+    <ul>
+      <li><strong>Concentration risk:</strong> Single site, key provider dependency</li>
+      <li><strong>Operational risk:</strong> Device uptime critical to revenue generation</li>
+      <li><strong>Market risk:</strong> Marketing spend efficiency, seasonal variations</li>
+    </ul>
+  </div>
+
+  <div>
+    <h3>🎯 Value Creation Plan</h3>
+    <h4>Day 1-30:</h4>
+    <ul>
+      <li>Payroll integration & comp ladder implementation</li>
+      <li>Pricing governance & KPI instrumentation</li>
+    </ul>
+    
+    <h4>Day 30-100:</h4>
+    <ul>
+      <li>Provider utilization optimization</li>
+      <li>Membership program enhancement</li>
+      <li>Marketing ROAS improvement</li>
+    </ul>
+
+    <h3>📊 Valuation Support</h3>
+    <p><strong>Multiple range 6-8×:</strong> Peer comparables, precedent transactions, DCF analysis all support 7× anchor within industry band.</p>
+    <p><strong>Marketing normalization:</strong> 10% of revenue standard for sustainable lead generation vs. 1% reported spend.</p>
+
+    <h2>Investment Analysis Summary</h2>
+    
+    <h3>Key Concerns (Case Breakers)</h3>
+    <ul>
+      <li>Seasonality; risk 10% S&M insufficient to maintain lead flow</li>
+      <li>Device downtime >10% for 30+ days</li>
+      <li>Key-provider dependency: injector churn >15% in first 90 days</li>
+    </ul>
+
+    <h3>Growth Opportunities</h3>
+    <ul>
+      <li>Memberships & pricing governance to lift LTV and revenue/hour</li>
+      <li>Injector productivity ladder (utilization, mix, scheduling discipline)</li>
+    </ul>
+
+    <h3>EBITDA Adjustments Rationale</h3>
+    <ul>
+      <li>S&M to 10% rev; owner +$300; remove one-offs; reclass interest; add back depreciation → <strong>$688</strong></li>
+    </ul>
+
+    <h3>Multiple Justification</h3>
+    <ul><li><strong>7.0×</strong> (band 6–8×) — cash-pay, ~70% GP, recurring mix vs single-site risk</li></ul>
+
+    <h3>Alternative Valuation Methods</h3>
+    <ul><li>EPV, simple DCF, comps/precedents bracket 6–8×; support 7× midpoint</li></ul>
+
+    <h3>Cash vs Equity Structure</h3>
+    <ul><li>70/30 improves retention/alignment; preserves growth capex and leverage headroom</li></ul>
+
+    <h3>Owner Compensation Treatment</h3>
+    <ul><li>Keep market post-close comp; add back only the excess ($300). Producer continuity secured via employment + rollover</li></ul>
+  </div>
+</div>
+
+<div class="callout">
+  <strong>Deal Economics Summary:</strong> At 7.0× multiple on $688 normalized EBITDA, transaction generates $2,865 equity value with balanced 70/30 cash/roll structure. ND/EBITDA of 2.8× provides appropriate leverage for healthcare services business.
+</div>
+
+<div class="footer-note">
+  <strong>Committee Action Required:</strong> Approval to submit IOI at proposed terms, subject to satisfactory QoE and debt verification.<br>
+  <strong>Next Steps:</strong> 45-day exclusivity for confirmatory diligence; definitive documentation; closing conditions satisfaction.
+</div>
+
+</body>
+</html> 

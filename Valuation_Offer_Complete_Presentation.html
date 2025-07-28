@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valuation & Offer Analysis - Complete Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+        :root {
+            --primary-color: #1a5276;
+            --secondary-color: #2980b9;
+            --accent-color: #3498db;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Source Sans Pro', sans-serif;
+            color: var(--dark-color);
+            background-color: #f8f9fa;
+        }
+        
+        .presentation-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .slide {
+            width: 100%;
+            max-width: 1280px;
+            min-height: 720px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            overflow: hidden;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            padding: 20px 40px 8px;
+            border-bottom: 2px solid var(--light-color);
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0 0 8px 0;
+            line-height: 1.1;
+        }
+        
+        .subheader {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .chip {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .decision-tag {
+            background-color: #e8f4f8;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        .content {
+            display: flex;
+            flex-grow: 1;
+            padding: 20px 40px;
+        }
+        
+        .left-column {
+            flex: 1;
+            padding-right: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .right-column {
+            flex: 1;
+            padding-left: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--light-color);
+            padding-bottom: 4px;
+        }
+        
+        .chart-container {
+            height: 200px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .bridge-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .bridge-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--light-color);
+        }
+        
+        .bridge-label {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .bridge-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+        
+        .bridge-note {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: -5px;
+            padding-left: 5px;
+        }
+        
+        .sensitivity-grid {
+            display: grid;
+            grid-template-columns: auto repeat(3, 1fr);
+            grid-template-rows: auto repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .grid-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-weight: 600;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .grid-row-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-weight: 600;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .grid-cell {
+            background-color: var(--light-color);
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 13px;
+        }
+        
+        .grid-cell .equity {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+        
+        .grid-cell .cash-rollover {
+            font-size: 11px;
+            color: var(--dark-color);
+            margin-top: 4px;
+        }
+        
+        .grid-cell.base-case {
+            border: 2px solid var(--accent-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .key-metrics {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .metrics-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .metrics-title i {
+            margin-right: 8px;
+        }
+        
+        .metrics-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: var(--dark-color);
+        }
+        
+        .answers-panel {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .answer-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .answer-icon {
+            color: var(--accent-color);
+            margin-right: 8px;
+            flex-shrink: 0;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+        
+        .answer-text {
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        
+        .answer-text strong {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+        
+        .proceeds-donut {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+        }
+        
+        .leverage-metric {
+            background-color: #e8f4f8;
+            border-radius: 20px;
+            padding: 8px 16px;
+            margin: 8px auto;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            display: inline-block;
+        }
+        
+        .footnote {
+            font-size: 11px;
+            color: #7f8c8d;
+            padding: 10px 40px;
+            border-top: 1px solid var(--light-color);
+            font-style: italic;
+            text-align: center;
+        }
+        
+        .missing-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+        
+        .missing-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .missing-title i {
+            margin-right: 8px;
+        }
+        
+        .missing-list {
+            margin: 0;
+            padding-left: 18px;
+            font-size: 12px;
+        }
+        
+        .missing-list li {
+            margin-bottom: 4px;
+        }
+        
+        .marketing-note {
+            font-size: 11px;
+            color: #7f8c8d;
+            font-style: italic;
+            text-align: center;
+            margin-top: 8px;
+        }
+        
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- SLIDE 1: Analysis Overview -->
+        <div class="slide">
+            <div class="slide-number">1/2</div>
+            <div class="header">
+                <h1 class="title">Valuation & Offer Analysis — 2024 Financial Data</h1>
+                <div class="subheader">
+                    <div class="chip">Adj. EBITDA $688 ($000s)</div>
+                    <div class="chip">EV (7.0×) $4,813 ($000s)</div>
+                    <div class="chip">Equity $2,865 ($000s)</div>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="left-column">
+                    <div class="section-title">EV to Equity Bridge</div>
+                    <div class="chart-container">
+                        <canvas id="waterfallChart"></canvas>
+                    </div>
+                    
+                    <div class="section-title">Marketing Sensitivity</div>
+                    <div class="chart-container">
+                        <canvas id="marketingChart"></canvas>
+                        <div class="marketing-note">10% × $3,726 = $373 normalized vs $37 reported ($000s)<br>Assumes no revenue response to higher marketing spend</div>
+                    </div>
+                    
+                    <div class="key-metrics">
+                        <h3 class="metrics-title">
+                            <i class="fas fa-chart-line"></i> Key Metrics
+                        </h3>
+                        <div class="metrics-content">
+                            <div class="metric">
+                                <div class="metric-value">$3,726</div>
+                                <div class="metric-label">Revenue ($000s)</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">18.5%</div>
+                                <div class="metric-label">EBITDA Margin</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">1.29×</div>
+                                <div class="metric-label">EV/Revenue</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">3.5×</div>
+                                <div class="metric-label">EBITDA/Interest</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="right-column">
+                    <h2 class="section-title">Analysis Summary</h2>
+                    <div class="answers-panel">
+                        <div class="answer-item">
+                            <i class="fas fa-calculator answer-icon"></i>
+                            <div class="answer-text"><strong>Enterprise Value:</strong> $4,813 ($000s) at 7.0× EBITDA multiple</div>
+                        </div>
+                        <div class="answer-item">
+                            <i class="fas fa-money-bill-wave answer-icon"></i>
+                            <div class="answer-text"><strong>Net Debt (Method A):</strong> Interest $195 ÷ 10% = $1,948 ($000s)</div>
+                        </div>
+                        <div class="answer-item">
+                            <i class="fas fa-balance-scale answer-icon"></i>
+                            <div class="answer-text"><strong>Equity Value:</strong> $2,865 ($000s) available to seller</div>
+                        </div>
+                        <div class="answer-item">
+                            <i class="fas fa-coins answer-icon"></i>
+                            <div class="answer-text"><strong>Transaction:</strong> 70% cash ($2,006) / 30% rollover ($860) ($000s)</div>
+                        </div>
+                        <div class="answer-item">
+                            <i class="fas fa-chart-line answer-icon"></i>
+                            <div class="answer-text"><strong>Marketing Impact:</strong> ΔEquity per 1% = Multiple × 1% × Revenue (≈$261 at 7×; $223 at 6×; $298 at 8×)</div>
+                        </div>
+                        <div class="answer-item">
+                            <i class="fas fa-percentage answer-icon"></i>
+                            <div class="answer-text"><strong>Rate Sensitivity:</strong> Higher rates → Lower net debt</div>
+                        </div>
+                    </div>
+                    
+                    <div class="missing-info">
+                        <div class="missing-title">
+                            <i class="fas fa-exclamation-circle"></i> Validation Results
+                        </div>
+                        <ul class="missing-list">
+                            <li>✅ Cash + Rollover = Equity Value ($2,865)</li>
+                            <li>✅ Percentage Split = 100% (70% + 30%)</li>
+                            <li>✅ EV = EBITDA × Multiple ($688 × 7.0×)</li>
+                            <li>✅ Net Debt = Interest ÷ Rate ($195 ÷ 10%)</li>
+                            <li>✅ All figures in $000s</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footnote">
+                Valuation & Offer Analysis • All figures in $000s • Generated: $(date +%Y-%m-%d)
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Detailed Analysis -->
+        <div class="slide">
+            <div class="slide-number">2/2</div>
+            <div class="header">
+                <h1 class="title">Valuation Matrix & Offer Structure</h1>
+                <div class="decision-tag">Proceed to IOI at 7.0×, 70/30 Cash/Roll, subject to QoE = $688 and no debt-like items beyond Method A</div>
+            </div>
+            
+            <div class="content">
+                <div class="left-column">
+                    <h2 class="section-title">EV → Equity Bridge</h2>
+                    <div class="bridge-container">
+                        <div class="bridge-item">
+                            <div class="bridge-label">Enterprise Value</div>
+                            <div class="bridge-value">$4,813</div>
+                        </div>
+                        <div class="bridge-item">
+                            <div class="bridge-label">Implied Net Debt</div>
+                            <div class="bridge-value">$(1,948)</div>
+                        </div>
+                        <div class="bridge-note">Method A = Interest $195 ÷ 10% = $1,948 (all $000s)</div>
+                        <div class="bridge-item">
+                            <div class="bridge-label">Equity Value</div>
+                            <div class="bridge-value">$2,865</div>
+                        </div>
+                        <div class="bridge-item">
+                            <div class="bridge-label">Cash at Close (70%)</div>
+                            <div class="bridge-value">$2,006</div>
+                        </div>
+                        <div class="bridge-item">
+                            <div class="bridge-label">Rollover (30%)</div>
+                            <div class="bridge-value">$860</div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <div class="leverage-metric">ND/EBITDA = 2.8×</div>
+                        <div class="leverage-metric">EBITDA/Interest = 3.5×</div>
+                    </div>
+                    
+                    <div class="proceeds-donut">
+                        <canvas id="proceedsDonut"></canvas>
+                    </div>
+                </div>
+                
+                <div class="right-column">
+                    <h2 class="section-title">Multiple × Marketing Sensitivity</h2>
+                    
+                    <div class="sensitivity-grid">
+                        <div class="grid-header">Multiple →</div>
+                        <div class="grid-header">6.0×</div>
+                        <div class="grid-header">7.0×</div>
+                        <div class="grid-header">8.0×</div>
+                        
+                        <div class="grid-row-header">10% Mkt</div>
+                        <div class="grid-cell">
+                            <div class="equity">$2,180</div>
+                            <div class="cash-rollover">Cash $1,526 / Roll $654</div>
+                        </div>
+                        <div class="grid-cell base-case">
+                            <div class="equity">$2,868</div>
+                            <div class="cash-rollover">Cash $2,008 / Roll $860</div>
+                        </div>
+                        <div class="grid-cell">
+                            <div class="equity">$3,556</div>
+                            <div class="cash-rollover">Cash $2,489 / Roll $1,067</div>
+                        </div>
+                        
+                        <div class="grid-row-header">12% Mkt</div>
+                        <div class="grid-cell">
+                            <div class="equity">$1,733</div>
+                            <div class="cash-rollover">Cash $1,213 / Roll $520</div>
+                        </div>
+                        <div class="grid-cell">
+                            <div class="equity">$2,346</div>
+                            <div class="cash-rollover">Cash $1,642 / Roll $704</div>
+                        </div>
+                        <div class="grid-cell">
+                            <div class="equity">$2,960</div>
+                            <div class="cash-rollover">Cash $2,072 / Roll $888</div>
+                        </div>
+                        
+                        <div class="grid-row-header">14% Mkt</div>
+                        <div class="grid-cell">
+                            <div class="equity">$1,286</div>
+                            <div class="cash-rollover">Cash $900 / Roll $386</div>
+                        </div>
+                        <div class="grid-cell">
+                            <div class="equity">$1,825</div>
+                            <div class="cash-rollover">Cash $1,278 / Roll $547</div>
+                        </div>
+                        <div class="grid-cell">
+                            <div class="equity">$2,364</div>
+                            <div class="cash-rollover">Cash $1,655 / Roll $709</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">Interest Rate Scenarios</div>
+                    <div class="chart-container">
+                        <canvas id="rateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footnote">
+                Investment Analysis • Base Case: 7.0× multiple, 10% marketing • All figures in $000s
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Register Chart.js plugin for data labels
+            Chart.register(ChartDataLabels);
+            
+            // Waterfall Chart
+            const waterfallCtx = document.getElementById('waterfallChart').getContext('2d');
+            const waterfallChart = new Chart(waterfallCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Enterprise Value', 'Net Debt', 'Equity Value'],
+                    datasets: [{
+                        label: 'Value ($000s)',
+                        data: [4813, -1948, 2865],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.8)',
+                            'rgba(231, 76, 60, 0.8)',
+                            'rgba(39, 174, 96, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(231, 76, 60, 1)',
+                            'rgba(39, 174, 96, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'EV to Equity Bridge ($000s)',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: { display: false },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            color: '#333',
+                            font: { weight: 'bold', size: 12 },
+                            formatter: (value) => value.toLocaleString()
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Value ($000s)' },
+                            ticks: { callback: function(value) { return '$' + value.toLocaleString(); } }
+                        }
+                    }
+                }
+            });
+
+            // Marketing Sensitivity Chart
+            const marketingCtx = document.getElementById('marketingChart').getContext('2d');
+            const marketingChart = new Chart(marketingCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['10% Marketing', '12% Marketing', '14% Marketing'],
+                    datasets: [{
+                        label: 'Equity Value ($000s)',
+                        data: [2868, 2346, 1825],
+                        backgroundColor: [
+                            'rgba(39, 174, 96, 0.8)',
+                            'rgba(243, 156, 18, 0.8)',
+                            'rgba(231, 76, 60, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(39, 174, 96, 1)',
+                            'rgba(243, 156, 18, 1)',
+                            'rgba(231, 76, 60, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Marketing Spend Impact on Equity',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: { display: false },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            color: '#333',
+                            font: { weight: 'bold', size: 12 },
+                            formatter: (value) => '$' + value.toLocaleString()
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Equity Value ($000s)' },
+                            ticks: { callback: function(value) { return '$' + value.toLocaleString(); } }
+                        }
+                    }
+                }
+            });
+
+            // Proceeds Donut Chart
+            const proceedsCtx = document.getElementById('proceedsDonut').getContext('2d');
+            const proceedsDonut = new Chart(proceedsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Cash (70%)', 'Rollover (30%)'],
+                    datasets: [{
+                        data: [2008, 860],
+                        backgroundColor: [
+                            'rgba(52, 152, 219, 0.8)',
+                            'rgba(39, 174, 96, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(52, 152, 219, 1)',
+                            'rgba(39, 174, 96, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '50%',
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Proceeds Split ($000s)',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 12 } }
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            font: { weight: 'bold', size: 14 },
+                            formatter: (value) => '$' + value.toLocaleString()
+                        }
+                    }
+                }
+            });
+
+            // Interest Rate Sensitivity Chart
+            const rateCtx = document.getElementById('rateChart').getContext('2d');
+            const rateChart = new Chart(rateCtx, {
+                type: 'line',
+                data: {
+                    labels: ['8%', '9%', '10%', '11%', '12%'],
+                    datasets: [{
+                        label: 'Equity Value',
+                        data: [2378, 2649, 2868, 3042, 3190],
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Interest Rate Impact on Equity',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: { display: false },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            color: '#333',
+                            font: { weight: 'bold', size: 11 },
+                            formatter: (value) => '$' + value.toLocaleString()
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: { display: true, text: 'Equity Value ($000s)' },
+                            ticks: { callback: function(value) { return '$' + value.toLocaleString(); } }
+                        },
+                        x: {
+                            title: { display: true, text: 'Interest Rate' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

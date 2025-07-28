@@ -1,0 +1,235 @@
+{
+  "company_info": {
+    "name": "VistaBelle Aesthetics, LLC",
+    "location": "Denver, CO",
+    "ttm_window": "2024-Q3 \u2192 2025-Q2"
+  },
+  "ttm_metrics": {
+    "ttm_revenue": 6000000,
+    "ttm_ebitda_reported": 1048000,
+    "ttm_ebitda_adjusted": 1188000,
+    "ttm_margin": 0.198
+  },
+  "ebitda_bridge": {
+    "reported_ebitda": 1048000,
+    "owner_addback": 130000,
+    "onetime_addback": 70000,
+    "rent_normalization": -60000,
+    "adjusted_ebitda": 1188000
+  },
+  "valuation_matrix": [
+    {
+      "multiple": 7.0,
+      "enterprise_value": 8316000.0,
+      "equity_value_to_seller": 7146000.0,
+      "ev_revenue_ratio": 1.386
+    },
+    {
+      "multiple": 7.5,
+      "enterprise_value": 8910000.0,
+      "equity_value_to_seller": 7740000.0,
+      "ev_revenue_ratio": 1.485
+    },
+    {
+      "multiple": 8.0,
+      "enterprise_value": 9504000.0,
+      "equity_value_to_seller": 8334000.0,
+      "ev_revenue_ratio": 1.584
+    },
+    {
+      "multiple": 8.5,
+      "enterprise_value": 10098000.0,
+      "equity_value_to_seller": 8928000.0,
+      "ev_revenue_ratio": 1.683
+    },
+    {
+      "multiple": 9.0,
+      "enterprise_value": 10692000.0,
+      "equity_value_to_seller": 9522000.0,
+      "ev_revenue_ratio": 1.782
+    },
+    {
+      "multiple": 9.5,
+      "enterprise_value": 11286000.0,
+      "equity_value_to_seller": 10116000.0,
+      "ev_revenue_ratio": 1.881
+    }
+  ],
+  "sources_uses": {
+    "entry_ev": 10098000.0,
+    "new_debt": 7573500.0,
+    "sponsor_equity": 2524500.0,
+    "equity_to_seller": 8928000.0,
+    "debt_pct": 75.0
+  },
+  "debt_schedule": [
+    {
+      "year": 1,
+      "revenue": 6420000.0,
+      "ebitda": 1303260.0,
+      "ebit": 1213260.0,
+      "nopat": 897812.3999999999,
+      "delta_wc": 11426.301369863068,
+      "maint_capex": 115559.99999999999,
+      "fcf_before_interest": 770826.0986301368,
+      "interest_expense": 643747.5,
+      "fcf_after_interest": 127078.59863013681,
+      "principal_payment": 101662.87890410946,
+      "debt_balance": 7471837.12109589
+    },
+    {
+      "year": 2,
+      "revenue": 6869400.0,
+      "ebitda": 1428835.2000000002,
+      "ebit": 1338835.2000000002,
+      "nopat": 990738.0480000002,
+      "delta_wc": 12226.142465753423,
+      "maint_capex": 123649.2,
+      "fcf_before_interest": 854862.7055342468,
+      "interest_expense": 635106.1552931507,
+      "fcf_after_interest": 219756.55024109606,
+      "principal_payment": 175805.24019287687,
+      "debt_balance": 7296031.880903013
+    },
+    {
+      "year": 3,
+      "revenue": 7350258.000000001,
+      "ebitda": 1565604.9540000004,
+      "ebit": 1475604.9540000004,
+      "nopat": 1091947.6659600004,
+      "delta_wc": 13081.972438356228,
+      "maint_capex": 132304.644,
+      "fcf_before_interest": 946561.0495216443,
+      "interest_expense": 620162.7098767562,
+      "fcf_after_interest": 326398.33964488807,
+      "principal_payment": 261118.67171591046,
+      "debt_balance": 7034913.2091871025
+    },
+    {
+      "year": 4,
+      "revenue": 7864776.060000001,
+      "ebitda": 1714521.1810800002,
+      "ebit": 1624521.1810800002,
+      "nopat": 1202145.6739992,
+      "delta_wc": 13997.710509041091,
+      "maint_capex": 141565.96908,
+      "fcf_before_interest": 1046581.9944101591,
+      "interest_expense": 597967.6227809037,
+      "fcf_after_interest": 448614.37162925536,
+      "principal_payment": 358891.4973034043,
+      "debt_balance": 6676021.711883699
+    },
+    {
+      "year": 5,
+      "revenue": 8415310.384200003,
+      "ebitda": 1876614.2156766008,
+      "ebit": 1786614.2156766008,
+      "nopat": 1322094.5196006845,
+      "delta_wc": 14977.55024467397,
+      "maint_capex": 151475.58691560006,
+      "fcf_before_interest": 1155641.3824404106,
+      "interest_expense": 567461.8455101145,
+      "fcf_after_interest": 588179.5369302961,
+      "principal_payment": 470543.62954423693,
+      "debt_balance": 6205478.082339462
+    }
+  ],
+  "irr_analysis": {
+    "year5_ebitda": 1876614.2156766008,
+    "exit_ev": 15012913.725412806,
+    "exit_debt": 6205478.082339462,
+    "exit_equity": 8807435.643073345,
+    "irr": 0.2839107071943358,
+    "moic": 3.488784172340402,
+    "exit_multiple": 8.0
+  },
+  "epv_analysis": {
+    "ebit": 1098000,
+    "nopat": 812520.0,
+    "reinvestment": 87840.0,
+    "fcf": 724680.0,
+    "epv_enterprise": 6039000.0,
+    "epv_equity": 4869000.0,
+    "epv_implied_multiple": 5.083333333333333,
+    "tax_rate": 0.26,
+    "wacc": 0.12,
+    "reinvestment_rate": 0.08
+  },
+  "epv_sensitivity": [
+    [
+      {
+        "wacc": 0.11,
+        "reinvestment_rate": 0.05,
+        "epv_enterprise": 6887454.545454546,
+        "epv_equity": 5717454.545454546
+      },
+      {
+        "wacc": 0.11,
+        "reinvestment_rate": 0.08,
+        "epv_enterprise": 6588000.0,
+        "epv_equity": 5418000.0
+      },
+      {
+        "wacc": 0.11,
+        "reinvestment_rate": 0.15,
+        "epv_enterprise": 5889272.7272727275,
+        "epv_equity": 4719272.7272727275
+      }
+    ],
+    [
+      {
+        "wacc": 0.12,
+        "reinvestment_rate": 0.05,
+        "epv_enterprise": 6313500.0,
+        "epv_equity": 5143500.0
+      },
+      {
+        "wacc": 0.12,
+        "reinvestment_rate": 0.08,
+        "epv_enterprise": 6039000.0,
+        "epv_equity": 4869000.0
+      },
+      {
+        "wacc": 0.12,
+        "reinvestment_rate": 0.15,
+        "epv_enterprise": 5398500.0,
+        "epv_equity": 4228500.0
+      }
+    ],
+    [
+      {
+        "wacc": 0.13,
+        "reinvestment_rate": 0.05,
+        "epv_enterprise": 5827846.153846154,
+        "epv_equity": 4657846.153846154
+      },
+      {
+        "wacc": 0.13,
+        "reinvestment_rate": 0.08,
+        "epv_enterprise": 5574461.538461538,
+        "epv_equity": 4404461.538461538
+      },
+      {
+        "wacc": 0.13,
+        "reinvestment_rate": 0.15,
+        "epv_enterprise": 4983230.769230769,
+        "epv_equity": 3813230.769230769
+      }
+    ]
+  ],
+  "assumptions": {
+    "net_debt": 1170000,
+    "ar_days": 11,
+    "inventory_days": 60,
+    "ap_days": 38,
+    "maintenance_capex_pct": 0.018,
+    "da_annual": 90000,
+    "tax_rate": 0.26,
+    "reinvestment_rate": 0.08,
+    "wacc": 0.12,
+    "debt_pct": 0.75,
+    "debt_rate": 0.085,
+    "exit_multiple": 8.0,
+    "revenue_growth": 0.07
+  }
+}

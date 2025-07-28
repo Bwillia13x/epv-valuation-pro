@@ -1,0 +1,97 @@
+{
+  "analysis_metadata": {
+    "case_name": "Multi-Service Medispa EBITDA Bridge",
+    "analysis_date": "2025-07-28 06:53:01",
+    "analyst": "Senior Financial Analyst - Claude Code",
+    "methodology": "Quality of Earnings Analysis with Overlay Adjustments"
+  },
+  "reported_ebitda": {
+    "2022": 817443.6,
+    "2023": 1281076.2999999998,
+    "2024": 1567785.13
+  },
+  "normalization_components": [
+    {
+      "name": "Marketing Normalization",
+      "description": "Normalize marketing expense to industry benchmark (10% of revenue)",
+      "adjustments": {
+        "2022": -142654.59999999998,
+        "2023": 108613.95900000003,
+        "2024": 335349.12767
+      },
+      "rationale": "Marketing expense dropped 93% from 2022 to 2024 (499,291 \u2192 37,261), likely due to reclassification. Industry benchmark: 10% of revenue.",
+      "confidence_level": "High"
+    },
+    {
+      "name": "Interest Reclassification",
+      "description": "Reclassify interest expense from operating to below-the-line",
+      "adjustments": {
+        "2022": 220144.0,
+        "2023": 212167.0,
+        "2024": 194812.0
+      },
+      "rationale": "Interest expense should be treated as financing cost, not operating expense. Add back to normalize operating performance.",
+      "confidence_level": "High"
+    },
+    {
+      "name": "Repairs & Maintenance Normalization",
+      "description": "Normalize R&M to 3-year average to smooth lumpy expenses",
+      "adjustments": {
+        "2022": -79982.26000000001,
+        "2023": 40624.95,
+        "2024": 39357.31
+      },
+      "rationale": "R&M shows significant volatility (164,053 \u2192 44,713). Normalize to 3-year average of $84,071 for run-rate analysis.",
+      "confidence_level": "Medium"
+    },
+    {
+      "name": "Owner Compensation Normalization",
+      "description": "Normalize owner compensation to market rate for similar role",
+      "adjustments": {
+        "2022": 200000,
+        "2023": 150000,
+        "2024": 100000
+      },
+      "rationale": "Total payroll decreased from $1,217,000 to $967,000. Estimated excess owner compensation above $400,000 market rate.",
+      "confidence_level": "Medium"
+    },
+    {
+      "name": "Equipment Rental Discontinuation",
+      "description": "Equipment rental ceased in 2023 - assess if recurring",
+      "adjustments": {
+        "2022": 0,
+        "2023": -17624,
+        "2024": -17624
+      },
+      "rationale": "Equipment rental ($17K) stopped in 2023. If this represents ongoing operational savings, no adjustment needed. If temporary, should normalize.",
+      "confidence_level": "Low"
+    },
+    {
+      "name": "Asset Sale Gain (Below Line)",
+      "description": "One-time asset sale gain - already below operating income",
+      "adjustments": {
+        "2022": 0,
+        "2023": 0,
+        "2024": 0
+      },
+      "rationale": "Asset sale gain of $42K in 2024 is already treated below operating income line.",
+      "confidence_level": "High"
+    }
+  ],
+  "total_adjustments": {
+    "2022": 197507.14,
+    "2023": 493781.90900000004,
+    "2024": 651894.4376700001
+  },
+  "normalized_ebitda": {
+    "2022": 1014950.74,
+    "2023": 1774858.2089999998,
+    "2024": 2219679.5676700003
+  },
+  "bridge_summary": {
+    "reported_ebitda_2024": 1567785.13,
+    "total_adjustments_2024": 651894.4376700001,
+    "normalized_ebitda_2024": 2219679.5676700003,
+    "normalization_impact_pct": 41.58059833556402
+  }
+}
