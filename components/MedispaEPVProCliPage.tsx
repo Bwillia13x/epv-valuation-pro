@@ -156,6 +156,9 @@ function parseDollars(v: string): number | null {
   return isNaN(n) ? null : n;
 }
 
+// Add import for the new spreadsheet component
+import SpreadsheetValuationIntegration from './SpreadsheetValuationIntegration';
+
 export default function MedispaEPVProCliPage() {
   const [mounted, setMounted] = useState(false);
 
@@ -1083,6 +1086,7 @@ export default function MedispaEPVProCliPage() {
     'cross-checks': 'validation',
     benchmarks: 'data',
     'quality-metrics': 'notes',
+    'spreadsheet-entry': 'spreadsheet-entry',
   }), []);
 
   // CLI state
@@ -2499,53 +2503,50 @@ export default function MedispaEPVProCliPage() {
                 label: 'Run Monte Carlo',
                 description: 'Execute scenario simulation',
                 icon: '🎲',
-                onClick: () => runMonteCarlo(),
+                onClick: runMonteCarlo,
                 variant: 'primary',
               },
               {
-                id: 'view-financial-data',
-                label: 'Financial Data',
-                description: 'Review service line details',
+                id: 'view-spreadsheet',
+                label: 'Spreadsheet Entry',
+                description: 'Manual P&L data entry',
                 icon: '📊',
-                onClick: () => setActiveSection('financial-data'),
+                onClick: () => setActiveSection('spreadsheet-entry'),
                 variant: 'secondary',
               },
               {
-                id: 'sensitivity-analysis',
-                label: 'Sensitivity Testing',
-                description: 'Analyze key variables',
-                icon: '⚖️',
-                onClick: () => setActiveSection('sensitivity-testing'),
-                variant: 'secondary',
-              },
-              {
-                id: 'export-data',
+                id: 'export-report',
                 label: 'Export Analysis',
-                description: 'Download current state',
-                icon: '📄',
-                onClick: () =>
-                  exportChartData(collectSnapshot(), 'epv-analysis', 'json'),
-                variant: 'outline',
-              },
-              {
-                id: 'validation-check',
-                label: 'Validation',
-                description: 'Cross-check calculations',
-                icon: '✅',
-                onClick: () => setActiveSection('cross-checks'),
-                variant: 'outline',
-              },
-              {
-                id: 'scenario-comparison',
-                label: 'Scenario Analysis',
-                description: 'Compare Bull/Bear cases',
-                icon: '🎯',
-                onClick: () => setActiveSection('scenario-analysis'),
+                description: 'Generate detailed report',
+                icon: '📋',
+                onClick: () => {
+                  const report = generateDetailedReport();
+                  const reportString = typeof report === 'string' ? report : JSON.stringify(report, null, 2);
+                  const blob = new Blob([reportString], { type: 'text/markdown' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'epv-analysis-report.md';
+                  a.click();
+                  URL.revokeObjectURL(url);
+                },
                 variant: 'outline',
               },
             ]}
             theme={theme}
             onNavigate={setActiveSection}
+          />
+        );
+
+      case 'spreadsheet-entry':
+        return (
+          <SpreadsheetValuationIntegration
+            onValuationComplete={(results) => {
+              pushLog({
+                kind: 'success',
+                text: `Spreadsheet valuation completed: Enterprise Value ${fmt0.format(results.enterpriseValue)}, Equity Value ${fmt0.format(results.equityValue)}`,
+              });
+            }}
           />
         );
 
@@ -2555,7 +2556,7 @@ export default function MedispaEPVProCliPage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-semibold mb-4">Company Profile</h2>
               <p className="text-gray-600 mb-6">
-                Enter basic company information and practice details.
+                Basic company information and business model details.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2565,9 +2566,20 @@ export default function MedispaEPVProCliPage() {
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter company name"
                   />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Industry
+                  </label>
+                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                    <option>Medical Aesthetics</option>
+                    <option>Healthcare Services</option>
+                    <option>Cosmetic Surgery</option>
+                    <option>Wellness Centers</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -2576,44 +2588,31 @@ export default function MedispaEPVProCliPage() {
                   <input
                     type="number"
                     value={locations}
-                    onChange={(e) => setLocations(Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    onChange={(e) => setLocations(parseInt(e.target.value) || 1)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Current Scenario
+                    Years in Operation
                   </label>
-                  <select
-                    value={scenario}
-                    onChange={(e) =>
-                      setScenario(e.target.value as 'Base' | 'Bull' | 'Bear')
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="Base">Base Case</option>
-                    <option value="Bull">Bull Case</option>
-                    <option value="Bear">Bear Case</option>
-                  </select>
+                  <input
+                    type="number"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Years in business"
+                  />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Geography Type
-                  </label>
-                  <select
-                    value={geographicRisk}
-                    onChange={(e) =>
-                      setGeographicRisk(
-                        e.target.value as 'low' | 'medium' | 'high'
-                      )
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="low">Urban/Metro</option>
-                    <option value="medium">Suburban</option>
-                    <option value="high">Rural</option>
-                  </select>
-                </div>
+              </div>
+
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Business Model Description
+                </label>
+                <textarea
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Describe the business model, target market, and competitive advantages..."
+                />
               </div>
             </div>
           </div>

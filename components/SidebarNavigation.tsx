@@ -37,6 +37,7 @@ const navigationStructure: NavigationItem[] = [
     children: [
       { id: 'company-profile', label: 'Company Profile', icon: '🏢' },
       { id: 'financial-data', label: 'Financial Data', icon: '💹' },
+      { id: 'spreadsheet-entry', label: 'Spreadsheet P&L', icon: '📊' },
       { id: 'market-data', label: 'Market Data', icon: '📈' },
     ],
   },
