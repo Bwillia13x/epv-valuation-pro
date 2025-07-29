@@ -1,5 +1,5 @@
-import MedispaEPVProCliPage from '../components/MedispaEPVProCliPage';
+import EPVGrailIntegration from '../components/EPVGrailIntegration';
 
 export default function Home() {
-  return <MedispaEPVProCliPage />;
+  return <EPVGrailIntegration enableNeptune={true} />;
 }
