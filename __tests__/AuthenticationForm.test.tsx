@@ -51,14 +51,17 @@ describe('AuthenticationForm', () => {
     it('should validate email format', async () => {
       render(<AuthenticationForm />);
 
-      fireEvent.change(screen.getByPlaceholderText('Email address'), {
-        target: { value: 'invalid-email' },
-      });
-      fireEvent.change(screen.getByPlaceholderText('Password'), {
-        target: { value: 'password123' },
-      });
+      // Fill form with invalid email
+      const emailInput = screen.getByPlaceholderText('Email address');
+      const passwordInput = screen.getByPlaceholderText('Password');
+      
+      fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
+      fireEvent.change(passwordInput, { target: { value: 'password123' } });
+      
+      // Submit the form
       fireEvent.click(screen.getByRole('button', { name: 'Sign in' }));
 
+      // The validation should prevent login from being called and show error
       await waitFor(() => {
         expect(screen.getByText('Please enter a valid email address')).toBeInTheDocument();
       });

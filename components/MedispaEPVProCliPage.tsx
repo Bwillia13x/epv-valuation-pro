@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { runMonteCarloEPV } from '../lib/valuationModels';
 import {
   generateCalculationAuditTrail,
@@ -406,13 +406,13 @@ export default function MedispaEPVProCliPage() {
   useEffect(() => {
     const state = collectSnapshot();
     localStorage.setItem('epv-pro-state', JSON.stringify(state));
-  }, [serviceLines, providers, locations, scenario]); // Add key dependencies
+  }, [serviceLines, providers, locations, scenario]); // collectSnapshot is stable
 
   const pushLog = (msg: Omit<CliMsg, 'ts'>) => {
     setCliLog((prev) => [...prev.slice(-49), { ...msg, ts: Date.now() }]);
   };
 
-  function collectSnapshot() {
+  const collectSnapshot = useCallback(() => {
     return {
       serviceLines,
       providers,
@@ -805,7 +805,7 @@ export default function MedispaEPVProCliPage() {
       ttmOwnerAddback +
       ttmOnetimeAddback +
       ttmRentNormalization,
-    [ttmEbitdaReported]
+    [ttmEbitdaReported, ttmOwnerAddback, ttmOnetimeAddback, ttmRentNormalization]
   );
 
   const ttmEbitdaMargin = useMemo(
@@ -1069,7 +1069,7 @@ export default function MedispaEPVProCliPage() {
 
   // ========================= Additional State for Full Interface =========================
   // Navigation mapping - old tabs to new sections
-  const navigationMapping = {
+  const navigationMapping = useMemo(() => ({
     dashboard: 'dashboard',
     'company-profile': 'inputs',
     'financial-data': 'capacity',
@@ -1083,7 +1083,7 @@ export default function MedispaEPVProCliPage() {
     'cross-checks': 'validation',
     benchmarks: 'data',
     'quality-metrics': 'notes',
-  };
+  }), []);
 
   // CLI state
   const [cliLog, setCliLog] = useState<CliMsg[]>([]);
@@ -1349,7 +1349,7 @@ export default function MedispaEPVProCliPage() {
       epvEnterprise,
       epvEquity,
     };
-  }, [currentEbitda, locations, taxRate, scenarioWacc]);
+  }, [currentEbitda, locations]); // Remove taxRate and scenarioWacc as they're not used
 
   // Monte Carlo state
   const mcStats = useMemo(() => {
