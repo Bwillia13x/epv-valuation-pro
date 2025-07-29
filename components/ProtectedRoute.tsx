@@ -81,7 +81,7 @@ export default function ProtectedRoute({
               Access Denied
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              You don't have sufficient permissions to access this resource.
+              You don&apos;t have the required permissions to access this area.
             </p>
             <p className="mt-1 text-center text-xs text-gray-500">
               Required role: {requireRole} | Your role: {user.role}

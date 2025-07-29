@@ -477,7 +477,7 @@ export default function MedispaEPVProCliPage() {
       daysPerWeek,
       roomUtilization,
     };
-  }
+  }, []); // Empty deps array since this is just a snapshot of current state
 
   function applySnapshot(data: any) {
     const setters: Record<string, (value: any) => void> = {
