@@ -99,7 +99,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
   const isItemActive = (item: NavigationItem): boolean => {
     if (item.id === activeSection) return true;
-    return item.children?.some(child => child.id === activeSection) || false;
+    return item.children?.some((child) => child.id === activeSection) || false;
   };
 
   const getProgressPercent = (item: NavigationItem): number => {
@@ -120,9 +120,10 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     const baseClasses = `
       group relative flex items-center w-full text-left transition-all duration-200
       ${level === 0 ? 'px-3 py-2.5' : 'px-6 py-2'}
-      ${theme === 'dark' 
-        ? 'text-slate-300 hover:text-white hover:bg-slate-700' 
-        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+      ${
+        theme === 'dark'
+          ? 'text-slate-300 hover:text-white hover:bg-slate-700'
+          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
       }
     `;
 
@@ -148,7 +149,9 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           aria-expanded={hasChildren ? isExpanded : undefined}
         >
           {/* Icon */}
-          <span className={`flex-shrink-0 ${isCollapsed ? 'mr-0' : 'mr-3'} text-lg`}>
+          <span
+            className={`flex-shrink-0 ${isCollapsed ? 'mr-0' : 'mr-3'} text-lg`}
+          >
             {item.icon}
           </span>
 
@@ -156,17 +159,19 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           {!isCollapsed && (
             <>
               <span className="flex-1 text-sm">{item.label}</span>
-              
+
               {/* Progress indicator */}
               {item.hasProgress && progressPercent > 0 && (
                 <div className="flex items-center ml-2">
                   <div className="w-6 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-green-500 transition-all duration-300"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
-                  <span className="ml-1 text-xs text-slate-500">{progressPercent}%</span>
+                  <span className="ml-1 text-xs text-slate-500">
+                    {progressPercent}%
+                  </span>
                 </div>
               )}
 
@@ -187,7 +192,9 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         {/* Children */}
         {hasChildren && isExpanded && !isCollapsed && (
           <div className="mt-1 space-y-1">
-            {item.children!.map(child => renderNavigationItem(child, level + 1))}
+            {item.children!.map((child) =>
+              renderNavigationItem(child, level + 1)
+            )}
           </div>
         )}
       </div>
@@ -198,9 +205,10 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     ${className}
     flex flex-col h-full transition-all duration-300 ease-in-out
     ${isCollapsed ? 'w-16' : 'w-64'}
-    ${theme === 'dark' 
-      ? 'bg-slate-800 border-slate-700' 
-      : 'bg-white border-slate-200'
+    ${
+      theme === 'dark'
+        ? 'bg-slate-800 border-slate-700'
+        : 'bg-white border-slate-200'
     }
     border-r shadow-sm
   `;
@@ -208,17 +216,21 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   return (
     <aside className={sidebarClasses}>
       {/* Header */}
-      <div className={`flex items-center justify-between p-4 border-b ${
-        theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
-      }`}>
+      <div
+        className={`flex items-center justify-between p-4 border-b ${
+          theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
+        }`}
+      >
         {!isCollapsed && (
-          <h2 className={`text-lg font-semibold ${
-            theme === 'dark' ? 'text-white' : 'text-slate-900'
-          }`}>
+          <h2
+            className={`text-lg font-semibold ${
+              theme === 'dark' ? 'text-white' : 'text-slate-900'
+            }`}
+          >
             EPV Valuation Pro
           </h2>
         )}
-        
+
         <button
           onClick={onToggleCollapse}
           className={`p-1.5 rounded-lg transition-colors ${
@@ -249,31 +261,46 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4">
         <div className="space-y-1">
-          {navigationStructure.map(item => renderNavigationItem(item))}
+          {navigationStructure.map((item) => renderNavigationItem(item))}
         </div>
       </nav>
 
       {/* Footer - Workflow Status */}
       {!isCollapsed && (
-        <div className={`p-4 border-t ${
-          theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
-        }`}>
-          <div className={`text-xs ${
-            theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
-          }`}>
+        <div
+          className={`p-4 border-t ${
+            theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
+          }`}
+        >
+          <div
+            className={`text-xs ${
+              theme === 'dark' ? 'text-slate-400' : 'text-slate-500'
+            }`}
+          >
             Workflow Progress
           </div>
           <div className="mt-2 space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className={theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}>
+              <span
+                className={
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+                }
+              >
                 Overall Completion
               </span>
-              <span className={theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}>
+              <span
+                className={
+                  theme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+                }
+              >
                 35%
               </span>
             </div>
             <div className="w-full bg-slate-200 rounded-full h-2">
-              <div className="bg-blue-500 h-2 rounded-full transition-all duration-300" style={{ width: '35%' }} />
+              <div
+                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                style={{ width: '35%' }}
+              />
             </div>
           </div>
         </div>

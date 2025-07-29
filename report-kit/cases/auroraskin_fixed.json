@@ -264,7 +264,9 @@
       "revenue_growth": { "mean": 8.0, "std": 2.0 }
     },
     "results": {
-      "irr_distribution": [12.5, 15.2, 18.1, 20.8, 22.8, 25.1, 27.9, 30.2, 33.1],
+      "irr_distribution": [
+        12.5, 15.2, 18.1, 20.8, 22.8, 25.1, 27.9, 30.2, 33.1
+      ],
       "percentiles": {
         "p10": 18.5,
         "p25": 20.2,
@@ -315,7 +317,7 @@
         "impact": 4.4
       },
       {
-        "name": "Exit Multiple", 
+        "name": "Exit Multiple",
         "base_value": 8.0,
         "low_value": 7.5,
         "high_value": 8.5,
@@ -367,4 +369,4 @@
     "exit_multiple": 8.0,
     "revenue_growth": 0.08
   }
-} 
+}

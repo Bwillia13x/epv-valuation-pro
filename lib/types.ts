@@ -18,8 +18,19 @@ export interface FinancialDatasetV1 {
 }
 
 export interface AgentAnalysis {
-  agentType: 'financial-analyst' | 'financial-analyst-b' | 'quant-finance-modeler' | 'value-investing-pe-analyst';
-  recommendation: 'BUY' | 'HOLD' | 'SELL' | 'CONDITIONAL' | 'FAVORABLE' | 'CAUTION' | 'UNFAVORABLE';
+  agentType:
+    | 'financial-analyst'
+    | 'financial-analyst-b'
+    | 'quant-finance-modeler'
+    | 'value-investing-pe-analyst';
+  recommendation:
+    | 'BUY'
+    | 'HOLD'
+    | 'SELL'
+    | 'CONDITIONAL'
+    | 'FAVORABLE'
+    | 'CAUTION'
+    | 'UNFAVORABLE';
   enterpriseValue: number;
   confidence: 'HIGH' | 'MEDIUM' | 'LOW';
   keyRisks: string[];
@@ -45,7 +56,7 @@ export interface ServiceLine {
   price: number; // per unit (annual for memberships)
   volume: number; // annual units per location
   cogsPct: number; // as decimal 0..1
-  kind: "service" | "retail";
+  kind: 'service' | 'retail';
   visitUnits: number; // appointment slots consumed per unit (retail = 0)
   isMembership?: boolean; // for CAC-based intangible
 }
@@ -59,40 +70,40 @@ export interface ProviderType {
   utilization: number; // 0..1
 }
 
-export type EPVMethod = "Owner Earnings" | "NOPAT (EBIT-based)";
+export type EPVMethod = 'Owner Earnings' | 'NOPAT (EBIT-based)';
 
 export type RecommendedMethod =
-  | "EPV Only"
-  | "Asset Reproduction"
-  | "Conservative: Min"
-  | "Opportunistic: Max"
-  | "Blend: 70% EPV / 30% Asset";
+  | 'EPV Only'
+  | 'Asset Reproduction'
+  | 'Conservative: Min'
+  | 'Opportunistic: Max'
+  | 'Blend: 70% EPV / 30% Asset';
 
 export interface EPVInputs {
   // Service lines
   serviceLines: ServiceLine[];
-  
+
   // Provider capacity
   providers: ProviderType[];
   locations: number;
-  
+
   // Cost structure
   clinicalLaborPct: number; // % of revenue
   marketingPct: number;
   adminPct: number;
   rentPerLocation: number; // annual
-  
+
   // Financial parameters
   wacc: number;
   taxRate: number;
   growthRate: number;
   terminalMultiple: number;
-  
+
   // Normalization adjustments
   ownerAddBack: number;
   depreciation: number;
   maintenanceCapex: number;
-  
+
   // Balance sheet
   cash: number;
   debt: number;
@@ -103,16 +114,16 @@ export interface EPVOutputs {
   // Core valuation
   enterpriseValue: number;
   equityValue: number;
-  
+
   // Financial metrics
   revenue: number;
   normalizedEBITDA: number;
   ebitdaMargin: number;
-  
+
   // Multiples
   evRevenue: number;
   evEBITDA: number;
-  
+
   // Sensitivity data
   sensitivityMatrix: number[][];
   scenarios: {
@@ -120,7 +131,7 @@ export interface EPVOutputs {
     bull: number;
     bear: number;
   };
-  
+
   // Monte Carlo results
   monteCarloResults?: {
     mean: number;
@@ -194,5 +205,9 @@ export interface SimulationResult {
 
 // Helper functions type definitions
 export type GetSeriesFunction = (metric: string, component: string) => number[];
-export type GetValueFunction = (metric: string, component: string, year: string) => number;
+export type GetValueFunction = (
+  metric: string,
+  component: string,
+  year: string
+) => number;
 export type ListComponentsFunction = (metric: string) => string[];

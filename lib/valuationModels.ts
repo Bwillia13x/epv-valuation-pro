@@ -18,10 +18,13 @@ export function percentile(sorted: number[], p: number) {
 
 function normal(mean: number, sd: number) {
   // Box-Muller transform
-  let u = 0, v = 0;
+  let u = 0,
+    v = 0;
   while (u === 0) u = Math.random();
   while (v === 0) v = Math.random();
-  return mean + sd * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  return (
+    mean + sd * Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v)
+  );
 }
 
 // Enhanced distribution functions
@@ -29,7 +32,7 @@ export function triangular(min: number, mode: number, max: number): number {
   // Triangular distribution sampling
   const u = Math.random();
   const f = (mode - min) / (max - min);
-  
+
   if (u < f) {
     return min + Math.sqrt(u * (max - min) * (mode - min));
   } else {
@@ -38,60 +41,68 @@ export function triangular(min: number, mode: number, max: number): number {
 }
 
 // Simple trend-based forecasting with moving average (not true ARIMA)
-export function forecastTrendMA(values: number[], periods: number = 5, volatilityScale: number = 0.3): number[] {
+export function forecastTrendMA(
+  values: number[],
+  periods: number = 5,
+  volatilityScale: number = 0.3
+): number[] {
   if (values.length < 2) {
     // Fallback to last value if insufficient data
     return Array(periods).fill(values[values.length - 1] || 0);
   }
-  
+
   if (values.length < 4) {
     // Simple CAGR for short series
-    const cagr = Math.pow(values[values.length - 1] / values[0], 1 / (values.length - 1)) - 1;
+    const cagr =
+      Math.pow(values[values.length - 1] / values[0], 1 / (values.length - 1)) -
+      1;
     const forecasts = [];
     let lastValue = values[values.length - 1];
     for (let i = 0; i < periods; i++) {
-      lastValue *= (1 + cagr);
+      lastValue *= 1 + cagr;
       forecasts.push(lastValue);
     }
     return forecasts;
   }
-  
+
   // Enhanced trend analysis with seasonal adjustment
   const n = values.length;
   const weights = values.map((_, i) => i + 1); // Linear weights favoring recent data
   const weightSum = weights.reduce((sum, w) => sum + w, 0);
-  
+
   // Weighted moving average
-  const weightedAvg = values.reduce((sum, val, i) => sum + val * weights[i], 0) / weightSum;
-  
+  const weightedAvg =
+    values.reduce((sum, val, i) => sum + val * weights[i], 0) / weightSum;
+
   // Trend calculation using linear regression
   const xMean = (n - 1) / 2;
   const yMean = values.reduce((sum, val) => sum + val, 0) / n;
-  
+
   let numerator = 0;
   let denominator = 0;
-  
+
   for (let i = 0; i < n; i++) {
     numerator += (i - xMean) * (values[i] - yMean);
     denominator += (i - xMean) * (i - xMean);
   }
-  
+
   const trend = denominator !== 0 ? numerator / denominator : 0;
   const intercept = yMean - trend * xMean;
-  
+
   // Generate forecasts with trend and variance adjustment
   const forecasts = [];
   const residuals = values.map((val, i) => val - (intercept + trend * i));
-  const residualVariance = residuals.reduce((sum, r) => sum + r * r, 0) / (n - 2);
+  const residualVariance =
+    residuals.reduce((sum, r) => sum + r * r, 0) / (n - 2);
   const volatility = Math.sqrt(residualVariance);
-  
+
   for (let i = 0; i < periods; i++) {
     const trendForecast = intercept + trend * (n + i);
     // Add controlled noise based on historical volatility
     const noise = normal(0, volatility * volatilityScale);
     forecasts.push(Math.max(0, trendForecast + noise));
   }
-  
+
   return forecasts;
 }
 
@@ -104,12 +115,12 @@ export interface SynergyParams {
 }
 
 export function calculateSynergies(
-  baseRevenue: number, 
-  baseEBITDA: number, 
+  baseRevenue: number,
+  baseEBITDA: number,
   params: SynergyParams
 ): number {
   let synergy = 0;
-  
+
   switch (params.method) {
     case 'margin_uplift':
       // Apply margin uplift to revenue
@@ -126,29 +137,29 @@ export function calculateSynergies(
       synergy = marginComponent + fixedComponent;
       break;
   }
-  
+
   // Apply phase-in adjustment if specified
   if (params.phaseInMonths && params.phaseInMonths < 12) {
     const phaseInFactor = params.phaseInMonths / 12;
     synergy *= phaseInFactor;
   }
-  
+
   return synergy;
 }
 
 export interface MonteCarloEPVInput {
-  adjustedEarnings: number;   // steady-state Owner Earnings or NOPAT
-  wacc: number;               // base WACC (decimal)
-  totalRevenue: number;       // used to scale capex % shocks
-  ebitMargin: number;         // current margin (for shock sd)
-  capexMode: "percent" | "amount";
+  adjustedEarnings: number; // steady-state Owner Earnings or NOPAT
+  wacc: number; // base WACC (decimal)
+  totalRevenue: number; // used to scale capex % shocks
+  ebitMargin: number; // current margin (for shock sd)
+  capexMode: 'percent' | 'amount';
   maintenanceCapexPct: number;
-  maintCapex: number;         // absolute capex if mode === amount
-  da: number;                 // depreciation & amortisation
-  cash: number;               // non-operating cash
-  debt: number;               // interest-bearing debt
-  taxRate: number;            // decimal
-  runs?: number;              // default 500
+  maintCapex: number; // absolute capex if mode === amount
+  da: number; // depreciation & amortisation
+  cash: number; // non-operating cash
+  debt: number; // interest-bearing debt
+  taxRate: number; // decimal
+  runs?: number; // default 500
 }
 
 // Enhanced Monte Carlo parameters
@@ -192,7 +203,11 @@ export function runMonteCarloEPV(
       const [min, mode, max] = input.waccTriangular;
       wacc = clamp(triangular(min, mode, max), 0.03, 0.5);
     } else {
-      wacc = clamp(normal(input.waccMean || input.wacc, input.waccStd || 0.01), 0.03, 0.5);
+      wacc = clamp(
+        normal(input.waccMean || input.wacc, input.waccStd || 0.01),
+        0.03,
+        0.5
+      );
     }
 
     // Enhanced revenue growth sampling
@@ -220,50 +235,69 @@ export function runMonteCarloEPV(
     const nopat = ebit * (1 - input.taxRate);
 
     // Enhanced capex modeling - only sample if in percent mode
-    const maintCapexPct = input.capexMode === "percent" 
-      ? clamp(normal(input.maintenanceCapexPct, 0.01), 0.005, 0.2)
-      : input.maintenanceCapexPct;
-    
-    const maint = input.capexMode === "percent"
-      ? maintCapexPct * rev
-      : input.maintCapex;
+    const maintCapexPct =
+      input.capexMode === 'percent'
+        ? clamp(normal(input.maintenanceCapexPct, 0.01), 0.005, 0.2)
+        : input.maintenanceCapexPct;
+
+    const maint =
+      input.capexMode === 'percent' ? maintCapexPct * rev : input.maintCapex;
 
     const adj = nopat + input.da - maint;
-    
+
     // INSTITUTIONAL-GRADE: Enhanced precision valuation approach
     let ev: number;
-    const useExitMultiple = input.valuationApproach === 'multiple' || 
-                           (input.valuationApproach === undefined && input.exitMultipleTriangular);
-    
+    const useExitMultiple =
+      input.valuationApproach === 'multiple' ||
+      (input.valuationApproach === undefined && input.exitMultipleTriangular);
+
     if (useExitMultiple && input.exitMultipleTriangular) {
       const [min, mode, max] = input.exitMultipleTriangular;
       const exitMultiple = triangular(min, mode, max);
       // Exit multiple on after-tax EBITDA for proper tax treatment
       const finalEBITDA = PrecisionMath.multiply(rev, margin);
-      const afterTaxEBITDA = PrecisionMath.multiply(finalEBITDA, (1 - input.taxRate));
+      const afterTaxEBITDA = PrecisionMath.multiply(
+        finalEBITDA,
+        1 - input.taxRate
+      );
       ev = PrecisionMath.multiply(afterTaxEBITDA, exitMultiple);
       detailedResults.push({
-        wacc, revenue: rev, margin, exitMultiple, ev, equity: ev + input.cash - input.debt
+        wacc,
+        revenue: rev,
+        margin,
+        exitMultiple,
+        ev,
+        equity: ev + input.cash - input.debt,
       });
     } else {
       // Traditional DCF approach with enhanced precision
       if (wacc > 0) {
         const epvResult = calculateEPVWithPrecision(adj, wacc);
         ev = epvResult.epv;
-        
+
         // Log precision warnings for large valuations
-        if (epvResult.precisionMetrics.warnings.length > 0 && Math.abs(adj) > 100000000) {
-          console.warn('Large valuation precision warning:', epvResult.precisionMetrics.warnings);
+        if (
+          epvResult.precisionMetrics.warnings.length > 0 &&
+          Math.abs(adj) > 100000000
+        ) {
+          console.warn(
+            'Large valuation precision warning:',
+            epvResult.precisionMetrics.warnings
+          );
         }
       } else {
         ev = 0;
       }
-      
+
       detailedResults.push({
-        wacc, revenue: rev, margin, ev, equity: ev + input.cash - input.debt
+        wacc,
+        revenue: rev,
+        margin,
+        ev,
+        equity: ev + input.cash - input.debt,
       });
     }
-    
+
     const equity = ev + input.cash - input.debt;
 
     evDist.push(ev);
@@ -277,7 +311,7 @@ export function runMonteCarloEPV(
   // INSTITUTIONAL-GRADE: Compute statistics with enhanced precision
   const meanEV = PrecisionMath.divide(sumEV, evDist.length);
   const variance = PrecisionMath.divide(
-    PrecisionMath.sum(evDist.map(val => Math.pow(val - meanEV, 2))),
+    PrecisionMath.sum(evDist.map((val) => Math.pow(val - meanEV, 2))),
     evDist.length
   );
   const volatility = Math.sqrt(variance);
@@ -286,21 +320,21 @@ export function runMonteCarloEPV(
     mean: meanEV,
     median: percentile(evDist, 0.5),
     p5: percentile(evDist, 0.05),
-    p10: percentile(evDist, 0.10),
+    p10: percentile(evDist, 0.1),
     p25: percentile(evDist, 0.25),
     p75: percentile(evDist, 0.75),
-    p90: percentile(evDist, 0.90),
+    p90: percentile(evDist, 0.9),
     p95: percentile(evDist, 0.95),
     meanEquity: eqDist.reduce((a, b) => a + b, 0) / eqDist.length,
     p5Equity: percentile(eqDist, 0.05),
-    p10Equity: percentile(eqDist, 0.10),
+    p10Equity: percentile(eqDist, 0.1),
     p25Equity: percentile(eqDist, 0.25),
     p75Equity: percentile(eqDist, 0.75),
-    p90Equity: percentile(eqDist, 0.90),
+    p90Equity: percentile(eqDist, 0.9),
     p95Equity: percentile(eqDist, 0.95),
     // Enhanced analytics
     volatility,
     detailedResults: detailedResults.slice(0, 100), // Sample for analysis
-    rawResults: { evDist, eqDist }
+    rawResults: { evDist, eqDist },
   };
-} 
+}

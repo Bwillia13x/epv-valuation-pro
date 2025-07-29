@@ -1,572 +1,587 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scenario Analysis - CPP Visual Report Kit</title>
-    <link rel="stylesheet" href="../public/css/report.css">
+    <link rel="stylesheet" href="../public/css/report.css" />
     <script src="../vendor/echarts.min.js"></script>
     <script src="../public/js/format.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="chart-container">
-        <div class="scenario-layout">
-            <div class="card-header">
-                <h1 class="card-title" id="chart-title">Scenario Analysis</h1>
-                <p class="card-subtitle" id="chart-subtitle">Base / Downside / Upside</p>
-            </div>
-            
-            <div class="scenario-grid">
-                <!-- Scenario Comparison Table -->
-                <div class="scenario-section full-width">
-                    <h3 class="section-title">Key Metrics Comparison</h3>
-                    <table class="scenario-table" id="scenario-table">
-                        <thead>
-                            <tr>
-                                <th class="metric-header">Metric</th>
-                                <th class="scenario-header downside">Downside</th>
-                                <th class="scenario-header base">Base Case</th>
-                                <th class="scenario-header upside">Upside</th>
-                                <th class="range-header">Range</th>
-                            </tr>
-                        </thead>
-                        <tbody id="scenario-tbody">
-                            <!-- Dynamic content will be inserted here -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Revenue Growth Chart -->
-                <div class="scenario-section">
-                    <h3 class="section-title">Revenue Trajectory</h3>
-                    <div id="revenue-chart" class="chart-medium"></div>
-                </div>
-                
-                <!-- Returns Comparison -->
-                <div class="scenario-section">
-                    <h3 class="section-title">Returns Comparison</h3>
-                    <div id="returns-chart" class="chart-medium"></div>
-                </div>
-                
-                <!-- EBITDA Bridge by Scenario -->
-                <div class="scenario-section full-width">
-                    <h3 class="section-title">EBITDA Evolution</h3>
-                    <div id="ebitda-evolution" class="chart-medium"></div>
-                </div>
-            </div>
+      <div class="scenario-layout">
+        <div class="card-header">
+          <h1 class="card-title" id="chart-title">Scenario Analysis</h1>
+          <p class="card-subtitle" id="chart-subtitle">
+            Base / Downside / Upside
+          </p>
         </div>
+
+        <div class="scenario-grid">
+          <!-- Scenario Comparison Table -->
+          <div class="scenario-section full-width">
+            <h3 class="section-title">Key Metrics Comparison</h3>
+            <table class="scenario-table" id="scenario-table">
+              <thead>
+                <tr>
+                  <th class="metric-header">Metric</th>
+                  <th class="scenario-header downside">Downside</th>
+                  <th class="scenario-header base">Base Case</th>
+                  <th class="scenario-header upside">Upside</th>
+                  <th class="range-header">Range</th>
+                </tr>
+              </thead>
+              <tbody id="scenario-tbody">
+                <!-- Dynamic content will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Revenue Growth Chart -->
+          <div class="scenario-section">
+            <h3 class="section-title">Revenue Trajectory</h3>
+            <div id="revenue-chart" class="chart-medium"></div>
+          </div>
+
+          <!-- Returns Comparison -->
+          <div class="scenario-section">
+            <h3 class="section-title">Returns Comparison</h3>
+            <div id="returns-chart" class="chart-medium"></div>
+          </div>
+
+          <!-- EBITDA Bridge by Scenario -->
+          <div class="scenario-section full-width">
+            <h3 class="section-title">EBITDA Evolution</h3>
+            <div id="ebitda-evolution" class="chart-medium"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        function calculateScenarios(caseData) {
-            const base = {
-                name: 'Base Case',
-                revenueGrowth: caseData.assumptions.revenue_growth,
-                marginImprovement: 0.005, // 50 bps
-                exitMultiple: 8.0,
-                capexRate: caseData.assumptions.maintenance_capex_pct
-            };
-            
-            const downside = {
-                name: 'Downside',
-                revenueGrowth: base.revenueGrowth - 0.03, // -300 bps
-                marginImprovement: 0.0, // No improvement
-                exitMultiple: 6.5,
-                capexRate: base.capexRate + 0.005 // +50 bps
-            };
-            
-            const upside = {
-                name: 'Upside',
-                revenueGrowth: base.revenueGrowth + 0.03, // +300 bps
-                marginImprovement: 0.01, // 100 bps
-                exitMultiple: 9.5,
-                capexRate: base.capexRate - 0.005 // -50 bps
-            };
-            
-            const scenarios = [downside, base, upside];
-            
-            // Calculate detailed metrics for each scenario
-            scenarios.forEach(scenario => {
-                const baseRevenue = caseData.ttm_metrics.ttm_revenue;
-                const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
-                const baseMargin = baseEbitda / baseRevenue;
-                
-                // 5-year projections
-                scenario.year5Revenue = baseRevenue * Math.pow(1 + scenario.revenueGrowth, 5);
-                scenario.year5Margin = baseMargin + (scenario.marginImprovement * 5);
-                scenario.year5Ebitda = scenario.year5Revenue * scenario.year5Margin;
-                
-                // Exit valuation
-                scenario.exitEv = scenario.year5Ebitda * scenario.exitMultiple;
-                scenario.exitDebt = caseData.irr_analysis.exit_debt; // Assume same debt paydown
-                scenario.exitEquity = scenario.exitEv - scenario.exitDebt;
-                
-                // Returns
-                scenario.moic = scenario.exitEquity / caseData.sources_uses.sponsor_equity;
-                scenario.irr = Math.pow(scenario.moic, 1/5) - 1;
-                
-                // Revenue CAGR
-                scenario.revenueCagr = Math.pow(scenario.year5Revenue / baseRevenue, 1/5) - 1;
-            });
-            
-            return scenarios;
-        }
+      function calculateScenarios(caseData) {
+        const base = {
+          name: 'Base Case',
+          revenueGrowth: caseData.assumptions.revenue_growth,
+          marginImprovement: 0.005, // 50 bps
+          exitMultiple: 8.0,
+          capexRate: caseData.assumptions.maintenance_capex_pct,
+        };
 
-        function createScenarioTable(scenarios, caseData) {
-            const tbody = document.getElementById('scenario-tbody');
-            tbody.innerHTML = '';
-            
-            const metrics = [
-                {
-                    name: 'Revenue CAGR',
-                    formatter: (s) => window.__FORMAT__.pct(s.revenueCagr),
-                    field: 'revenueCagr'
-                },
-                {
-                    name: 'Year 5 Revenue',
-                    formatter: (s) => window.__FORMAT__.abbr(s.year5Revenue),
-                    field: 'year5Revenue'
-                },
-                {
-                    name: 'Year 5 EBITDA Margin',
-                    formatter: (s) => window.__FORMAT__.pct(s.year5Margin),
-                    field: 'year5Margin'
-                },
-                {
-                    name: 'Year 5 EBITDA',
-                    formatter: (s) => window.__FORMAT__.abbr(s.year5Ebitda),
-                    field: 'year5Ebitda'
-                },
-                {
-                    name: 'Exit Multiple',
-                    formatter: (s) => s.exitMultiple.toFixed(1) + '×',
-                    field: 'exitMultiple'
-                },
-                {
-                    name: 'Exit EV',
-                    formatter: (s) => window.__FORMAT__.abbr(s.exitEv),
-                    field: 'exitEv'
-                },
-                {
-                    name: 'Exit Equity',
-                    formatter: (s) => window.__FORMAT__.abbr(s.exitEquity),
-                    field: 'exitEquity'
-                },
-                {
-                    name: 'MOIC',
-                    formatter: (s) => s.moic.toFixed(1) + '×',
-                    field: 'moic'
-                },
-                {
-                    name: 'IRR',
-                    formatter: (s) => window.__FORMAT__.pct(s.irr),
-                    field: 'irr'
-                }
-            ];
-            
-            metrics.forEach(metric => {
-                const row = document.createElement('tr');
-                
-                // Metric name
-                const nameCell = document.createElement('td');
-                nameCell.textContent = metric.name;
-                nameCell.className = 'metric-name';
-                row.appendChild(nameCell);
-                
-                // Scenario values
-                scenarios.forEach((scenario, index) => {
-                    const cell = document.createElement('td');
-                    cell.textContent = metric.formatter(scenario);
-                    cell.className = `scenario-value ${['downside', 'base', 'upside'][index]}`;
-                    row.appendChild(cell);
-                });
-                
-                // Range
-                const values = scenarios.map(s => s[metric.field]);
-                const min = Math.min(...values);
-                const max = Math.max(...values);
-                const range = max - min;
-                const rangeCell = document.createElement('td');
-                
-                if (metric.name.includes('%') || metric.name === 'IRR' || metric.name === 'Revenue CAGR' || metric.name === 'Year 5 EBITDA Margin') {
-                    rangeCell.textContent = window.__FORMAT__.pct(range);
-                } else if (metric.name.includes('Multiple')) {
-                    rangeCell.textContent = range.toFixed(1) + '×';
-                } else if (metric.name === 'MOIC') {
-                    rangeCell.textContent = range.toFixed(1) + '×';
-                } else {
-                    rangeCell.textContent = window.__FORMAT__.abbr(range);
-                }
-                
-                rangeCell.className = 'range-value';
-                row.appendChild(rangeCell);
-                
-                tbody.appendChild(row);
-            });
-        }
+        const downside = {
+          name: 'Downside',
+          revenueGrowth: base.revenueGrowth - 0.03, // -300 bps
+          marginImprovement: 0.0, // No improvement
+          exitMultiple: 6.5,
+          capexRate: base.capexRate + 0.005, // +50 bps
+        };
 
-        function createRevenueChart(scenarios, caseData) {
-            const chart = echarts.init(document.getElementById('revenue-chart'));
-            
-            const years = [0, 1, 2, 3, 4, 5];
-            const baseRevenue = caseData.ttm_metrics.ttm_revenue;
-            
-            const series = scenarios.map((scenario, index) => {
-                const data = years.map(year => {
-                    if (year === 0) return baseRevenue;
-                    return baseRevenue * Math.pow(1 + scenario.revenueGrowth, year);
-                });
-                
-                return {
-                    name: scenario.name,
-                    type: 'line',
-                    data: data,
-                    lineStyle: {
-                        width: index === 1 ? 3 : 2 // Make base case thicker
-                    },
-                    itemStyle: {
-                        color: ['#ef4444', '#2563eb', '#22c55e'][index]
-                    },
-                    symbolSize: 6
-                };
-            });
-            
-            const option = {
-                grid: {
-                    left: '15%',
-                    right: '10%',
-                    top: '10%',
-                    bottom: '20%'
-                },
-                xAxis: {
-                    type: 'category',
-                    data: years.map(y => y === 0 ? 'TTM' : `Y${y}`),
-                    axisLabel: {
-                        fontSize: 10
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        formatter: function(value) {
-                            return window.__FORMAT__.abbr(value);
-                        },
-                        fontSize: 10
-                    }
-                },
-                series: series,
-                legend: {
-                    bottom: 0,
-                    textStyle: {
-                        fontSize: 10
-                    }
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    formatter: function(params) {
-                        let result = params[0].name + '<br/>';
-                        params.forEach(p => {
-                            result += `${p.seriesName}: ${window.__FORMAT__.abbr(p.value)}<br/>`;
-                        });
-                        return result;
-                    }
-                }
-            };
-            
-            chart.setOption(option);
-            return chart;
-        }
+        const upside = {
+          name: 'Upside',
+          revenueGrowth: base.revenueGrowth + 0.03, // +300 bps
+          marginImprovement: 0.01, // 100 bps
+          exitMultiple: 9.5,
+          capexRate: base.capexRate - 0.005, // -50 bps
+        };
 
-        function createReturnsChart(scenarios) {
-            const chart = echarts.init(document.getElementById('returns-chart'));
-            
-            const data = scenarios.map((scenario, index) => ({
-                name: scenario.name,
-                irr: scenario.irr * 100,
-                moic: scenario.moic,
-                color: ['#ef4444', '#2563eb', '#22c55e'][index]
-            }));
-            
-            const option = {
-                grid: {
-                    left: '15%',
-                    right: '15%',
-                    top: '10%',
-                    bottom: '20%'
-                },
-                xAxis: {
-                    type: 'value',
-                    name: 'MOIC',
-                    nameLocation: 'middle',
-                    nameGap: 25,
-                    axisLabel: {
-                        formatter: '{value}×',
-                        fontSize: 10
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    name: 'IRR (%)',
-                    nameLocation: 'middle',
-                    nameGap: 40,
-                    axisLabel: {
-                        formatter: '{value}%',
-                        fontSize: 10
-                    }
-                },
-                series: [{
-                    type: 'scatter',
-                    data: data.map(d => [d.moic, d.irr]),
-                    symbolSize: 12,
-                    itemStyle: {
-                        color: function(params) {
-                            return data[params.dataIndex].color;
-                        }
-                    },
-                    label: {
-                        show: true,
-                        position: 'top',
-                        formatter: function(params) {
-                            return data[params.dataIndex].name;
-                        },
-                        fontSize: 10
-                    }
-                }],
-                tooltip: {
-                    trigger: 'item',
-                    formatter: function(params) {
-                        const d = data[params.dataIndex];
-                        return `${d.name}<br/>MOIC: ${d.moic.toFixed(1)}×<br/>IRR: ${d.irr.toFixed(1)}%`;
-                    }
-                }
-            };
-            
-            chart.setOption(option);
-            return chart;
-        }
+        const scenarios = [downside, base, upside];
 
-        function createEbitdaEvolution(scenarios, caseData) {
-            const chart = echarts.init(document.getElementById('ebitda-evolution'));
-            
-            const years = [0, 1, 2, 3, 4, 5];
-            const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
-            const baseRevenue = caseData.ttm_metrics.ttm_revenue;
-            const baseMargin = baseEbitda / baseRevenue;
-            
-            const series = scenarios.map((scenario, index) => {
-                const data = years.map(year => {
-                    if (year === 0) return baseEbitda;
-                    const revenue = baseRevenue * Math.pow(1 + scenario.revenueGrowth, year);
-                    const margin = baseMargin + (scenario.marginImprovement * year);
-                    return revenue * margin;
-                });
-                
-                return {
-                    name: scenario.name,
-                    type: 'line',
-                    data: data,
-                    lineStyle: {
-                        width: index === 1 ? 3 : 2
-                    },
-                    itemStyle: {
-                        color: ['#ef4444', '#2563eb', '#22c55e'][index]
-                    },
-                    areaStyle: {
-                        opacity: 0.1
-                    },
-                    symbolSize: 6
-                };
-            });
-            
-            const option = {
-                grid: {
-                    left: '15%',
-                    right: '10%',
-                    top: '10%',
-                    bottom: '20%'
-                },
-                xAxis: {
-                    type: 'category',
-                    data: years.map(y => y === 0 ? 'TTM' : `Y${y}`),
-                    axisLabel: {
-                        fontSize: 10
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        formatter: function(value) {
-                            return window.__FORMAT__.abbr(value);
-                        },
-                        fontSize: 10
-                    }
-                },
-                series: series,
-                legend: {
-                    bottom: 0,
-                    textStyle: {
-                        fontSize: 10
-                    }
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    formatter: function(params) {
-                        let result = params[0].name + '<br/>';
-                        params.forEach(p => {
-                            result += `${p.seriesName}: ${window.__FORMAT__.abbr(p.value)}<br/>`;
-                        });
-                        return result;
-                    }
-                }
-            };
-            
-            chart.setOption(option);
-            return chart;
-        }
+        // Calculate detailed metrics for each scenario
+        scenarios.forEach((scenario) => {
+          const baseRevenue = caseData.ttm_metrics.ttm_revenue;
+          const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
+          const baseMargin = baseEbitda / baseRevenue;
 
-        function initializeScenarioAnalysis(caseData) {
-            document.getElementById('chart-title').textContent = 'Scenario Analysis';
-            document.getElementById('chart-subtitle').textContent = 'Base / Downside / Upside • ' + (window.__TTM__ || 'TTM Analysis');
-            
-            // Calculate scenarios
-            const scenarios = calculateScenarios(caseData);
-            
-            // Create visualizations
-            createScenarioTable(scenarios, caseData);
-            createRevenueChart(scenarios, caseData);
-            createReturnsChart(scenarios);
-            createEbitdaEvolution(scenarios, caseData);
-        }
+          // 5-year projections
+          scenario.year5Revenue =
+            baseRevenue * Math.pow(1 + scenario.revenueGrowth, 5);
+          scenario.year5Margin = baseMargin + scenario.marginImprovement * 5;
+          scenario.year5Ebitda = scenario.year5Revenue * scenario.year5Margin;
 
-        // Wait for case data injection
-        function waitForData() {
-            if (window.__CASE__) {
-                initializeScenarioAnalysis(window.__CASE__);
-                window.__READY__ = true;
-            } else {
-                setTimeout(waitForData, 100);
-            }
-        }
+          // Exit valuation
+          scenario.exitEv = scenario.year5Ebitda * scenario.exitMultiple;
+          scenario.exitDebt = caseData.irr_analysis.exit_debt; // Assume same debt paydown
+          scenario.exitEquity = scenario.exitEv - scenario.exitDebt;
 
-        // Start initialization
-        waitForData();
+          // Returns
+          scenario.moic =
+            scenario.exitEquity / caseData.sources_uses.sponsor_equity;
+          scenario.irr = Math.pow(scenario.moic, 1 / 5) - 1;
+
+          // Revenue CAGR
+          scenario.revenueCagr =
+            Math.pow(scenario.year5Revenue / baseRevenue, 1 / 5) - 1;
+        });
+
+        return scenarios;
+      }
+
+      function createScenarioTable(scenarios, caseData) {
+        const tbody = document.getElementById('scenario-tbody');
+        tbody.innerHTML = '';
+
+        const metrics = [
+          {
+            name: 'Revenue CAGR',
+            formatter: (s) => window.__FORMAT__.pct(s.revenueCagr),
+            field: 'revenueCagr',
+          },
+          {
+            name: 'Year 5 Revenue',
+            formatter: (s) => window.__FORMAT__.abbr(s.year5Revenue),
+            field: 'year5Revenue',
+          },
+          {
+            name: 'Year 5 EBITDA Margin',
+            formatter: (s) => window.__FORMAT__.pct(s.year5Margin),
+            field: 'year5Margin',
+          },
+          {
+            name: 'Year 5 EBITDA',
+            formatter: (s) => window.__FORMAT__.abbr(s.year5Ebitda),
+            field: 'year5Ebitda',
+          },
+          {
+            name: 'Exit Multiple',
+            formatter: (s) => s.exitMultiple.toFixed(1) + '×',
+            field: 'exitMultiple',
+          },
+          {
+            name: 'Exit EV',
+            formatter: (s) => window.__FORMAT__.abbr(s.exitEv),
+            field: 'exitEv',
+          },
+          {
+            name: 'Exit Equity',
+            formatter: (s) => window.__FORMAT__.abbr(s.exitEquity),
+            field: 'exitEquity',
+          },
+          {
+            name: 'MOIC',
+            formatter: (s) => s.moic.toFixed(1) + '×',
+            field: 'moic',
+          },
+          {
+            name: 'IRR',
+            formatter: (s) => window.__FORMAT__.pct(s.irr),
+            field: 'irr',
+          },
+        ];
+
+        metrics.forEach((metric) => {
+          const row = document.createElement('tr');
+
+          // Metric name
+          const nameCell = document.createElement('td');
+          nameCell.textContent = metric.name;
+          nameCell.className = 'metric-name';
+          row.appendChild(nameCell);
+
+          // Scenario values
+          scenarios.forEach((scenario, index) => {
+            const cell = document.createElement('td');
+            cell.textContent = metric.formatter(scenario);
+            cell.className = `scenario-value ${['downside', 'base', 'upside'][index]}`;
+            row.appendChild(cell);
+          });
+
+          // Range
+          const values = scenarios.map((s) => s[metric.field]);
+          const min = Math.min(...values);
+          const max = Math.max(...values);
+          const range = max - min;
+          const rangeCell = document.createElement('td');
+
+          if (
+            metric.name.includes('%') ||
+            metric.name === 'IRR' ||
+            metric.name === 'Revenue CAGR' ||
+            metric.name === 'Year 5 EBITDA Margin'
+          ) {
+            rangeCell.textContent = window.__FORMAT__.pct(range);
+          } else if (metric.name.includes('Multiple')) {
+            rangeCell.textContent = range.toFixed(1) + '×';
+          } else if (metric.name === 'MOIC') {
+            rangeCell.textContent = range.toFixed(1) + '×';
+          } else {
+            rangeCell.textContent = window.__FORMAT__.abbr(range);
+          }
+
+          rangeCell.className = 'range-value';
+          row.appendChild(rangeCell);
+
+          tbody.appendChild(row);
+        });
+      }
+
+      function createRevenueChart(scenarios, caseData) {
+        const chart = echarts.init(document.getElementById('revenue-chart'));
+
+        const years = [0, 1, 2, 3, 4, 5];
+        const baseRevenue = caseData.ttm_metrics.ttm_revenue;
+
+        const series = scenarios.map((scenario, index) => {
+          const data = years.map((year) => {
+            if (year === 0) return baseRevenue;
+            return baseRevenue * Math.pow(1 + scenario.revenueGrowth, year);
+          });
+
+          return {
+            name: scenario.name,
+            type: 'line',
+            data: data,
+            lineStyle: {
+              width: index === 1 ? 3 : 2, // Make base case thicker
+            },
+            itemStyle: {
+              color: ['#ef4444', '#2563eb', '#22c55e'][index],
+            },
+            symbolSize: 6,
+          };
+        });
+
+        const option = {
+          grid: {
+            left: '15%',
+            right: '10%',
+            top: '10%',
+            bottom: '20%',
+          },
+          xAxis: {
+            type: 'category',
+            data: years.map((y) => (y === 0 ? 'TTM' : `Y${y}`)),
+            axisLabel: {
+              fontSize: 10,
+            },
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: function (value) {
+                return window.__FORMAT__.abbr(value);
+              },
+              fontSize: 10,
+            },
+          },
+          series: series,
+          legend: {
+            bottom: 0,
+            textStyle: {
+              fontSize: 10,
+            },
+          },
+          tooltip: {
+            trigger: 'axis',
+            formatter: function (params) {
+              let result = params[0].name + '<br/>';
+              params.forEach((p) => {
+                result += `${p.seriesName}: ${window.__FORMAT__.abbr(p.value)}<br/>`;
+              });
+              return result;
+            },
+          },
+        };
+
+        chart.setOption(option);
+        return chart;
+      }
+
+      function createReturnsChart(scenarios) {
+        const chart = echarts.init(document.getElementById('returns-chart'));
+
+        const data = scenarios.map((scenario, index) => ({
+          name: scenario.name,
+          irr: scenario.irr * 100,
+          moic: scenario.moic,
+          color: ['#ef4444', '#2563eb', '#22c55e'][index],
+        }));
+
+        const option = {
+          grid: {
+            left: '15%',
+            right: '15%',
+            top: '10%',
+            bottom: '20%',
+          },
+          xAxis: {
+            type: 'value',
+            name: 'MOIC',
+            nameLocation: 'middle',
+            nameGap: 25,
+            axisLabel: {
+              formatter: '{value}×',
+              fontSize: 10,
+            },
+          },
+          yAxis: {
+            type: 'value',
+            name: 'IRR (%)',
+            nameLocation: 'middle',
+            nameGap: 40,
+            axisLabel: {
+              formatter: '{value}%',
+              fontSize: 10,
+            },
+          },
+          series: [
+            {
+              type: 'scatter',
+              data: data.map((d) => [d.moic, d.irr]),
+              symbolSize: 12,
+              itemStyle: {
+                color: function (params) {
+                  return data[params.dataIndex].color;
+                },
+              },
+              label: {
+                show: true,
+                position: 'top',
+                formatter: function (params) {
+                  return data[params.dataIndex].name;
+                },
+                fontSize: 10,
+              },
+            },
+          ],
+          tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+              const d = data[params.dataIndex];
+              return `${d.name}<br/>MOIC: ${d.moic.toFixed(1)}×<br/>IRR: ${d.irr.toFixed(1)}%`;
+            },
+          },
+        };
+
+        chart.setOption(option);
+        return chart;
+      }
+
+      function createEbitdaEvolution(scenarios, caseData) {
+        const chart = echarts.init(document.getElementById('ebitda-evolution'));
+
+        const years = [0, 1, 2, 3, 4, 5];
+        const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
+        const baseRevenue = caseData.ttm_metrics.ttm_revenue;
+        const baseMargin = baseEbitda / baseRevenue;
+
+        const series = scenarios.map((scenario, index) => {
+          const data = years.map((year) => {
+            if (year === 0) return baseEbitda;
+            const revenue =
+              baseRevenue * Math.pow(1 + scenario.revenueGrowth, year);
+            const margin = baseMargin + scenario.marginImprovement * year;
+            return revenue * margin;
+          });
+
+          return {
+            name: scenario.name,
+            type: 'line',
+            data: data,
+            lineStyle: {
+              width: index === 1 ? 3 : 2,
+            },
+            itemStyle: {
+              color: ['#ef4444', '#2563eb', '#22c55e'][index],
+            },
+            areaStyle: {
+              opacity: 0.1,
+            },
+            symbolSize: 6,
+          };
+        });
+
+        const option = {
+          grid: {
+            left: '15%',
+            right: '10%',
+            top: '10%',
+            bottom: '20%',
+          },
+          xAxis: {
+            type: 'category',
+            data: years.map((y) => (y === 0 ? 'TTM' : `Y${y}`)),
+            axisLabel: {
+              fontSize: 10,
+            },
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: function (value) {
+                return window.__FORMAT__.abbr(value);
+              },
+              fontSize: 10,
+            },
+          },
+          series: series,
+          legend: {
+            bottom: 0,
+            textStyle: {
+              fontSize: 10,
+            },
+          },
+          tooltip: {
+            trigger: 'axis',
+            formatter: function (params) {
+              let result = params[0].name + '<br/>';
+              params.forEach((p) => {
+                result += `${p.seriesName}: ${window.__FORMAT__.abbr(p.value)}<br/>`;
+              });
+              return result;
+            },
+          },
+        };
+
+        chart.setOption(option);
+        return chart;
+      }
+
+      function initializeScenarioAnalysis(caseData) {
+        document.getElementById('chart-title').textContent =
+          'Scenario Analysis';
+        document.getElementById('chart-subtitle').textContent =
+          'Base / Downside / Upside • ' + (window.__TTM__ || 'TTM Analysis');
+
+        // Calculate scenarios
+        const scenarios = calculateScenarios(caseData);
+
+        // Create visualizations
+        createScenarioTable(scenarios, caseData);
+        createRevenueChart(scenarios, caseData);
+        createReturnsChart(scenarios);
+        createEbitdaEvolution(scenarios, caseData);
+      }
+
+      // Wait for case data injection
+      function waitForData() {
+        if (window.__CASE__) {
+          initializeScenarioAnalysis(window.__CASE__);
+          window.__READY__ = true;
+        } else {
+          setTimeout(waitForData, 100);
+        }
+      }
+
+      // Start initialization
+      waitForData();
     </script>
 
     <style>
-        .scenario-layout {
-            padding: 20px;
-            background: white;
-        }
-        
-        .scenario-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto auto;
-            gap: 20px;
-            height: calc(100vh - 120px);
-        }
-        
-        .scenario-section {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid var(--color-border);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .scenario-section.full-width {
-            grid-column: 1 / -1;
-        }
-        
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--color-text);
-            margin: 0 0 15px 0;
-            text-align: center;
-        }
-        
-        .chart-medium {
-            flex: 1;
-            min-height: 200px;
-        }
-        
-        .scenario-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        
-        .scenario-table th,
-        .scenario-table td {
-            padding: 8px 12px;
-            text-align: center;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 12px;
-        }
-        
-        .scenario-table th {
-            background: #f3f4f6;
-            font-weight: 600;
-            color: var(--color-text);
-        }
-        
-        .metric-header {
-            text-align: left !important;
-            width: 25%;
-        }
-        
-        .scenario-header {
-            width: 15%;
-        }
-        
-        .scenario-header.downside {
-            color: #ef4444;
-        }
-        
-        .scenario-header.base {
-            color: #2563eb;
-        }
-        
-        .scenario-header.upside {
-            color: #22c55e;
-        }
-        
-        .range-header {
-            width: 15%;
-            color: var(--color-text-light);
-        }
-        
-        .metric-name {
-            text-align: left !important;
-            font-weight: 500;
-            color: var(--color-text);
-        }
-        
-        .scenario-value {
-            font-weight: 500;
-        }
-        
-        .scenario-value.downside {
-            color: #ef4444;
-        }
-        
-        .scenario-value.base {
-            color: #2563eb;
-            font-weight: 600;
-        }
-        
-        .scenario-value.upside {
-            color: #22c55e;
-        }
-        
-        .range-value {
-            color: var(--color-text-light);
-            font-style: italic;
-        }
+      .scenario-layout {
+        padding: 20px;
+        background: white;
+      }
+
+      .scenario-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 20px;
+        height: calc(100vh - 120px);
+      }
+
+      .scenario-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid var(--color-border);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .scenario-section.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .section-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--color-text);
+        margin: 0 0 15px 0;
+        text-align: center;
+      }
+
+      .chart-medium {
+        flex: 1;
+        min-height: 200px;
+      }
+
+      .scenario-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .scenario-table th,
+      .scenario-table td {
+        padding: 8px 12px;
+        text-align: center;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 12px;
+      }
+
+      .scenario-table th {
+        background: #f3f4f6;
+        font-weight: 600;
+        color: var(--color-text);
+      }
+
+      .metric-header {
+        text-align: left !important;
+        width: 25%;
+      }
+
+      .scenario-header {
+        width: 15%;
+      }
+
+      .scenario-header.downside {
+        color: #ef4444;
+      }
+
+      .scenario-header.base {
+        color: #2563eb;
+      }
+
+      .scenario-header.upside {
+        color: #22c55e;
+      }
+
+      .range-header {
+        width: 15%;
+        color: var(--color-text-light);
+      }
+
+      .metric-name {
+        text-align: left !important;
+        font-weight: 500;
+        color: var(--color-text);
+      }
+
+      .scenario-value {
+        font-weight: 500;
+      }
+
+      .scenario-value.downside {
+        color: #ef4444;
+      }
+
+      .scenario-value.base {
+        color: #2563eb;
+        font-weight: 600;
+      }
+
+      .scenario-value.upside {
+        color: #22c55e;
+      }
+
+      .range-value {
+        color: var(--color-text-light);
+        font-style: italic;
+      }
     </style>
-</body>
-</html> 
+  </body>
+</html>

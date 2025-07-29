@@ -2,7 +2,7 @@
 
 **File:** `CLAUDE_SUBAGENT_ANALYSIS_PROMPT.md`  
 **Purpose:** Enable other Claude instances to conduct medispa investment analysis  
-**Model:** Summit EPV Valuation System v2.0  
+**Model:** Summit EPV Valuation System v2.0
 
 ---
 
@@ -52,6 +52,7 @@ Before using the prompt, ensure your data includes:
 - ✅ **Derived metrics** (margins, growth rates, ratios)
 
 ### **Data Quality Standards:**
+
 - All values in consistent units (preferably $000s)
 - Complete 3-year historical data (minimum)
 - Accurate service line classifications
@@ -62,12 +63,14 @@ Before using the prompt, ensure your data includes:
 ## 🎯 **EXPECTED OUTCOMES**
 
 ### **Analysis Quality:**
+
 - **Professional-grade** investment recommendation
 - **Quantitative valuation** using EPV methodology
 - **Risk assessment** with mitigation strategies
 - **Implementation roadmap** with monitoring framework
 
 ### **Deliverable Standards:**
+
 - **Executive summary** (2-3 pages)
 - **Detailed JSON results** (machine-readable)
 - **Python implementation** (reusable code)
@@ -78,12 +81,14 @@ Before using the prompt, ensure your data includes:
 ## ⚙️ **TECHNICAL REQUIREMENTS**
 
 ### **For Subagent Environment:**
+
 - Access to Python 3.9+ environment
 - Ability to import existing Summit EPV files
 - File creation/editing capabilities
 - JSON and Markdown output generation
 
 ### **Model Dependencies:**
+
 ```python
 # Required imports
 from unified_epv_system import EPVInputs, ServiceLine, compute_unified_epv
@@ -98,10 +103,12 @@ from dataclasses import dataclass
 ## 🔄 **ITERATIVE IMPROVEMENT**
 
 ### **Version Control:**
+
 - **v1.0:** Initial comprehensive prompt (current)
 - **Future versions:** Based on subagent feedback and results
 
 ### **Feedback Loop:**
+
 1. **Monitor subagent outputs** for quality and consistency
 2. **Identify common errors** or improvement opportunities
 3. **Refine prompt** with additional guidance or examples
@@ -112,12 +119,14 @@ from dataclasses import dataclass
 ## 📈 **SUCCESS METRICS**
 
 ### **Analysis Quality Indicators:**
+
 - ✅ **Accurate EPV calculations** (cross-validated)
 - ✅ **Proper normalization adjustments** (justified)
 - ✅ **Realistic valuation multiples** (industry benchmarked)
 - ✅ **Clear investment recommendation** (actionable)
 
 ### **Output Consistency:**
+
 - ✅ **Standard deliverable format** (matches examples)
 - ✅ **Professional presentation** (investment-grade)
 - ✅ **Complete documentation** (methodology transparent)
@@ -146,11 +155,13 @@ from dataclasses import dataclass
 ## 📚 **REFERENCE MATERIALS**
 
 ### **Study These Examples:**
+
 - **`COMPREHENSIVE_MEDISPA_INVESTMENT_ANALYSIS_REPORT.md`** - Target output quality
 - **`new_medispa_case_simulation.py`** - Code implementation pattern
 - **`new_medispa_results_20250728_063232.json`** - JSON output format
 
 ### **Methodology References:**
+
 - **Summit EPV Framework** - Core valuation approach
 - **Greenwald EPV Method** - Theoretical foundation
 - **Healthcare Services Benchmarks** - Industry context
@@ -173,6 +184,6 @@ The prompt is now **production-ready** for:
 
 **Created:** July 28, 2025  
 **Model Version:** Summit EPV v2.0  
-**Prompt Status:** Ready for deployment  
+**Prompt Status:** Ready for deployment
 
-*The framework has been validated through multiple successful medispa analyses including the comprehensive case study in this workspace.* 
+_The framework has been validated through multiple successful medispa analyses including the comprehensive case study in this workspace._

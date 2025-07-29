@@ -1,495 +1,537 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Monte Carlo Simulation - CPP Visual Report Kit</title>
-    <link rel="stylesheet" href="../public/css/report.css">
+    <link rel="stylesheet" href="../public/css/report.css" />
     <script src="../vendor/echarts.min.js"></script>
     <script src="../public/js/format.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="chart-container">
-        <div class="monte-carlo-layout">
-            <div class="card-header">
-                <h1 class="card-title" id="chart-title">Monte Carlo Simulation</h1>
-                <p class="card-subtitle" id="chart-subtitle">10,000 Scenario Analysis</p>
-            </div>
-            
-            <div class="simulation-grid">
-                <!-- IRR Distribution -->
-                <div class="simulation-panel">
-                    <h3 class="panel-title">IRR Distribution</h3>
-                    <div id="irr-distribution" class="chart-large"></div>
-                    <div class="stats-summary">
-                        <div class="stat-item">
-                            <span class="stat-label">P10:</span>
-                            <span class="stat-value" id="irr-p10">--</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">P50:</span>
-                            <span class="stat-value" id="irr-p50">--</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">P90:</span>
-                            <span class="stat-value" id="irr-p90">--</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- MOIC Distribution -->
-                <div class="simulation-panel">
-                    <h3 class="panel-title">MOIC Distribution</h3>
-                    <div id="moic-distribution" class="chart-large"></div>
-                    <div class="stats-summary">
-                        <div class="stat-item">
-                            <span class="stat-label">P10:</span>
-                            <span class="stat-value" id="moic-p10">--</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">P50:</span>
-                            <span class="stat-value" id="moic-p50">--</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">P90:</span>
-                            <span class="stat-value" id="moic-p90">--</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Scenario Scatter Plot -->
-                <div class="simulation-panel full-width">
-                    <h3 class="panel-title">Risk-Return Scatter Plot</h3>
-                    <div id="risk-return-scatter" class="chart-large"></div>
-                    <div class="scenario-legend">
-                        <div class="legend-item">
-                            <span class="legend-dot base-case"></span>
-                            <span>Base Case</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot downside"></span>
-                            <span>Downside (P10)</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot upside"></span>
-                            <span>Upside (P90)</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Key Assumptions -->
-                <div class="assumptions-panel">
-                    <h3 class="panel-title">Monte Carlo Assumptions</h3>
-                    <div class="assumptions-grid">
-                        <div class="assumption-item">
-                            <span class="assumption-label">Revenue Growth:</span>
-                            <span class="assumption-value">5% - 12% (Normal)</span>
-                        </div>
-                        <div class="assumption-item">
-                            <span class="assumption-label">EBITDA Margin:</span>
-                            <span class="assumption-value">15% - 25% (Beta)</span>
-                        </div>
-                        <div class="assumption-item">
-                            <span class="assumption-label">Exit Multiple:</span>
-                            <span class="assumption-value">6.5× - 9.5× (Triangular)</span>
-                        </div>
-                        <div class="assumption-item">
-                            <span class="assumption-label">Iterations:</span>
-                            <span class="assumption-value">10,000 scenarios</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="monte-carlo-layout">
+        <div class="card-header">
+          <h1 class="card-title" id="chart-title">Monte Carlo Simulation</h1>
+          <p class="card-subtitle" id="chart-subtitle">
+            10,000 Scenario Analysis
+          </p>
         </div>
+
+        <div class="simulation-grid">
+          <!-- IRR Distribution -->
+          <div class="simulation-panel">
+            <h3 class="panel-title">IRR Distribution</h3>
+            <div id="irr-distribution" class="chart-large"></div>
+            <div class="stats-summary">
+              <div class="stat-item">
+                <span class="stat-label">P10:</span>
+                <span class="stat-value" id="irr-p10">--</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">P50:</span>
+                <span class="stat-value" id="irr-p50">--</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">P90:</span>
+                <span class="stat-value" id="irr-p90">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- MOIC Distribution -->
+          <div class="simulation-panel">
+            <h3 class="panel-title">MOIC Distribution</h3>
+            <div id="moic-distribution" class="chart-large"></div>
+            <div class="stats-summary">
+              <div class="stat-item">
+                <span class="stat-label">P10:</span>
+                <span class="stat-value" id="moic-p10">--</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">P50:</span>
+                <span class="stat-value" id="moic-p50">--</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">P90:</span>
+                <span class="stat-value" id="moic-p90">--</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scenario Scatter Plot -->
+          <div class="simulation-panel full-width">
+            <h3 class="panel-title">Risk-Return Scatter Plot</h3>
+            <div id="risk-return-scatter" class="chart-large"></div>
+            <div class="scenario-legend">
+              <div class="legend-item">
+                <span class="legend-dot base-case"></span>
+                <span>Base Case</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot downside"></span>
+                <span>Downside (P10)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot upside"></span>
+                <span>Upside (P90)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Assumptions -->
+          <div class="assumptions-panel">
+            <h3 class="panel-title">Monte Carlo Assumptions</h3>
+            <div class="assumptions-grid">
+              <div class="assumption-item">
+                <span class="assumption-label">Revenue Growth:</span>
+                <span class="assumption-value">5% - 12% (Normal)</span>
+              </div>
+              <div class="assumption-item">
+                <span class="assumption-label">EBITDA Margin:</span>
+                <span class="assumption-value">15% - 25% (Beta)</span>
+              </div>
+              <div class="assumption-item">
+                <span class="assumption-label">Exit Multiple:</span>
+                <span class="assumption-value">6.5× - 9.5× (Triangular)</span>
+              </div>
+              <div class="assumption-item">
+                <span class="assumption-label">Iterations:</span>
+                <span class="assumption-value">10,000 scenarios</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Monte Carlo simulation functions
-        function normalRandom(mean, stdDev) {
-            // Box-Muller transformation
-            const u1 = Math.random();
-            const u2 = Math.random();
-            const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-            return mean + z0 * stdDev;
+      // Monte Carlo simulation functions
+      function normalRandom(mean, stdDev) {
+        // Box-Muller transformation
+        const u1 = Math.random();
+        const u2 = Math.random();
+        const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+        return mean + z0 * stdDev;
+      }
+
+      function triangularRandom(min, mode, max) {
+        const u = Math.random();
+        const f = (mode - min) / (max - min);
+
+        if (u < f) {
+          return min + Math.sqrt(u * (max - min) * (mode - min));
+        } else {
+          return max - Math.sqrt((1 - u) * (max - min) * (max - mode));
         }
-        
-        function triangularRandom(min, mode, max) {
-            const u = Math.random();
-            const f = (mode - min) / (max - min);
-            
-            if (u < f) {
-                return min + Math.sqrt(u * (max - min) * (mode - min));
-            } else {
-                return max - Math.sqrt((1 - u) * (max - min) * (max - mode));
+      }
+
+      function betaRandom(alpha, beta, min, max) {
+        // Simplified beta distribution approximation
+        const x1 = Math.pow(Math.random(), 1 / alpha);
+        const x2 = Math.pow(Math.random(), 1 / beta);
+        const beta_sample = x1 / (x1 + x2);
+        return min + beta_sample * (max - min);
+      }
+
+      function runMonteCarloSimulation(caseData, numSims = 10000) {
+        const results = [];
+        const baseLbo = caseData.irr_analysis;
+        const baseRevenue = caseData.ttm_metrics.ttm_revenue;
+        const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
+        const baseMargin = baseEbitda / baseRevenue;
+
+        for (let i = 0; i < numSims; i++) {
+          // Random variables
+          const revenueGrowth = normalRandom(0.07, 0.025); // 7% ± 2.5%
+          const ebitdaMargin = betaRandom(2, 2, 0.15, 0.25); // 15%-25% beta distribution
+          const exitMultiple = triangularRandom(6.5, 8.0, 9.5); // 6.5×-9.5× triangular
+
+          // Calculate scenario metrics
+          const year5Revenue = baseRevenue * Math.pow(1 + revenueGrowth, 5);
+          const year5Ebitda = year5Revenue * ebitdaMargin;
+          const exitEv = year5Ebitda * exitMultiple;
+
+          // Approximate debt paydown (simplified)
+          const debtReduction = baseLbo.exit_debt * 0.8; // Assume 80% paydown variance
+          const exitDebt = baseLbo.exit_debt * (0.8 + Math.random() * 0.4); // 80%-120% of base
+          const exitEquity = exitEv - exitDebt;
+
+          // Calculate returns
+          const moic = exitEquity / caseData.sources_uses.sponsor_equity;
+          const irr = Math.pow(moic, 1 / 5) - 1; // Simplified 5-year IRR
+
+          results.push({
+            irr: irr * 100,
+            moic: moic,
+            exitMultiple: exitMultiple,
+            revenueGrowth: revenueGrowth * 100,
+            ebitdaMargin: ebitdaMargin * 100,
+          });
+        }
+
+        return results.sort((a, b) => a.irr - b.irr);
+      }
+
+      function calculatePercentiles(data, field) {
+        const sorted = data.map((d) => d[field]).sort((a, b) => a - b);
+        return {
+          p10: sorted[Math.floor(sorted.length * 0.1)],
+          p50: sorted[Math.floor(sorted.length * 0.5)],
+          p90: sorted[Math.floor(sorted.length * 0.9)],
+        };
+      }
+
+      function createHistogram(elementId, data, field, title, unit) {
+        const chart = echarts.init(document.getElementById(elementId));
+
+        // Create histogram bins
+        const values = data.map((d) => d[field]);
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const binCount = 30;
+        const binWidth = (max - min) / binCount;
+
+        const bins = Array(binCount).fill(0);
+        const binLabels = [];
+
+        for (let i = 0; i < binCount; i++) {
+          binLabels.push(min + i * binWidth);
+          values.forEach((value) => {
+            if (
+              value >= min + i * binWidth &&
+              value < min + (i + 1) * binWidth
+            ) {
+              bins[i]++;
             }
-        }
-        
-        function betaRandom(alpha, beta, min, max) {
-            // Simplified beta distribution approximation
-            const x1 = Math.pow(Math.random(), 1/alpha);
-            const x2 = Math.pow(Math.random(), 1/beta);
-            const beta_sample = x1 / (x1 + x2);
-            return min + beta_sample * (max - min);
+          });
         }
 
-        function runMonteCarloSimulation(caseData, numSims = 10000) {
-            const results = [];
-            const baseLbo = caseData.irr_analysis;
-            const baseRevenue = caseData.ttm_metrics.ttm_revenue;
-            const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
-            const baseMargin = baseEbitda / baseRevenue;
-            
-            for (let i = 0; i < numSims; i++) {
-                // Random variables
-                const revenueGrowth = normalRandom(0.07, 0.025); // 7% ± 2.5%
-                const ebitdaMargin = betaRandom(2, 2, 0.15, 0.25); // 15%-25% beta distribution
-                const exitMultiple = triangularRandom(6.5, 8.0, 9.5); // 6.5×-9.5× triangular
-                
-                // Calculate scenario metrics
-                const year5Revenue = baseRevenue * Math.pow(1 + revenueGrowth, 5);
-                const year5Ebitda = year5Revenue * ebitdaMargin;
-                const exitEv = year5Ebitda * exitMultiple;
-                
-                // Approximate debt paydown (simplified)
-                const debtReduction = baseLbo.exit_debt * 0.8; // Assume 80% paydown variance
-                const exitDebt = baseLbo.exit_debt * (0.8 + Math.random() * 0.4); // 80%-120% of base
-                const exitEquity = exitEv - exitDebt;
-                
-                // Calculate returns
-                const moic = exitEquity / caseData.sources_uses.sponsor_equity;
-                const irr = Math.pow(moic, 1/5) - 1; // Simplified 5-year IRR
-                
-                results.push({
-                    irr: irr * 100,
-                    moic: moic,
-                    exitMultiple: exitMultiple,
-                    revenueGrowth: revenueGrowth * 100,
-                    ebitdaMargin: ebitdaMargin * 100
-                });
-            }
-            
-            return results.sort((a, b) => a.irr - b.irr);
-        }
+        const option = {
+          grid: {
+            left: '10%',
+            right: '10%',
+            top: '10%',
+            bottom: '20%',
+          },
+          xAxis: {
+            type: 'category',
+            data: binLabels.map((label) => label.toFixed(1)),
+            axisLabel: {
+              formatter: (value) => `${value}${unit}`,
+              fontSize: 10,
+            },
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              fontSize: 10,
+            },
+          },
+          series: [
+            {
+              type: 'bar',
+              data: bins,
+              itemStyle: {
+                color: '#2563eb',
+                opacity: 0.7,
+              },
+              barWidth: '90%',
+            },
+          ],
+          tooltip: {
+            trigger: 'axis',
+            formatter: function (params) {
+              const bin = params[0];
+              return `${title}: ${bin.name}${unit}<br/>Frequency: ${bin.value}`;
+            },
+          },
+        };
 
-        function calculatePercentiles(data, field) {
-            const sorted = data.map(d => d[field]).sort((a, b) => a - b);
-            return {
-                p10: sorted[Math.floor(sorted.length * 0.1)],
-                p50: sorted[Math.floor(sorted.length * 0.5)],
-                p90: sorted[Math.floor(sorted.length * 0.9)]
-            };
-        }
+        chart.setOption(option);
+        return chart;
+      }
 
-        function createHistogram(elementId, data, field, title, unit) {
-            const chart = echarts.init(document.getElementById(elementId));
-            
-            // Create histogram bins
-            const values = data.map(d => d[field]);
-            const min = Math.min(...values);
-            const max = Math.max(...values);
-            const binCount = 30;
-            const binWidth = (max - min) / binCount;
-            
-            const bins = Array(binCount).fill(0);
-            const binLabels = [];
-            
-            for (let i = 0; i < binCount; i++) {
-                binLabels.push(min + i * binWidth);
-                values.forEach(value => {
-                    if (value >= min + i * binWidth && value < min + (i + 1) * binWidth) {
-                        bins[i]++;
-                    }
-                });
-            }
-            
-            const option = {
-                grid: {
-                    left: '10%',
-                    right: '10%',
-                    top: '10%',
-                    bottom: '20%'
-                },
-                xAxis: {
-                    type: 'category',
-                    data: binLabels.map(label => label.toFixed(1)),
-                    axisLabel: {
-                        formatter: value => `${value}${unit}`,
-                        fontSize: 10
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        fontSize: 10
-                    }
-                },
-                series: [{
-                    type: 'bar',
-                    data: bins,
-                    itemStyle: {
-                        color: '#2563eb',
-                        opacity: 0.7
-                    },
-                    barWidth: '90%'
-                }],
-                tooltip: {
-                    trigger: 'axis',
-                    formatter: function(params) {
-                        const bin = params[0];
-                        return `${title}: ${bin.name}${unit}<br/>Frequency: ${bin.value}`;
-                    }
-                }
-            };
-            
-            chart.setOption(option);
-            return chart;
-        }
+      function createScatterPlot(elementId, data, caseData) {
+        const chart = echarts.init(document.getElementById(elementId));
 
-        function createScatterPlot(elementId, data, caseData) {
-            const chart = echarts.init(document.getElementById(elementId));
-            
-            const scatterData = data.map(d => [d.revenueGrowth, d.irr]);
-            const baseCase = [caseData.assumptions.revenue_growth * 100, caseData.irr_analysis.irr * 100];
-            
-            const option = {
-                grid: {
-                    left: '12%',
-                    right: '10%',
-                    top: '10%',
-                    bottom: '15%'
-                },
-                xAxis: {
-                    type: 'value',
-                    name: 'Revenue Growth (%)',
-                    nameLocation: 'middle',
-                    nameGap: 25,
-                    axisLabel: {
-                        formatter: '{value}%',
-                        fontSize: 10
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    name: 'IRR (%)',
-                    nameLocation: 'middle',
-                    nameGap: 40,
-                    axisLabel: {
-                        formatter: '{value}%',
-                        fontSize: 10
-                    }
-                },
-                series: [
-                    {
-                        type: 'scatter',
-                        data: scatterData,
-                        symbolSize: 3,
-                        itemStyle: {
-                            color: '#6b7280',
-                            opacity: 0.3
-                        }
-                    },
-                    {
-                        type: 'scatter',
-                        data: [baseCase],
-                        symbolSize: 12,
-                        itemStyle: {
-                            color: '#ef4444',
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        zlevel: 10
-                    }
-                ],
-                tooltip: {
-                    trigger: 'item',
-                    formatter: function(params) {
-                        if (params.seriesIndex === 1) {
-                            return 'Base Case<br/>Revenue Growth: ' + params.value[0].toFixed(1) + '%<br/>IRR: ' + params.value[1].toFixed(1) + '%';
-                        }
-                        return 'Revenue Growth: ' + params.value[0].toFixed(1) + '%<br/>IRR: ' + params.value[1].toFixed(1) + '%';
-                    }
-                }
-            };
-            
-            chart.setOption(option);
-            return chart;
-        }
+        const scatterData = data.map((d) => [d.revenueGrowth, d.irr]);
+        const baseCase = [
+          caseData.assumptions.revenue_growth * 100,
+          caseData.irr_analysis.irr * 100,
+        ];
 
-        function initializeMonteCarloAnalysis(caseData) {
-            document.getElementById('chart-title').textContent = 'Monte Carlo Simulation';
-            document.getElementById('chart-subtitle').textContent = '10,000 Scenario Analysis • ' + (window.__TTM__ || 'TTM Analysis');
-            
-            // Run simulation
-            console.log('Running Monte Carlo simulation...');
-            const simulationResults = runMonteCarloSimulation(caseData);
-            
-            // Calculate percentiles
-            const irrPercentiles = calculatePercentiles(simulationResults, 'irr');
-            const moicPercentiles = calculatePercentiles(simulationResults, 'moic');
-            
-            // Update statistics
-            document.getElementById('irr-p10').textContent = irrPercentiles.p10.toFixed(1) + '%';
-            document.getElementById('irr-p50').textContent = irrPercentiles.p50.toFixed(1) + '%';
-            document.getElementById('irr-p90').textContent = irrPercentiles.p90.toFixed(1) + '%';
-            
-            document.getElementById('moic-p10').textContent = moicPercentiles.p10.toFixed(1) + '×';
-            document.getElementById('moic-p50').textContent = moicPercentiles.p50.toFixed(1) + '×';
-            document.getElementById('moic-p90').textContent = moicPercentiles.p90.toFixed(1) + '×';
-            
-            // Create charts
-            createHistogram('irr-distribution', simulationResults, 'irr', 'IRR', '%');
-            createHistogram('moic-distribution', simulationResults, 'moic', 'MOIC', '×');
-            createScatterPlot('risk-return-scatter', simulationResults, caseData);
-            
-            console.log('Monte Carlo analysis complete');
-        }
+        const option = {
+          grid: {
+            left: '12%',
+            right: '10%',
+            top: '10%',
+            bottom: '15%',
+          },
+          xAxis: {
+            type: 'value',
+            name: 'Revenue Growth (%)',
+            nameLocation: 'middle',
+            nameGap: 25,
+            axisLabel: {
+              formatter: '{value}%',
+              fontSize: 10,
+            },
+          },
+          yAxis: {
+            type: 'value',
+            name: 'IRR (%)',
+            nameLocation: 'middle',
+            nameGap: 40,
+            axisLabel: {
+              formatter: '{value}%',
+              fontSize: 10,
+            },
+          },
+          series: [
+            {
+              type: 'scatter',
+              data: scatterData,
+              symbolSize: 3,
+              itemStyle: {
+                color: '#6b7280',
+                opacity: 0.3,
+              },
+            },
+            {
+              type: 'scatter',
+              data: [baseCase],
+              symbolSize: 12,
+              itemStyle: {
+                color: '#ef4444',
+                borderColor: '#fff',
+                borderWidth: 2,
+              },
+              zlevel: 10,
+            },
+          ],
+          tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+              if (params.seriesIndex === 1) {
+                return (
+                  'Base Case<br/>Revenue Growth: ' +
+                  params.value[0].toFixed(1) +
+                  '%<br/>IRR: ' +
+                  params.value[1].toFixed(1) +
+                  '%'
+                );
+              }
+              return (
+                'Revenue Growth: ' +
+                params.value[0].toFixed(1) +
+                '%<br/>IRR: ' +
+                params.value[1].toFixed(1) +
+                '%'
+              );
+            },
+          },
+        };
 
-        // Wait for case data injection
-        function waitForData() {
-            if (window.__CASE__) {
-                initializeMonteCarloAnalysis(window.__CASE__);
-                window.__READY__ = true;
-            } else {
-                setTimeout(waitForData, 100);
-            }
-        }
+        chart.setOption(option);
+        return chart;
+      }
 
-        // Start initialization
-        waitForData();
+      function initializeMonteCarloAnalysis(caseData) {
+        document.getElementById('chart-title').textContent =
+          'Monte Carlo Simulation';
+        document.getElementById('chart-subtitle').textContent =
+          '10,000 Scenario Analysis • ' + (window.__TTM__ || 'TTM Analysis');
+
+        // Run simulation
+        console.log('Running Monte Carlo simulation...');
+        const simulationResults = runMonteCarloSimulation(caseData);
+
+        // Calculate percentiles
+        const irrPercentiles = calculatePercentiles(simulationResults, 'irr');
+        const moicPercentiles = calculatePercentiles(simulationResults, 'moic');
+
+        // Update statistics
+        document.getElementById('irr-p10').textContent =
+          irrPercentiles.p10.toFixed(1) + '%';
+        document.getElementById('irr-p50').textContent =
+          irrPercentiles.p50.toFixed(1) + '%';
+        document.getElementById('irr-p90').textContent =
+          irrPercentiles.p90.toFixed(1) + '%';
+
+        document.getElementById('moic-p10').textContent =
+          moicPercentiles.p10.toFixed(1) + '×';
+        document.getElementById('moic-p50').textContent =
+          moicPercentiles.p50.toFixed(1) + '×';
+        document.getElementById('moic-p90').textContent =
+          moicPercentiles.p90.toFixed(1) + '×';
+
+        // Create charts
+        createHistogram(
+          'irr-distribution',
+          simulationResults,
+          'irr',
+          'IRR',
+          '%'
+        );
+        createHistogram(
+          'moic-distribution',
+          simulationResults,
+          'moic',
+          'MOIC',
+          '×'
+        );
+        createScatterPlot('risk-return-scatter', simulationResults, caseData);
+
+        console.log('Monte Carlo analysis complete');
+      }
+
+      // Wait for case data injection
+      function waitForData() {
+        if (window.__CASE__) {
+          initializeMonteCarloAnalysis(window.__CASE__);
+          window.__READY__ = true;
+        } else {
+          setTimeout(waitForData, 100);
+        }
+      }
+
+      // Start initialization
+      waitForData();
     </script>
 
     <style>
-        .monte-carlo-layout {
-            padding: 20px;
-            background: white;
-        }
-        
-        .simulation-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto auto;
-            gap: 20px;
-            height: calc(100vh - 120px);
-        }
-        
-        .simulation-panel {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid var(--color-border);
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .simulation-panel.full-width {
-            grid-column: 1 / -1;
-        }
-        
-        .panel-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--color-text);
-            margin: 0 0 15px 0;
-            text-align: center;
-        }
-        
-        .chart-large {
-            flex: 1;
-            min-height: 200px;
-        }
-        
-        .stats-summary {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--color-border);
-        }
-        
-        .stat-item {
-            text-align: center;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: var(--color-text-light);
-            font-weight: 500;
-        }
-        
-        .stat-value {
-            display: block;
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--color-output);
-            margin-top: 2px;
-        }
-        
-        .scenario-legend {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid var(--color-border);
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 12px;
-            color: var(--color-text);
-        }
-        
-        .legend-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-        }
-        
-        .legend-dot.base-case {
-            background-color: #ef4444;
-        }
-        
-        .legend-dot.downside {
-            background-color: #f59e0b;
-        }
-        
-        .legend-dot.upside {
-            background-color: #22c55e;
-        }
-        
-        .assumptions-panel {
-            grid-column: 1 / -1;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid var(--color-border);
-        }
-        
-        .assumptions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-        
-        .assumption-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .assumption-label {
-            font-weight: 500;
-            color: var(--color-text);
-            font-size: 14px;
-        }
-        
-        .assumption-value {
-            color: var(--color-linked);
-            font-size: 14px;
-        }
+      .monte-carlo-layout {
+        padding: 20px;
+        background: white;
+      }
+
+      .simulation-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 20px;
+        height: calc(100vh - 120px);
+      }
+
+      .simulation-panel {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid var(--color-border);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .simulation-panel.full-width {
+        grid-column: 1 / -1;
+      }
+
+      .panel-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--color-text);
+        margin: 0 0 15px 0;
+        text-align: center;
+      }
+
+      .chart-large {
+        flex: 1;
+        min-height: 200px;
+      }
+
+      .stats-summary {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--color-border);
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: var(--color-text-light);
+        font-weight: 500;
+      }
+
+      .stat-value {
+        display: block;
+        font-size: 16px;
+        font-weight: bold;
+        color: var(--color-output);
+        margin-top: 2px;
+      }
+
+      .scenario-legend {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--color-border);
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        color: var(--color-text);
+      }
+
+      .legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+
+      .legend-dot.base-case {
+        background-color: #ef4444;
+      }
+
+      .legend-dot.downside {
+        background-color: #f59e0b;
+      }
+
+      .legend-dot.upside {
+        background-color: #22c55e;
+      }
+
+      .assumptions-panel {
+        grid-column: 1 / -1;
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        border: 1px solid var(--color-border);
+      }
+
+      .assumptions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .assumption-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .assumption-label {
+        font-weight: 500;
+        color: var(--color-text);
+        font-size: 14px;
+      }
+
+      .assumption-value {
+        color: var(--color-linked);
+        font-size: 14px;
+      }
     </style>
-</body>
-</html> 
+  </body>
+</html>

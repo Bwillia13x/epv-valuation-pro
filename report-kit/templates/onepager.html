@@ -1,527 +1,625 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CPP One-Pager Report</title>
-    <link rel="stylesheet" href="../public/css/report.css">
-    <link rel="stylesheet" href="../vendor/katex.min.css">
+    <link rel="stylesheet" href="../public/css/report.css" />
+    <link rel="stylesheet" href="../vendor/katex.min.css" />
     <script src="../vendor/katex.min.js"></script>
     <script src="../vendor/echarts.min.js"></script>
     <script src="../public/js/format.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="onepager">
-        <!-- Header -->
-        <div class="onepager-header">
-            <h1 class="onepager-title" id="page-title">CPP Investment Analysis</h1>
-            <p class="onepager-subtitle" id="page-subtitle">TTM Window: Loading...</p>
+      <!-- Header -->
+      <div class="onepager-header">
+        <h1 class="onepager-title" id="page-title">CPP Investment Analysis</h1>
+        <p class="onepager-subtitle" id="page-subtitle">
+          TTM Window: Loading...
+        </p>
+      </div>
+
+      <!-- Enhanced Analytics Summary -->
+      <div class="analytics-summary">
+        <div class="analytics-item">
+          <span class="analytics-label">Monte Carlo P50 IRR:</span>
+          <span class="analytics-value" id="monte-carlo-p50">--</span>
         </div>
-        
-        <!-- Enhanced Analytics Summary -->
-        <div class="analytics-summary">
-            <div class="analytics-item">
-                <span class="analytics-label">Monte Carlo P50 IRR:</span>
-                <span class="analytics-value" id="monte-carlo-p50">--</span>
-            </div>
-            <div class="analytics-item">
-                <span class="analytics-label">Risk Range (P10-P90):</span>
-                <span class="analytics-value" id="risk-range">--</span>
-            </div>
-            <div class="analytics-item">
-                <span class="analytics-label">Most Sensitive Variable:</span>
-                <span class="analytics-value" id="most-sensitive">--</span>
-            </div>
-            <div class="analytics-item">
-                <span class="analytics-label">Scenario Range:</span>
-                <span class="analytics-value" id="scenario-range">--</span>
-            </div>
+        <div class="analytics-item">
+          <span class="analytics-label">Risk Range (P10-P90):</span>
+          <span class="analytics-value" id="risk-range">--</span>
         </div>
-        
-        <!-- 2x2 Grid -->
-        <div class="onepager-grid">
-            <!-- Top Left: EBITDA Bridge -->
-            <div class="onepager-chart">
-                <h3>EBITDA Bridge</h3>
-                <div id="bridge-chart" style="height: 200px;"></div>
-                <div style="display: flex; justify-content: space-between; font-size: 10px; margin-top: 8px;">
-                    <span id="bridge-reported-margin"></span>
-                    <span id="bridge-adjusted-margin"></span>
+        <div class="analytics-item">
+          <span class="analytics-label">Most Sensitive Variable:</span>
+          <span class="analytics-value" id="most-sensitive">--</span>
+        </div>
+        <div class="analytics-item">
+          <span class="analytics-label">Scenario Range:</span>
+          <span class="analytics-value" id="scenario-range">--</span>
+        </div>
+      </div>
+
+      <!-- 2x2 Grid -->
+      <div class="onepager-grid">
+        <!-- Top Left: EBITDA Bridge -->
+        <div class="onepager-chart">
+          <h3>EBITDA Bridge</h3>
+          <div id="bridge-chart" style="height: 200px"></div>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              font-size: 10px;
+              margin-top: 8px;
+            "
+          >
+            <span id="bridge-reported-margin"></span>
+            <span id="bridge-adjusted-margin"></span>
+          </div>
+        </div>
+
+        <!-- Top Right: Valuation Matrix -->
+        <div class="onepager-chart">
+          <h3>Valuation Matrix</h3>
+          <div
+            style="font-size: 10px; margin-bottom: 8px; text-align: center"
+            id="matrix-assumptions"
+          ></div>
+          <table style="width: 100%; font-size: 10px">
+            <thead>
+              <tr style="background: var(--color-neutral); color: white">
+                <th style="padding: 4px">Multiple</th>
+                <th style="padding: 4px">Enterprise Value</th>
+                <th style="padding: 4px">Equity to Seller</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-table-body">
+              <tr>
+                <td colspan="3" style="text-align: center; padding: 8px">
+                  Loading...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Bottom Left: EPV Panel -->
+        <div class="onepager-chart">
+          <h3>EPV Analysis</h3>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px;
+              height: 200px;
+            "
+          >
+            <div style="font-size: 10px">
+              <div
+                id="epv-formula-mini"
+                style="text-align: center; margin-bottom: 8px; font-size: 11px"
+              ></div>
+              <div style="margin-bottom: 4px">
+                <div style="display: flex; justify-content: space-between">
+                  <span>EBIT:</span>
+                  <span id="epv-ebit">-</span>
                 </div>
-            </div>
-            
-            <!-- Top Right: Valuation Matrix -->
-            <div class="onepager-chart">
-                <h3>Valuation Matrix</h3>
-                <div style="font-size: 10px; margin-bottom: 8px; text-align: center;" id="matrix-assumptions"></div>
-                <table style="width: 100%; font-size: 10px;">
-                    <thead>
-                        <tr style="background: var(--color-neutral); color: white;">
-                            <th style="padding: 4px;">Multiple</th>
-                            <th style="padding: 4px;">Enterprise Value</th>
-                            <th style="padding: 4px;">Equity to Seller</th>
-                        </tr>
-                    </thead>
-                    <tbody id="matrix-table-body">
-                        <tr><td colspan="3" style="text-align: center; padding: 8px;">Loading...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Bottom Left: EPV Panel -->
-            <div class="onepager-chart">
-                <h3>EPV Analysis</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; height: 200px;">
-                    <div style="font-size: 10px;">
-                        <div id="epv-formula-mini" style="text-align: center; margin-bottom: 8px; font-size: 11px;"></div>
-                                                 <div style="margin-bottom: 4px;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>EBIT:</span>
-                                <span id="epv-ebit">-</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Tax:</span>
-                                <span id="epv-tax">-</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Reinvest:</span>
-                                <span id="epv-reinvest">-</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>WACC:</span>
-                                <span id="epv-wacc">-</span>
-                            </div>
-                            <hr style="margin: 4px 0;">
-                            <div style="display: flex; justify-content: space-between; font-weight: bold;">
-                                <span>EPV:</span>
-                                <span id="epv-result">-</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="epv-sensitivity-mini" style="height: 160px;"></div>
+                <div style="display: flex; justify-content: space-between">
+                  <span>Tax:</span>
+                  <span id="epv-tax">-</span>
                 </div>
-            </div>
-            
-            <!-- Bottom Right: LBO Summary -->
-            <div class="onepager-chart">
-                <h3>LBO Summary</h3>
-                <div style="height: 200px; display: flex; flex-direction: column;">
-                    <!-- Sources & Uses -->
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 8px; font-size: 9px;">
-                        <div style="text-align: center;">
-                            <div style="font-weight: bold;">Entry EV</div>
-                            <div id="lbo-entry-ev">-</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-weight: bold;">Sponsor Equity</div>
-                            <div id="lbo-sponsor-equity">-</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Debt Chart -->
-                    <div id="lbo-debt-chart" style="flex: 1; min-height: 100px;"></div>
-                    
-                    <!-- Returns -->
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 8px; font-size: 9px;">
-                        <div style="text-align: center;">
-                            <div style="font-weight: bold;">Exit Multiple</div>
-                            <div id="lbo-exit-multiple">-</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-weight: bold;">MOIC</div>
-                            <div id="lbo-moic">-</div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="font-weight: bold;">IRR</div>
-                            <div id="lbo-irr">-</div>
-                        </div>
-                    </div>
+                <div style="display: flex; justify-content: space-between">
+                  <span>Reinvest:</span>
+                  <span id="epv-reinvest">-</span>
                 </div>
+                <div style="display: flex; justify-content: space-between">
+                  <span>WACC:</span>
+                  <span id="epv-wacc">-</span>
+                </div>
+                <hr style="margin: 4px 0" />
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    font-weight: bold;
+                  "
+                >
+                  <span>EPV:</span>
+                  <span id="epv-result">-</span>
+                </div>
+              </div>
             </div>
+            <div id="epv-sensitivity-mini" style="height: 160px"></div>
+          </div>
         </div>
-        
-        <!-- Footer -->
-        <div class="onepager-footer">
-            <span id="footer-text">Prepared for CPP MA&I Case • Generated on Loading... • Model v1.0</span>
+
+        <!-- Bottom Right: LBO Summary -->
+        <div class="onepager-chart">
+          <h3>LBO Summary</h3>
+          <div style="height: 200px; display: flex; flex-direction: column">
+            <!-- Sources & Uses -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-bottom: 8px;
+                font-size: 9px;
+              "
+            >
+              <div style="text-align: center">
+                <div style="font-weight: bold">Entry EV</div>
+                <div id="lbo-entry-ev">-</div>
+              </div>
+              <div style="text-align: center">
+                <div style="font-weight: bold">Sponsor Equity</div>
+                <div id="lbo-sponsor-equity">-</div>
+              </div>
+            </div>
+
+            <!-- Debt Chart -->
+            <div id="lbo-debt-chart" style="flex: 1; min-height: 100px"></div>
+
+            <!-- Returns -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 4px;
+                margin-top: 8px;
+                font-size: 9px;
+              "
+            >
+              <div style="text-align: center">
+                <div style="font-weight: bold">Exit Multiple</div>
+                <div id="lbo-exit-multiple">-</div>
+              </div>
+              <div style="text-align: center">
+                <div style="font-weight: bold">MOIC</div>
+                <div id="lbo-moic">-</div>
+              </div>
+              <div style="text-align: center">
+                <div style="font-weight: bold">IRR</div>
+                <div id="lbo-irr">-</div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="onepager-footer">
+        <span id="footer-text"
+          >Prepared for CPP MA&I Case • Generated on Loading... • Model
+          v1.0</span
+        >
+      </div>
     </div>
 
     <script>
-        // Global variables
-        let caseData = null;
-        let chartsReady = 0;
-        const totalCharts = 4;
-        
-        // Wait for data injection
-        function initializeOnePager() {
-            if (!window.__CASE__) {
-                setTimeout(initializeOnePager, 100);
-                return;
-            }
-            
-            caseData = window.__CASE__;
-            const title = window.__TITLE__ || 'CPP Investment Analysis';
-            const ttm = window.__TTM__ || 'TTM Window';
-            
-            // Update header
-            document.getElementById('page-title').textContent = title;
-            document.getElementById('page-subtitle').textContent = `TTM Window: ${ttm}`;
-            
-            // Update footer
-            const timestamp = new Date().toLocaleDateString();
-            document.getElementById('footer-text').textContent = 
-                `Prepared for CPP MA&I Case • Generated on ${timestamp} • Model v1.0`;
-            
-            // Initialize analytics summary
-            populateAnalyticsSummary();
-            
-            // Initialize all charts
-            createBridgeChart();
-            createMatrixTable();
-            createEPVPanel();
-            createLBOChart();
-        }
-        
-        function populateAnalyticsSummary() {
-            // Simplified Monte Carlo analysis (1000 iterations for speed)
-            const baseIrr = caseData.irr_analysis.irr;
-            const baseRevenue = caseData.ttm_metrics.ttm_revenue;
-            const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
-            const sponsorEquity = caseData.sources_uses.sponsor_equity;
-            
-            const iterations = 1000;
-            const irrResults = [];
-            
-            for (let i = 0; i < iterations; i++) {
-                // Random variables (simplified)
-                const revenueGrowthFactor = 0.9 + Math.random() * 0.4; // 90%-130% of base
-                const exitMultipleFactor = 0.8 + Math.random() * 0.4;  // 80%-120% of base
-                
-                // Calculate scenario IRR
-                const projectedRevenue = baseRevenue * Math.pow(1 + (0.07 * revenueGrowthFactor), 5);
-                const projectedEbitda = projectedRevenue * (baseEbitda / baseRevenue);
-                const exitEv = projectedEbitda * (8.0 * exitMultipleFactor);
-                const exitEquity = exitEv - caseData.irr_analysis.exit_debt;
-                const moic = exitEquity / sponsorEquity;
-                const irr = Math.pow(moic, 1/5) - 1;
-                
-                irrResults.push(irr * 100);
-            }
-            
-            irrResults.sort((a, b) => a - b);
-            const p10 = irrResults[Math.floor(iterations * 0.1)];
-            const p50 = irrResults[Math.floor(iterations * 0.5)];
-            const p90 = irrResults[Math.floor(iterations * 0.9)];
-            
-            // Calculate scenario range
-            const downsideIrr = calculateScenarioIrr(0.04, 6.5); // 4% growth, 6.5x exit
-            const upsideIrr = calculateScenarioIrr(0.10, 9.5);  // 10% growth, 9.5x exit
-            const scenarioSpread = upsideIrr - downsideIrr;
-            
-            // Determine most sensitive variable (simplified sensitivity)
-            const exitMultipleImpact = calculateScenarioIrr(0.07, 9.5) - calculateScenarioIrr(0.07, 6.5);
-            const revenueGrowthImpact = calculateScenarioIrr(0.10, 8.0) - calculateScenarioIrr(0.04, 8.0);
-            
-            const mostSensitive = exitMultipleImpact > revenueGrowthImpact ? "Exit Multiple" : "Revenue Growth";
-            
-            // Update analytics summary
-            document.getElementById('monte-carlo-p50').textContent = `${p50.toFixed(1)}%`;
-            document.getElementById('risk-range').textContent = `${(p90 - p10).toFixed(1)}pp`;
-            document.getElementById('most-sensitive').textContent = mostSensitive;
-            document.getElementById('scenario-range').textContent = `${(scenarioSpread * 100).toFixed(1)}pp`;
-        }
-        
-        function calculateScenarioIrr(revenueGrowth, exitMultiple) {
-            const baseRevenue = caseData.ttm_metrics.ttm_revenue;
-            const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
-            const sponsorEquity = caseData.sources_uses.sponsor_equity;
-            
-            const projectedRevenue = baseRevenue * Math.pow(1 + revenueGrowth, 5);
-            const projectedEbitda = projectedRevenue * (baseEbitda / baseRevenue);
-            const exitEv = projectedEbitda * exitMultiple;
-            const exitEquity = exitEv - caseData.irr_analysis.exit_debt;
-            const moic = exitEquity / sponsorEquity;
-            const irr = Math.pow(moic, 1/5) - 1;
-            
-            return irr;
+      // Global variables
+      let caseData = null;
+      let chartsReady = 0;
+      const totalCharts = 4;
+
+      // Wait for data injection
+      function initializeOnePager() {
+        if (!window.__CASE__) {
+          setTimeout(initializeOnePager, 100);
+          return;
         }
 
-        function createBridgeChart() {
-            const bridge = caseData.ebitda_bridge;
-            const revenue = caseData.ttm_metrics.ttm_revenue;
-            
-            // Simplified waterfall for one-pager
-            const categories = ['Reported', 'Owner', 'One-time', 'Rent', 'Adjusted'];
-            const values = [
-                bridge.reported_ebitda,
-                bridge.owner_addback,
-                bridge.onetime_addback,
-                bridge.rent_normalization,
-                bridge.adjusted_ebitda
-            ];
-            
-            const option = {
-                tooltip: {
-                    trigger: 'axis',
-                    formatter: function(params) {
-                        const point = params[0];
-                        const value = Array.isArray(point.value) ? 
-                            point.value[1] - point.value[0] : point.value;
-                        return `${point.name}: ${money(value)}`;
-                    }
-                },
-                grid: { left: '15%', right: '15%', bottom: '20%', top: '10%' },
-                xAxis: {
-                    type: 'category',
-                    data: categories,
-                    axisLabel: { fontSize: 9 }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: { 
-                        formatter: money,
-                        fontSize: 8
-                    }
-                },
-                series: [{
-                    type: 'bar',
-                    data: values.map((val, idx) => ({
-                        value: val,
-                        itemStyle: { 
-                            color: idx === 0 || idx === values.length - 1 ? 
-                                (idx === values.length - 1 ? '#16a34a' : '#1f2937') : '#2563eb'
-                        }
-                    })),
-                    barWidth: '60%',
-                    label: {
-                        show: true,
-                        position: 'inside',
-                        formatter: function(params) {
-                            return money(params.value, { unit: 'M' });
-                        },
-                        fontSize: 8,
-                        color: 'white',
-                        fontWeight: 'bold'
-                    }
-                }]
-            };
-            
-            const chartElement = document.getElementById('bridge-chart');
-            const chart = echarts.init(chartElement);
-            chart.setOption(option);
-            
-            // Add margin percentages
-            const reportedMargin = (bridge.reported_ebitda / revenue) * 100;
-            const adjustedMargin = (bridge.adjusted_ebitda / revenue) * 100;
-            document.getElementById('bridge-reported-margin').textContent = `${reportedMargin.toFixed(1)}%`;
-            document.getElementById('bridge-adjusted-margin').textContent = `${adjustedMargin.toFixed(1)}%`;
-            
-            chartReady();
+        caseData = window.__CASE__;
+        const title = window.__TITLE__ || 'CPP Investment Analysis';
+        const ttm = window.__TTM__ || 'TTM Window';
+
+        // Update header
+        document.getElementById('page-title').textContent = title;
+        document.getElementById('page-subtitle').textContent =
+          `TTM Window: ${ttm}`;
+
+        // Update footer
+        const timestamp = new Date().toLocaleDateString();
+        document.getElementById('footer-text').textContent =
+          `Prepared for CPP MA&I Case • Generated on ${timestamp} • Model v1.0`;
+
+        // Initialize analytics summary
+        populateAnalyticsSummary();
+
+        // Initialize all charts
+        createBridgeChart();
+        createMatrixTable();
+        createEPVPanel();
+        createLBOChart();
+      }
+
+      function populateAnalyticsSummary() {
+        // Simplified Monte Carlo analysis (1000 iterations for speed)
+        const baseIrr = caseData.irr_analysis.irr;
+        const baseRevenue = caseData.ttm_metrics.ttm_revenue;
+        const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
+        const sponsorEquity = caseData.sources_uses.sponsor_equity;
+
+        const iterations = 1000;
+        const irrResults = [];
+
+        for (let i = 0; i < iterations; i++) {
+          // Random variables (simplified)
+          const revenueGrowthFactor = 0.9 + Math.random() * 0.4; // 90%-130% of base
+          const exitMultipleFactor = 0.8 + Math.random() * 0.4; // 80%-120% of base
+
+          // Calculate scenario IRR
+          const projectedRevenue =
+            baseRevenue * Math.pow(1 + 0.07 * revenueGrowthFactor, 5);
+          const projectedEbitda = projectedRevenue * (baseEbitda / baseRevenue);
+          const exitEv = projectedEbitda * (8.0 * exitMultipleFactor);
+          const exitEquity = exitEv - caseData.irr_analysis.exit_debt;
+          const moic = exitEquity / sponsorEquity;
+          const irr = Math.pow(moic, 1 / 5) - 1;
+
+          irrResults.push(irr * 100);
         }
-        
-        function createMatrixTable() {
-            const matrix = caseData.valuation_matrix;
-            const adjEbitda = caseData.ebitda_bridge.adjusted_ebitda;
-            
-            // Find base case
-            let baseMultiple = 8.5;
-            let baseCase = matrix.find(row => row.multiple === baseMultiple);
-            if (!baseCase) {
-                baseMultiple = 8.0;
-                baseCase = matrix.find(row => row.multiple === baseMultiple);
+
+        irrResults.sort((a, b) => a - b);
+        const p10 = irrResults[Math.floor(iterations * 0.1)];
+        const p50 = irrResults[Math.floor(iterations * 0.5)];
+        const p90 = irrResults[Math.floor(iterations * 0.9)];
+
+        // Calculate scenario range
+        const downsideIrr = calculateScenarioIrr(0.04, 6.5); // 4% growth, 6.5x exit
+        const upsideIrr = calculateScenarioIrr(0.1, 9.5); // 10% growth, 9.5x exit
+        const scenarioSpread = upsideIrr - downsideIrr;
+
+        // Determine most sensitive variable (simplified sensitivity)
+        const exitMultipleImpact =
+          calculateScenarioIrr(0.07, 9.5) - calculateScenarioIrr(0.07, 6.5);
+        const revenueGrowthImpact =
+          calculateScenarioIrr(0.1, 8.0) - calculateScenarioIrr(0.04, 8.0);
+
+        const mostSensitive =
+          exitMultipleImpact > revenueGrowthImpact
+            ? 'Exit Multiple'
+            : 'Revenue Growth';
+
+        // Update analytics summary
+        document.getElementById('monte-carlo-p50').textContent =
+          `${p50.toFixed(1)}%`;
+        document.getElementById('risk-range').textContent =
+          `${(p90 - p10).toFixed(1)}pp`;
+        document.getElementById('most-sensitive').textContent = mostSensitive;
+        document.getElementById('scenario-range').textContent =
+          `${(scenarioSpread * 100).toFixed(1)}pp`;
+      }
+
+      function calculateScenarioIrr(revenueGrowth, exitMultiple) {
+        const baseRevenue = caseData.ttm_metrics.ttm_revenue;
+        const baseEbitda = caseData.ttm_metrics.ttm_ebitda_adjusted;
+        const sponsorEquity = caseData.sources_uses.sponsor_equity;
+
+        const projectedRevenue = baseRevenue * Math.pow(1 + revenueGrowth, 5);
+        const projectedEbitda = projectedRevenue * (baseEbitda / baseRevenue);
+        const exitEv = projectedEbitda * exitMultiple;
+        const exitEquity = exitEv - caseData.irr_analysis.exit_debt;
+        const moic = exitEquity / sponsorEquity;
+        const irr = Math.pow(moic, 1 / 5) - 1;
+
+        return irr;
+      }
+
+      function createBridgeChart() {
+        const bridge = caseData.ebitda_bridge;
+        const revenue = caseData.ttm_metrics.ttm_revenue;
+
+        // Simplified waterfall for one-pager
+        const categories = [
+          'Reported',
+          'Owner',
+          'One-time',
+          'Rent',
+          'Adjusted',
+        ];
+        const values = [
+          bridge.reported_ebitda,
+          bridge.owner_addback,
+          bridge.onetime_addback,
+          bridge.rent_normalization,
+          bridge.adjusted_ebitda,
+        ];
+
+        const option = {
+          tooltip: {
+            trigger: 'axis',
+            formatter: function (params) {
+              const point = params[0];
+              const value = Array.isArray(point.value)
+                ? point.value[1] - point.value[0]
+                : point.value;
+              return `${point.name}: ${money(value)}`;
+            },
+          },
+          grid: { left: '15%', right: '15%', bottom: '20%', top: '10%' },
+          xAxis: {
+            type: 'category',
+            data: categories,
+            axisLabel: { fontSize: 9 },
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: money,
+              fontSize: 8,
+            },
+          },
+          series: [
+            {
+              type: 'bar',
+              data: values.map((val, idx) => ({
+                value: val,
+                itemStyle: {
+                  color:
+                    idx === 0 || idx === values.length - 1
+                      ? idx === values.length - 1
+                        ? '#16a34a'
+                        : '#1f2937'
+                      : '#2563eb',
+                },
+              })),
+              barWidth: '60%',
+              label: {
+                show: true,
+                position: 'inside',
+                formatter: function (params) {
+                  return money(params.value, { unit: 'M' });
+                },
+                fontSize: 8,
+                color: 'white',
+                fontWeight: 'bold',
+              },
+            },
+          ],
+        };
+
+        const chartElement = document.getElementById('bridge-chart');
+        const chart = echarts.init(chartElement);
+        chart.setOption(option);
+
+        // Add margin percentages
+        const reportedMargin = (bridge.reported_ebitda / revenue) * 100;
+        const adjustedMargin = (bridge.adjusted_ebitda / revenue) * 100;
+        document.getElementById('bridge-reported-margin').textContent =
+          `${reportedMargin.toFixed(1)}%`;
+        document.getElementById('bridge-adjusted-margin').textContent =
+          `${adjustedMargin.toFixed(1)}%`;
+
+        chartReady();
+      }
+
+      function createMatrixTable() {
+        const matrix = caseData.valuation_matrix;
+        const adjEbitda = caseData.ebitda_bridge.adjusted_ebitda;
+
+        // Find base case
+        let baseMultiple = 8.5;
+        let baseCase = matrix.find((row) => row.multiple === baseMultiple);
+        if (!baseCase) {
+          baseMultiple = 8.0;
+          baseCase = matrix.find((row) => row.multiple === baseMultiple);
+        }
+
+        // Update assumptions
+        document.getElementById('matrix-assumptions').textContent =
+          `Adj. EBITDA: ${money(adjEbitda)} • Base: ${baseMultiple}×`;
+
+        // Create table rows (show only key multiples for space)
+        const keyMultiples = [7.0, 8.0, 8.5, 9.0, 9.5].filter((m) =>
+          matrix.some((row) => row.multiple === m)
+        );
+
+        const tableBody = document.getElementById('matrix-table-body');
+        tableBody.innerHTML = '';
+
+        keyMultiples.forEach((multiple) => {
+          const row = matrix.find((r) => r.multiple === multiple);
+          if (row) {
+            const tr = document.createElement('tr');
+            if (multiple === baseMultiple) {
+              tr.style.backgroundColor = 'var(--color-highlight)';
+              tr.style.fontWeight = 'bold';
             }
-            
-            // Update assumptions
-            document.getElementById('matrix-assumptions').textContent = 
-                `Adj. EBITDA: ${money(adjEbitda)} • Base: ${baseMultiple}×`;
-            
-            // Create table rows (show only key multiples for space)
-            const keyMultiples = [7.0, 8.0, 8.5, 9.0, 9.5].filter(m => 
-                matrix.some(row => row.multiple === m)
-            );
-            
-            const tableBody = document.getElementById('matrix-table-body');
-            tableBody.innerHTML = '';
-            
-            keyMultiples.forEach(multiple => {
-                const row = matrix.find(r => r.multiple === multiple);
-                if (row) {
-                    const tr = document.createElement('tr');
-                    if (multiple === baseMultiple) {
-                        tr.style.backgroundColor = 'var(--color-highlight)';
-                        tr.style.fontWeight = 'bold';
-                    }
-                    tr.innerHTML = `
+            tr.innerHTML = `
                         <td style="padding: 2px 4px;">${row.multiple.toFixed(1)}×</td>
                         <td style="padding: 2px 4px;">${money(row.enterprise_value)}</td>
                         <td style="padding: 2px 4px;">${money(row.equity_value_to_seller)}</td>
                     `;
-                    tableBody.appendChild(tr);
-                }
-            });
-            
-            chartReady();
-        }
-        
-        function createEPVPanel() {
-            const epv = caseData.epv_analysis;
-            const sensitivity = caseData.epv_sensitivity;
-            
-            // Render mini formula
-            const formulaElement = document.getElementById('epv-formula-mini');
-            try {
-                katex.render('EPV = \\frac{EBIT(1-T) - R}{WACC}', formulaElement, {
-                    throwOnError: false,
-                    displayMode: false
-                });
-            } catch (error) {
-                formulaElement.innerHTML = 'EPV = (EBIT(1-T) - R) / WACC';
-            }
-            
-            // Update values
-            const taxRate = 1 - (epv.nopat / epv.ebit);
-            const reinvestmentRate = epv.reinvestment / epv.ebit;
-            const wacc = epv.fcf / epv.epv_enterprise;
-            
-            document.getElementById('epv-ebit').textContent = money(epv.ebit);
-            document.getElementById('epv-tax').textContent = pct(taxRate);
-            document.getElementById('epv-reinvest').textContent = pct(reinvestmentRate);
-            document.getElementById('epv-wacc').textContent = pct(wacc);
-            document.getElementById('epv-result').textContent = money(epv.epv_enterprise);
-            
-            // Create mini sensitivity matrix
-            const data = [];
-            for (let i = 0; i < 3; i++) {
-                for (let j = 0; j < 3; j++) {
-                    data.push([j, i, sensitivity[i][j].epv_enterprise]);
-                }
-            }
-            
-            const values = data.map(d => d[2]);
-            const minValue = Math.min(...values);
-            const maxValue = Math.max(...values);
-            
-            const option = {
-                tooltip: {
-                    formatter: function(params) {
-                        return `EPV: ${money(params.data[2])}`;
-                    }
-                },
-                grid: { left: '5%', right: '5%', top: '15%', bottom: '25%' },
-                xAxis: {
-                    type: 'category',
-                    data: ['11%', '12%', '13%'],
-                    axisLabel: { fontSize: 8 }
-                },
-                yAxis: {
-                    type: 'category',
-                    data: ['5%', '10%', '15%'],
-                    axisLabel: { fontSize: 8 }
-                },
-                visualMap: {
-                    min: minValue,
-                    max: maxValue,
-                    show: false,
-                    inRange: { color: ['#fee2e2', '#22c55e'] }
-                },
-                series: [{
-                    type: 'heatmap',
-                    data: data,
-                    label: {
-                        show: true,
-                        formatter: function(params) {
-                            return money(params.value[2], { unit: 'M' });
-                        },
-                        fontSize: 7
-                    }
-                }]
-            };
-            
-            const chartElement = document.getElementById('epv-sensitivity-mini');
-            const chart = echarts.init(chartElement);
-            chart.setOption(option);
-            
-            chartReady();
-        }
-        
-        function createLBOChart() {
-            const sourcesUses = caseData.sources_uses;
-            const debtSchedule = caseData.debt_schedule;
-            const irr = caseData.irr_analysis;
-            
-            // Update sources & uses
-            document.getElementById('lbo-entry-ev').textContent = money(sourcesUses.entry_ev);
-            document.getElementById('lbo-sponsor-equity').textContent = money(sourcesUses.sponsor_equity);
-            
-            // Create mini debt chart
-            const years = [0, ...debtSchedule.map(row => row.year)];
-            const debtBalances = [sourcesUses.new_debt, ...debtSchedule.map(row => row.debt_balance)];
-            
-            const option = {
-                tooltip: {
-                    formatter: function(params) {
-                        return `Year ${params.name}: ${money(params.value)}`;
-                    }
-                },
-                grid: { left: '15%', right: '15%', top: '10%', bottom: '20%' },
-                xAxis: {
-                    type: 'category',
-                    data: years.map(y => y === 0 ? 'Entry' : `Y${y}`),
-                    axisLabel: { fontSize: 8 }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: { 
-                        formatter: money,
-                        fontSize: 7
-                    }
-                },
-                series: [{
-                    type: 'line',
-                    data: debtBalances,
-                    lineStyle: { color: '#1f2937', width: 2 },
-                    itemStyle: { color: '#1f2937' },
-                    symbol: 'circle',
-                    symbolSize: 4,
-                    areaStyle: { color: 'rgba(31, 41, 55, 0.1)' }
-                }]
-            };
-            
-            const chartElement = document.getElementById('lbo-debt-chart');
-            const chart = echarts.init(chartElement);
-            chart.setOption(option);
-            
-            // Update returns
-            const exitMultiple = irr.exit_ev / irr.year5_ebitda;
-            document.getElementById('lbo-exit-multiple').textContent = `${exitMultiple.toFixed(1)}×`;
-            document.getElementById('lbo-moic').textContent = `${irr.moic.toFixed(1)}×`;
-            document.getElementById('lbo-irr').textContent = pct(irr.irr);
-            
-            chartReady();
-        }
-        
-        function chartReady() {
-            chartsReady++;
-            if (chartsReady >= totalCharts) {
-                // All charts are ready
-                window.__READY__ = true;
-            }
-        }
-        
-        // Handle window resize for all charts
-        window.addEventListener('resize', function() {
-            // Resize all charts
-            echarts.getInstanceByDom(document.getElementById('bridge-chart'))?.resize();
-            echarts.getInstanceByDom(document.getElementById('epv-sensitivity-mini'))?.resize();
-            echarts.getInstanceByDom(document.getElementById('lbo-debt-chart'))?.resize();
+            tableBody.appendChild(tr);
+          }
         });
-        
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeOnePager);
-        } else {
-            initializeOnePager();
+
+        chartReady();
+      }
+
+      function createEPVPanel() {
+        const epv = caseData.epv_analysis;
+        const sensitivity = caseData.epv_sensitivity;
+
+        // Render mini formula
+        const formulaElement = document.getElementById('epv-formula-mini');
+        try {
+          katex.render('EPV = \\frac{EBIT(1-T) - R}{WACC}', formulaElement, {
+            throwOnError: false,
+            displayMode: false,
+          });
+        } catch (error) {
+          formulaElement.innerHTML = 'EPV = (EBIT(1-T) - R) / WACC';
         }
+
+        // Update values
+        const taxRate = 1 - epv.nopat / epv.ebit;
+        const reinvestmentRate = epv.reinvestment / epv.ebit;
+        const wacc = epv.fcf / epv.epv_enterprise;
+
+        document.getElementById('epv-ebit').textContent = money(epv.ebit);
+        document.getElementById('epv-tax').textContent = pct(taxRate);
+        document.getElementById('epv-reinvest').textContent =
+          pct(reinvestmentRate);
+        document.getElementById('epv-wacc').textContent = pct(wacc);
+        document.getElementById('epv-result').textContent = money(
+          epv.epv_enterprise
+        );
+
+        // Create mini sensitivity matrix
+        const data = [];
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            data.push([j, i, sensitivity[i][j].epv_enterprise]);
+          }
+        }
+
+        const values = data.map((d) => d[2]);
+        const minValue = Math.min(...values);
+        const maxValue = Math.max(...values);
+
+        const option = {
+          tooltip: {
+            formatter: function (params) {
+              return `EPV: ${money(params.data[2])}`;
+            },
+          },
+          grid: { left: '5%', right: '5%', top: '15%', bottom: '25%' },
+          xAxis: {
+            type: 'category',
+            data: ['11%', '12%', '13%'],
+            axisLabel: { fontSize: 8 },
+          },
+          yAxis: {
+            type: 'category',
+            data: ['5%', '10%', '15%'],
+            axisLabel: { fontSize: 8 },
+          },
+          visualMap: {
+            min: minValue,
+            max: maxValue,
+            show: false,
+            inRange: { color: ['#fee2e2', '#22c55e'] },
+          },
+          series: [
+            {
+              type: 'heatmap',
+              data: data,
+              label: {
+                show: true,
+                formatter: function (params) {
+                  return money(params.value[2], { unit: 'M' });
+                },
+                fontSize: 7,
+              },
+            },
+          ],
+        };
+
+        const chartElement = document.getElementById('epv-sensitivity-mini');
+        const chart = echarts.init(chartElement);
+        chart.setOption(option);
+
+        chartReady();
+      }
+
+      function createLBOChart() {
+        const sourcesUses = caseData.sources_uses;
+        const debtSchedule = caseData.debt_schedule;
+        const irr = caseData.irr_analysis;
+
+        // Update sources & uses
+        document.getElementById('lbo-entry-ev').textContent = money(
+          sourcesUses.entry_ev
+        );
+        document.getElementById('lbo-sponsor-equity').textContent = money(
+          sourcesUses.sponsor_equity
+        );
+
+        // Create mini debt chart
+        const years = [0, ...debtSchedule.map((row) => row.year)];
+        const debtBalances = [
+          sourcesUses.new_debt,
+          ...debtSchedule.map((row) => row.debt_balance),
+        ];
+
+        const option = {
+          tooltip: {
+            formatter: function (params) {
+              return `Year ${params.name}: ${money(params.value)}`;
+            },
+          },
+          grid: { left: '15%', right: '15%', top: '10%', bottom: '20%' },
+          xAxis: {
+            type: 'category',
+            data: years.map((y) => (y === 0 ? 'Entry' : `Y${y}`)),
+            axisLabel: { fontSize: 8 },
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: money,
+              fontSize: 7,
+            },
+          },
+          series: [
+            {
+              type: 'line',
+              data: debtBalances,
+              lineStyle: { color: '#1f2937', width: 2 },
+              itemStyle: { color: '#1f2937' },
+              symbol: 'circle',
+              symbolSize: 4,
+              areaStyle: { color: 'rgba(31, 41, 55, 0.1)' },
+            },
+          ],
+        };
+
+        const chartElement = document.getElementById('lbo-debt-chart');
+        const chart = echarts.init(chartElement);
+        chart.setOption(option);
+
+        // Update returns
+        const exitMultiple = irr.exit_ev / irr.year5_ebitda;
+        document.getElementById('lbo-exit-multiple').textContent =
+          `${exitMultiple.toFixed(1)}×`;
+        document.getElementById('lbo-moic').textContent =
+          `${irr.moic.toFixed(1)}×`;
+        document.getElementById('lbo-irr').textContent = pct(irr.irr);
+
+        chartReady();
+      }
+
+      function chartReady() {
+        chartsReady++;
+        if (chartsReady >= totalCharts) {
+          // All charts are ready
+          window.__READY__ = true;
+        }
+      }
+
+      // Handle window resize for all charts
+      window.addEventListener('resize', function () {
+        // Resize all charts
+        echarts
+          .getInstanceByDom(document.getElementById('bridge-chart'))
+          ?.resize();
+        echarts
+          .getInstanceByDom(document.getElementById('epv-sensitivity-mini'))
+          ?.resize();
+        echarts
+          .getInstanceByDom(document.getElementById('lbo-debt-chart'))
+          ?.resize();
+      });
+
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeOnePager);
+      } else {
+        initializeOnePager();
+      }
     </script>
-</body>
-</html> 
+  </body>
+</html>

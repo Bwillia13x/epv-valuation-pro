@@ -5,26 +5,30 @@ A professional-grade Earnings Power Value (EPV) valuation system with advanced f
 🚀 **NEW**: Multi-Agent Financial Analysis System with 4 specialized AI analysts providing independent investment recommendations.
 
 ## 📊 Recent Case Studies
+
 - **Multi-Service Medispa Analysis**: Complete $3.7M revenue case with 6 service lines
-- **Financial Dataset V1**: Normalized and validated medispa financials 
+- **Financial Dataset V1**: Normalized and validated medispa financials
 - **4-Agent Analysis**: Independent valuations ranging from $1.58M - $10.4M
 - **Monte Carlo Modeling**: 10,000+ iteration risk analysis
 
 ## 🚀 Features
 
 ### Core Valuation Engine
+
 - **Greenwald EPV Methodology**: Proper implementation of Bruce Greenwald's Earnings Power Value approach
 - **Multi-Scenario Analysis**: Base, Bull, and Bear case modeling with scenario adjustments
 - **Asset Reproduction Value**: Detailed reproduction cost modeling for franchise analysis
 - **Advanced WACC Calculation**: CAPM-based cost of capital with size and specific risk premia
 
 ### Financial Modeling
+
 - **Service Line Builder**: Granular revenue modeling with individual pricing, volumes, and margins
 - **Cost Structure Analysis**: Detailed variable costs, fixed costs, and operating expenses
 - **Working Capital Modeling**: DSO/DSI/DPO calculations for cash flow analysis
 - **Monte Carlo Simulation**: Configurable risk analysis with distribution statistics
 
 ### Advanced Analytics
+
 - **Multi-Agent Analysis**: 4 specialized financial analysts (General, Advanced, Quant, Value Investing)
 - **Sensitivity Analysis**: WACC vs EBIT margin valuation sensitivity tables
 - **Monte Carlo Simulation**: 10,000+ iteration risk modeling with confidence intervals
@@ -33,6 +37,7 @@ A professional-grade Earnings Power Value (EPV) valuation system with advanced f
 - **Real-time Calculations**: Live updates as inputs change
 
 ### User Experience
+
 - **Responsive Design**: Mobile-friendly interface with Tailwind CSS
 - **Data Persistence**: Local storage for scenario saving and loading
 - **Export Capabilities**: JSON report generation for external analysis
@@ -49,10 +54,12 @@ A professional-grade Earnings Power Value (EPV) valuation system with advanced f
 ## 📦 Installation
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 
 ### Setup
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -66,6 +73,7 @@ npm run dev
 ```
 
 ### Build for Production
+
 ```bash
 # Create optimized production build
 npm run build
@@ -97,6 +105,7 @@ summit2/
 ## 🎯 Usage
 
 ### Basic Workflow
+
 1. **Input Data**: Enter service line details, costs, and financial parameters
 2. **Model Review**: Review the financial model and normalized earnings
 3. **Valuation Analysis**: Examine EPV, reproduction value, and franchise factors
@@ -105,6 +114,7 @@ summit2/
 6. **LBO Modeling**: Structure potential leveraged buyout scenarios
 
 ### Key Inputs
+
 - **Revenue Lines**: Individual service/retail line items with pricing and volumes
 - **Cost Structure**: Clinical labor, marketing, admin, and fixed costs
 - **Normalizations**: Owner add-backs, D&A, and maintenance capex
@@ -112,6 +122,7 @@ summit2/
 - **Asset Reproduction**: Buildout, equipment, and startup costs
 
 ### Outputs
+
 - **Enterprise EPV**: Core valuation based on normalized earnings
 - **Equity Value**: EPV plus cash minus debt
 - **Franchise Factor**: EPV divided by reproduction value
@@ -121,9 +132,11 @@ summit2/
 ## 🔧 Configuration
 
 ### Environment Variables
+
 No environment variables required for basic functionality.
 
 ### Customization
+
 - Modify default service lines in `components/MedispaEPVProCliPage.tsx`
 - Adjust WACC parameters for different industry sectors
 - Customize Monte Carlo simulation parameters in `lib/valuationModels.ts`
@@ -131,6 +144,7 @@ No environment variables required for basic functionality.
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -140,7 +154,9 @@ vercel
 ```
 
 ### Other Platforms
+
 The application is compatible with any platform supporting Next.js:
+
 - Netlify
 - AWS Amplify
 - Google Cloud Run
@@ -156,6 +172,7 @@ The application is compatible with any platform supporting Next.js:
 ## 🧪 Testing
 
 ### Development Testing
+
 ```bash
 # Run linting
 npm run lint
@@ -168,6 +185,7 @@ npm run build
 ```
 
 ### Manual Testing Checklist
+
 - [ ] Service line addition/removal
 - [ ] Scenario switching (Base/Bull/Bear)
 - [ ] Monte Carlo simulation execution
@@ -178,6 +196,7 @@ npm run build
 ## 📈 Roadmap
 
 ### Planned Features
+
 - [ ] Real-time data integration (Yahoo Finance API)
 - [ ] Advanced charting with Recharts
 - [ ] Multi-location modeling
@@ -186,6 +205,7 @@ npm run build
 - [ ] API endpoints for external integrations
 
 ### Technical Improvements
+
 - [ ] Web Workers for Monte Carlo calculations
 - [ ] Service Worker for offline functionality
 - [ ] Progressive Web App (PWA) features
@@ -210,6 +230,7 @@ This software is for educational and professional analysis purposes only. The va
 ## 🆘 Support
 
 For technical support or feature requests:
+
 - Create an issue in the GitHub repository
 - Review the documentation in `/docs` (if available)
 - Check the troubleshooting section below
@@ -219,6 +240,7 @@ For technical support or feature requests:
 ### Common Issues
 
 **Build Errors**
+
 ```bash
 # Clear cache and reinstall
 rm -rf node_modules .next
@@ -227,15 +249,17 @@ npm run build
 ```
 
 **Runtime Errors**
+
 - Ensure all dependencies are installed: `npm install`
 - Check browser console for JavaScript errors
 - Verify TypeScript compilation: `npm run type-check`
 
 **Performance Issues**
+
 - Reduce Monte Carlo runs for faster simulation
 - Use production build for optimal performance
 - Check for memory leaks in browser dev tools
 
 ---
 
-**Built with ❤️ for professional financial analysis** 
+**Built with ❤️ for professional financial analysis**

@@ -1,324 +1,387 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LBO Summary - CPP Visual Report Kit</title>
-    <link rel="stylesheet" href="../public/css/report.css">
+    <link rel="stylesheet" href="../public/css/report.css" />
     <script src="../vendor/echarts.min.js"></script>
     <script src="../public/js/format.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="chart-container">
-        <div class="lbo-layout">
-            <!-- Top Panel: Sources & Uses -->
-            <div class="lbo-sources-uses">
-                <h2 class="text-lg font-semibold mb-4">LBO Sources & Uses</h2>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
-                    <div class="text-center">
-                        <div class="font-semibold text-sm text-neutral mb-1">Entry EV</div>
-                        <div class="text-lg font-bold text-linked" id="entry-ev">Loading...</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="font-semibold text-sm text-neutral mb-1">New Debt</div>
-                        <div class="text-lg font-bold text-input" id="new-debt">Loading...</div>
-                        <div class="text-xs text-neutral" id="debt-pct">Loading...</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="font-semibold text-sm text-neutral mb-1">Sponsor Equity</div>
-                        <div class="text-lg font-bold text-input" id="sponsor-equity">Loading...</div>
-                        <div class="text-xs text-neutral">INVESTED</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="font-semibold text-sm text-neutral mb-1">Equity to Seller</div>
-                        <div class="text-lg font-bold text-output" id="equity-to-seller">Loading...</div>
-                        <div class="text-xs text-neutral">EV - Old Debt</div>
-                    </div>
-                </div>
+      <div class="lbo-layout">
+        <!-- Top Panel: Sources & Uses -->
+        <div class="lbo-sources-uses">
+          <h2 class="text-lg font-semibold mb-4">LBO Sources & Uses</h2>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              gap: 16px;
+            "
+          >
+            <div class="text-center">
+              <div class="font-semibold text-sm text-neutral mb-1">
+                Entry EV
+              </div>
+              <div class="text-lg font-bold text-linked" id="entry-ev">
+                Loading...
+              </div>
             </div>
-            
-            <!-- Middle Panel: Debt Schedule Chart -->
-            <div class="lbo-debt-chart">
-                <h3 class="text-lg font-semibold mb-2">Debt Amortization Schedule</h3>
-                <div id="debt-chart" style="height: 280px;"></div>
+            <div class="text-center">
+              <div class="font-semibold text-sm text-neutral mb-1">
+                New Debt
+              </div>
+              <div class="text-lg font-bold text-input" id="new-debt">
+                Loading...
+              </div>
+              <div class="text-xs text-neutral" id="debt-pct">Loading...</div>
             </div>
-            
-            <!-- Bottom Panel: Exit Metrics & Assumptions -->
-            <div class="lbo-metrics">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Exit Metrics (Year 5)</h3>
-                    <div class="space-y-2">
-                        <div class="metric">
-                            <span class="metric-label">Exit Multiple:</span>
-                            <span class="metric-value input" id="exit-multiple">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Year 5 EBITDA:</span>
-                            <span class="metric-value linked" id="year5-ebitda">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Exit EV:</span>
-                            <span class="metric-value linked" id="exit-ev">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Exit Debt:</span>
-                            <span class="metric-value linked" id="exit-debt">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Exit Equity:</span>
-                            <span class="metric-value output" id="exit-equity">Loading...</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 p-3 bg-white border rounded-lg">
-                        <h4 class="font-semibold mb-2">Returns Summary</h4>
-                        <div class="space-y-1">
-                            <div class="metric">
-                                <span class="metric-label">MOIC:</span>
-                                <span class="metric-value output" id="moic">Loading...</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">IRR:</span>
-                                <span class="metric-value output" id="irr">Loading...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Key Assumptions</h3>
-                    <div class="space-y-2">
-                        <div class="metric">
-                            <span class="metric-label">Entry Debt %:</span>
-                            <span class="metric-value input" id="entry-debt-pct">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Debt Rate:</span>
-                            <span class="metric-value input" id="debt-rate">8.5%</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Cash Sweep:</span>
-                            <span class="metric-value input">80%</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Hold Period:</span>
-                            <span class="metric-value input">5 years</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">Revenue CAGR:</span>
-                            <span class="metric-value linked" id="revenue-cagr">Loading...</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-label">EBITDA CAGR:</span>
-                            <span class="metric-value linked" id="ebitda-cagr">Loading...</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 p-3 bg-white border rounded-lg">
-                        <h4 class="font-semibold mb-2">Key Drivers</h4>
-                        <div class="space-y-1 text-sm">
-                            <div class="metric">
-                                <span class="metric-label">Maint CapEx:</span>
-                                <span class="metric-value linked">2.0% of revenue</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">Working Capital:</span>
-                                <span class="metric-value linked">AR/Inv/AP policy</span>
-                            </div>
-                            <div class="metric">
-                                <span class="metric-label">D&A:</span>
-                                <span class="metric-value linked">$100K annual</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="text-center">
+              <div class="font-semibold text-sm text-neutral mb-1">
+                Sponsor Equity
+              </div>
+              <div class="text-lg font-bold text-input" id="sponsor-equity">
+                Loading...
+              </div>
+              <div class="text-xs text-neutral">INVESTED</div>
             </div>
+            <div class="text-center">
+              <div class="font-semibold text-sm text-neutral mb-1">
+                Equity to Seller
+              </div>
+              <div class="text-lg font-bold text-output" id="equity-to-seller">
+                Loading...
+              </div>
+              <div class="text-xs text-neutral">EV - Old Debt</div>
+            </div>
+          </div>
         </div>
+
+        <!-- Middle Panel: Debt Schedule Chart -->
+        <div class="lbo-debt-chart">
+          <h3 class="text-lg font-semibold mb-2">Debt Amortization Schedule</h3>
+          <div id="debt-chart" style="height: 280px"></div>
+        </div>
+
+        <!-- Bottom Panel: Exit Metrics & Assumptions -->
+        <div class="lbo-metrics">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Exit Metrics (Year 5)</h3>
+            <div class="space-y-2">
+              <div class="metric">
+                <span class="metric-label">Exit Multiple:</span>
+                <span class="metric-value input" id="exit-multiple"
+                  >Loading...</span
+                >
+              </div>
+              <div class="metric">
+                <span class="metric-label">Year 5 EBITDA:</span>
+                <span class="metric-value linked" id="year5-ebitda"
+                  >Loading...</span
+                >
+              </div>
+              <div class="metric">
+                <span class="metric-label">Exit EV:</span>
+                <span class="metric-value linked" id="exit-ev">Loading...</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Exit Debt:</span>
+                <span class="metric-value linked" id="exit-debt"
+                  >Loading...</span
+                >
+              </div>
+              <div class="metric">
+                <span class="metric-label">Exit Equity:</span>
+                <span class="metric-value output" id="exit-equity"
+                  >Loading...</span
+                >
+              </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-white border rounded-lg">
+              <h4 class="font-semibold mb-2">Returns Summary</h4>
+              <div class="space-y-1">
+                <div class="metric">
+                  <span class="metric-label">MOIC:</span>
+                  <span class="metric-value output" id="moic">Loading...</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">IRR:</span>
+                  <span class="metric-value output" id="irr">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Key Assumptions</h3>
+            <div class="space-y-2">
+              <div class="metric">
+                <span class="metric-label">Entry Debt %:</span>
+                <span class="metric-value input" id="entry-debt-pct"
+                  >Loading...</span
+                >
+              </div>
+              <div class="metric">
+                <span class="metric-label">Debt Rate:</span>
+                <span class="metric-value input" id="debt-rate">8.5%</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Cash Sweep:</span>
+                <span class="metric-value input">80%</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Hold Period:</span>
+                <span class="metric-value input">5 years</span>
+              </div>
+              <div class="metric">
+                <span class="metric-label">Revenue CAGR:</span>
+                <span class="metric-value linked" id="revenue-cagr"
+                  >Loading...</span
+                >
+              </div>
+              <div class="metric">
+                <span class="metric-label">EBITDA CAGR:</span>
+                <span class="metric-value linked" id="ebitda-cagr"
+                  >Loading...</span
+                >
+              </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-white border rounded-lg">
+              <h4 class="font-semibold mb-2">Key Drivers</h4>
+              <div class="space-y-1 text-sm">
+                <div class="metric">
+                  <span class="metric-label">Maint CapEx:</span>
+                  <span class="metric-value linked">2.0% of revenue</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">Working Capital:</span>
+                  <span class="metric-value linked">AR/Inv/AP policy</span>
+                </div>
+                <div class="metric">
+                  <span class="metric-label">D&A:</span>
+                  <span class="metric-value linked">$100K annual</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Global variables
-        let caseData = null;
-        let debtChart = null;
-        
-        // Wait for data injection
-        function initializeLBO() {
-            if (!window.__CASE__) {
-                setTimeout(initializeLBO, 100);
-                return;
-            }
-            
-            caseData = window.__CASE__;
-            
-            // Update sources & uses
-            updateSourcesUses();
-            
-            // Create debt schedule chart
-            createDebtChart();
-            
-            // Update exit metrics
-            updateExitMetrics();
-            
-            // Update assumptions
-            updateAssumptions();
-            
-            // Signal that chart is ready
-            window.__READY__ = true;
+      // Global variables
+      let caseData = null;
+      let debtChart = null;
+
+      // Wait for data injection
+      function initializeLBO() {
+        if (!window.__CASE__) {
+          setTimeout(initializeLBO, 100);
+          return;
         }
-        
-        function updateSourcesUses() {
-            const sourcesUses = caseData.sources_uses;
-            
-            document.getElementById('entry-ev').textContent = money(sourcesUses.entry_ev);
-            document.getElementById('new-debt').textContent = money(sourcesUses.new_debt);
-            document.getElementById('debt-pct').textContent = `${sourcesUses.debt_pct.toFixed(0)}% of EV`;
-            document.getElementById('sponsor-equity').textContent = money(sourcesUses.sponsor_equity);
-            document.getElementById('equity-to-seller').textContent = money(sourcesUses.equity_to_seller);
-        }
-        
-        function createDebtChart() {
-            const debtSchedule = caseData.debt_schedule;
-            const sourcesUses = caseData.sources_uses;
-            
-            // Prepare data for line chart
-            const years = [0, ...debtSchedule.map(row => row.year)];
-            const debtBalances = [sourcesUses.new_debt, ...debtSchedule.map(row => row.debt_balance)];
-            
-            const option = {
-                tooltip: {
-                    trigger: 'axis',
-                    formatter: function(params) {
-                        const year = params[0].axisValue;
-                        const debt = params[0].value;
-                        return `Year ${year}<br/>Net Debt: ${money(debt)}`;
-                    }
+
+        caseData = window.__CASE__;
+
+        // Update sources & uses
+        updateSourcesUses();
+
+        // Create debt schedule chart
+        createDebtChart();
+
+        // Update exit metrics
+        updateExitMetrics();
+
+        // Update assumptions
+        updateAssumptions();
+
+        // Signal that chart is ready
+        window.__READY__ = true;
+      }
+
+      function updateSourcesUses() {
+        const sourcesUses = caseData.sources_uses;
+
+        document.getElementById('entry-ev').textContent = money(
+          sourcesUses.entry_ev
+        );
+        document.getElementById('new-debt').textContent = money(
+          sourcesUses.new_debt
+        );
+        document.getElementById('debt-pct').textContent =
+          `${sourcesUses.debt_pct.toFixed(0)}% of EV`;
+        document.getElementById('sponsor-equity').textContent = money(
+          sourcesUses.sponsor_equity
+        );
+        document.getElementById('equity-to-seller').textContent = money(
+          sourcesUses.equity_to_seller
+        );
+      }
+
+      function createDebtChart() {
+        const debtSchedule = caseData.debt_schedule;
+        const sourcesUses = caseData.sources_uses;
+
+        // Prepare data for line chart
+        const years = [0, ...debtSchedule.map((row) => row.year)];
+        const debtBalances = [
+          sourcesUses.new_debt,
+          ...debtSchedule.map((row) => row.debt_balance),
+        ];
+
+        const option = {
+          tooltip: {
+            trigger: 'axis',
+            formatter: function (params) {
+              const year = params[0].axisValue;
+              const debt = params[0].value;
+              return `Year ${year}<br/>Net Debt: ${money(debt)}`;
+            },
+          },
+          grid: {
+            left: '10%',
+            right: '10%',
+            bottom: '15%',
+            top: '15%',
+          },
+          xAxis: {
+            type: 'category',
+            data: years,
+            axisLabel: {
+              fontSize: 12,
+              formatter: function (value) {
+                return value === 0 ? 'Entry' : `Year ${value}`;
+              },
+            },
+            axisLine: {
+              lineStyle: { color: '#e5e7eb' },
+            },
+          },
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              formatter: function (value) {
+                return money(value);
+              },
+              fontSize: 12,
+              color: '#6b7280',
+            },
+            axisLine: {
+              lineStyle: { color: '#e5e7eb' },
+            },
+            splitLine: {
+              lineStyle: { color: '#f3f4f6' },
+            },
+          },
+          series: [
+            {
+              name: 'Net Debt',
+              type: 'line',
+              data: debtBalances,
+              lineStyle: {
+                color: '#1f2937',
+                width: 3,
+              },
+              itemStyle: {
+                color: '#1f2937',
+                borderWidth: 2,
+                borderColor: '#ffffff',
+              },
+              symbol: 'circle',
+              symbolSize: 8,
+              areaStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: 'rgba(31, 41, 55, 0.3)',
+                    },
+                    {
+                      offset: 1,
+                      color: 'rgba(31, 41, 55, 0.1)',
+                    },
+                  ],
                 },
-                grid: {
-                    left: '10%',
-                    right: '10%',
-                    bottom: '15%',
-                    top: '15%'
+              },
+              label: {
+                show: true,
+                position: 'top',
+                formatter: function (params) {
+                  return money(params.value, { unit: 'M' });
                 },
-                xAxis: {
-                    type: 'category',
-                    data: years,
-                    axisLabel: {
-                        fontSize: 12,
-                        formatter: function(value) {
-                            return value === 0 ? 'Entry' : `Year ${value}`;
-                        }
-                    },
-                    axisLine: {
-                        lineStyle: { color: '#e5e7eb' }
-                    }
-                },
-                yAxis: {
-                    type: 'value',
-                    axisLabel: {
-                        formatter: function(value) {
-                            return money(value);
-                        },
-                        fontSize: 12,
-                        color: '#6b7280'
-                    },
-                    axisLine: {
-                        lineStyle: { color: '#e5e7eb' }
-                    },
-                    splitLine: {
-                        lineStyle: { color: '#f3f4f6' }
-                    }
-                },
-                series: [{
-                    name: 'Net Debt',
-                    type: 'line',
-                    data: debtBalances,
-                    lineStyle: {
-                        color: '#1f2937',
-                        width: 3
-                    },
-                    itemStyle: {
-                        color: '#1f2937',
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    },
-                    symbol: 'circle',
-                    symbolSize: 8,
-                    areaStyle: {
-                        color: {
-                            type: 'linear',
-                            x: 0,
-                            y: 0,
-                            x2: 0,
-                            y2: 1,
-                            colorStops: [{
-                                offset: 0, color: 'rgba(31, 41, 55, 0.3)'
-                            }, {
-                                offset: 1, color: 'rgba(31, 41, 55, 0.1)'
-                            }]
-                        }
-                    },
-                    label: {
-                        show: true,
-                        position: 'top',
-                        formatter: function(params) {
-                            return money(params.value, { unit: 'M' });
-                        },
-                        fontSize: 10,
-                        color: '#1f2937',
-                        fontWeight: 'bold'
-                    }
-                }]
-            };
-            
-            const chartElement = document.getElementById('debt-chart');
-            debtChart = echarts.init(chartElement);
-            debtChart.setOption(option);
+                fontSize: 10,
+                color: '#1f2937',
+                fontWeight: 'bold',
+              },
+            },
+          ],
+        };
+
+        const chartElement = document.getElementById('debt-chart');
+        debtChart = echarts.init(chartElement);
+        debtChart.setOption(option);
+      }
+
+      function updateExitMetrics() {
+        const irr = caseData.irr_analysis;
+
+        // Calculate exit multiple
+        const exitMultiple = irr.exit_ev / irr.year5_ebitda;
+
+        document.getElementById('exit-multiple').textContent =
+          `${exitMultiple.toFixed(1)}×`;
+        document.getElementById('year5-ebitda').textContent = money(
+          irr.year5_ebitda
+        );
+        document.getElementById('exit-ev').textContent = money(irr.exit_ev);
+        document.getElementById('exit-debt').textContent = money(irr.exit_debt);
+        document.getElementById('exit-equity').textContent = money(
+          irr.exit_equity
+        );
+        document.getElementById('moic').textContent = `${irr.moic.toFixed(1)}×`;
+        document.getElementById('irr').textContent = pct(irr.irr);
+      }
+
+      function updateAssumptions() {
+        const sourcesUses = caseData.sources_uses;
+        const debtSchedule = caseData.debt_schedule;
+        const ttm = caseData.ttm_metrics;
+        const irr = caseData.irr_analysis;
+
+        // Calculate growth rates
+        const finalYear = debtSchedule[debtSchedule.length - 1];
+        const revenueCagr =
+          Math.pow(finalYear.revenue / ttm.ttm_revenue, 1 / 5) - 1;
+        const ebitdaCagr =
+          Math.pow(irr.year5_ebitda / ttm.ttm_ebitda_adjusted, 1 / 5) - 1;
+
+        document.getElementById('entry-debt-pct').textContent =
+          `${sourcesUses.debt_pct.toFixed(0)}%`;
+        document.getElementById('revenue-cagr').textContent = pct(revenueCagr);
+        document.getElementById('ebitda-cagr').textContent = pct(ebitdaCagr);
+      }
+
+      // Handle window resize
+      window.addEventListener('resize', function () {
+        if (debtChart) {
+          debtChart.resize();
         }
-        
-        function updateExitMetrics() {
-            const irr = caseData.irr_analysis;
-            
-            // Calculate exit multiple
-            const exitMultiple = irr.exit_ev / irr.year5_ebitda;
-            
-            document.getElementById('exit-multiple').textContent = `${exitMultiple.toFixed(1)}×`;
-            document.getElementById('year5-ebitda').textContent = money(irr.year5_ebitda);
-            document.getElementById('exit-ev').textContent = money(irr.exit_ev);
-            document.getElementById('exit-debt').textContent = money(irr.exit_debt);
-            document.getElementById('exit-equity').textContent = money(irr.exit_equity);
-            document.getElementById('moic').textContent = `${irr.moic.toFixed(1)}×`;
-            document.getElementById('irr').textContent = pct(irr.irr);
-        }
-        
-        function updateAssumptions() {
-            const sourcesUses = caseData.sources_uses;
-            const debtSchedule = caseData.debt_schedule;
-            const ttm = caseData.ttm_metrics;
-            const irr = caseData.irr_analysis;
-            
-            // Calculate growth rates
-            const finalYear = debtSchedule[debtSchedule.length - 1];
-            const revenueCagr = Math.pow(finalYear.revenue / ttm.ttm_revenue, 1/5) - 1;
-            const ebitdaCagr = Math.pow(irr.year5_ebitda / ttm.ttm_ebitda_adjusted, 1/5) - 1;
-            
-            document.getElementById('entry-debt-pct').textContent = `${sourcesUses.debt_pct.toFixed(0)}%`;
-            document.getElementById('revenue-cagr').textContent = pct(revenueCagr);
-            document.getElementById('ebitda-cagr').textContent = pct(ebitdaCagr);
-        }
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (debtChart) {
-                debtChart.resize();
-            }
-        });
-        
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeLBO);
-        } else {
-            initializeLBO();
-        }
+      });
+
+      // Initialize when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeLBO);
+      } else {
+        initializeLBO();
+      }
     </script>
-</body>
-</html> 
+  </body>
+</html>

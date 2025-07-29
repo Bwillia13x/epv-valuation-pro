@@ -1,374 +1,424 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EBITDA Bridge - CPP Visual Report Kit</title>
-    <link rel="stylesheet" href="../public/css/report.css">
+    <link rel="stylesheet" href="../public/css/report.css" />
     <script src="../vendor/echarts.min.js"></script>
     <script src="../public/js/format.js"></script>
     <script src="../public/js/acceptance.js"></script>
     <style>
-        .bridge-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: var(--spacing-card-lg);
-            font-family: var(--font-family);
-            background: var(--color-background);
-        }
-        
-        .bridge-header {
-            text-align: center;
-            margin-bottom: var(--spacing-lg);
-            padding-bottom: var(--spacing-sm);
-            border-bottom: 1px solid var(--color-border);
-        }
-        
-        .bridge-title {
-            font-size: var(--font-size-2xl);
-            font-weight: 700;
-            color: var(--color-text);
-            margin-bottom: var(--spacing-xs);
-        }
-        
-        .bridge-subtitle {
-            font-size: var(--font-size-base-lg);
-            color: var(--color-text-light);
-            font-weight: 500;
-        }
-        
-        .chart-section {
-            flex: 1;
-            min-height: 400px;
-            margin-bottom: var(--spacing-lg);
-        }
-        
-        .footer-metrics {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: var(--spacing-md);
-            padding: var(--spacing-card);
-            background: white;
-            border-radius: var(--radius-card);
-            box-shadow: var(--shadow-card);
-            border: 1px solid var(--color-border);
-        }
-        
-        .metric-card {
-            text-align: center;
-            padding: var(--spacing-sm);
-        }
-        
-        .metric-label {
-            font-size: var(--font-size-caption-lg);
-            color: var(--color-text-light);
-            margin-bottom: var(--spacing-xs);
-            display: block;
-        }
-        
-        .metric-value {
-            font-size: var(--font-size-xl);
-            font-weight: 600;
-            display: block;
-        }
-        
-        .metric-value.reported { color: var(--color-neutral); }
-        .metric-value.adjusted { color: var(--color-output); }
-        .metric-value.revenue { color: var(--color-linked); }
-        
-        .reconciliation-badge {
-            position: absolute;
-            top: var(--spacing-sm);
-            right: var(--spacing-sm);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--spacing-xs);
-            font-size: var(--font-size-caption);
-            font-weight: 600;
-        }
-        
-        .reconciliation-badge.pass {
-            background: #dcfce7;
-            color: #166534;
-        }
-        
-        .reconciliation-badge.fail {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+      .bridge-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: var(--spacing-card-lg);
+        font-family: var(--font-family);
+        background: var(--color-background);
+      }
+
+      .bridge-header {
+        text-align: center;
+        margin-bottom: var(--spacing-lg);
+        padding-bottom: var(--spacing-sm);
+        border-bottom: 1px solid var(--color-border);
+      }
+
+      .bridge-title {
+        font-size: var(--font-size-2xl);
+        font-weight: 700;
+        color: var(--color-text);
+        margin-bottom: var(--spacing-xs);
+      }
+
+      .bridge-subtitle {
+        font-size: var(--font-size-base-lg);
+        color: var(--color-text-light);
+        font-weight: 500;
+      }
+
+      .chart-section {
+        flex: 1;
+        min-height: 400px;
+        margin-bottom: var(--spacing-lg);
+      }
+
+      .footer-metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: var(--spacing-md);
+        padding: var(--spacing-card);
+        background: white;
+        border-radius: var(--radius-card);
+        box-shadow: var(--shadow-card);
+        border: 1px solid var(--color-border);
+      }
+
+      .metric-card {
+        text-align: center;
+        padding: var(--spacing-sm);
+      }
+
+      .metric-label {
+        font-size: var(--font-size-caption-lg);
+        color: var(--color-text-light);
+        margin-bottom: var(--spacing-xs);
+        display: block;
+      }
+
+      .metric-value {
+        font-size: var(--font-size-xl);
+        font-weight: 600;
+        display: block;
+      }
+
+      .metric-value.reported {
+        color: var(--color-neutral);
+      }
+      .metric-value.adjusted {
+        color: var(--color-output);
+      }
+      .metric-value.revenue {
+        color: var(--color-linked);
+      }
+
+      .reconciliation-badge {
+        position: absolute;
+        top: var(--spacing-sm);
+        right: var(--spacing-sm);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--spacing-xs);
+        font-size: var(--font-size-caption);
+        font-weight: 600;
+      }
+
+      .reconciliation-badge.pass {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .reconciliation-badge.fail {
+        background: #fee2e2;
+        color: #991b1b;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="bridge-container">
-        <div class="reconciliation-badge" id="reconciliation-badge">
-            Checking...
+      <div class="reconciliation-badge" id="reconciliation-badge">
+        Checking...
+      </div>
+
+      <div class="bridge-header">
+        <h1 class="bridge-title" id="chart-title">EBITDA Bridge Analysis</h1>
+        <p class="bridge-subtitle" id="chart-subtitle">
+          TTM Window: Loading...
+        </p>
+      </div>
+
+      <div class="chart-section">
+        <div id="bridge-chart" style="width: 100%; height: 100%"></div>
+      </div>
+
+      <div class="footer-metrics">
+        <div class="metric-card">
+          <span class="metric-label">TTM Revenue</span>
+          <span class="metric-value revenue" id="revenue-metric"
+            >Loading...</span
+          >
         </div>
-        
-        <div class="bridge-header">
-            <h1 class="bridge-title" id="chart-title">EBITDA Bridge Analysis</h1>
-            <p class="bridge-subtitle" id="chart-subtitle">TTM Window: Loading...</p>
+        <div class="metric-card">
+          <span class="metric-label">Reported Margin</span>
+          <span class="metric-value reported" id="reported-margin"
+            >Loading...</span
+          >
         </div>
-        
-        <div class="chart-section">
-            <div id="bridge-chart" style="width: 100%; height: 100%;"></div>
+        <div class="metric-card">
+          <span class="metric-label">Adjusted Margin</span>
+          <span class="metric-value adjusted" id="adjusted-margin"
+            >Loading...</span
+          >
         </div>
-        
-        <div class="footer-metrics">
-            <div class="metric-card">
-                <span class="metric-label">TTM Revenue</span>
-                <span class="metric-value revenue" id="revenue-metric">Loading...</span>
-            </div>
-            <div class="metric-card">
-                <span class="metric-label">Reported Margin</span>
-                <span class="metric-value reported" id="reported-margin">Loading...</span>
-            </div>
-            <div class="metric-card">
-                <span class="metric-label">Adjusted Margin</span>
-                <span class="metric-value adjusted" id="adjusted-margin">Loading...</span>
-            </div>
-        </div>
+      </div>
     </div>
 
     <script>
-    function initializeBridge() {
+      function initializeBridge() {
         try {
-            // Load case data
-            const caseData = window.__CASE_DATA__;
-            if (!caseData) {
-                throw new Error('Case data not loaded');
-            }
-            
-            const title = window.__CHART_CONFIG__.title || 'Investment Target';
-            const ttmWindow = caseData.company_info.ttm_window || 'TTM';
-            
-            // Update header
-            document.getElementById('chart-title').textContent = `${title} - EBITDA Bridge`;
-            document.getElementById('chart-subtitle').textContent = `TTM Window: ${ttmWindow}`;
-            
-            // Extract bridge data
-            const bridge = caseData.ebitda_bridge;
-            const ttm = caseData.ttm_metrics;
-            
-            const reported = bridge.reported_ebitda;
-            const ownerAddback = bridge.owner_addback;
-            const onetimeAddback = bridge.onetime_addback;
-            const rentNorm = bridge.rent_normalization;
-            const adjusted = bridge.adjusted_ebitda;
-            
-            // Run acceptance check
-            const calculatedAdjusted = reported + ownerAddback + onetimeAddback + rentNorm;
-            const reconciliationError = Math.abs(calculatedAdjusted - adjusted);
-            const reconciliationTolerance = adjusted * 0.005; // 0.5%
-            const reconciliationPassed = reconciliationError <= reconciliationTolerance;
-            
-            // Update reconciliation badge
-            const badge = document.getElementById('reconciliation-badge');
-            if (reconciliationPassed) {
-                badge.textContent = '✓ Reconciled';
-                badge.className = 'reconciliation-badge pass';
-            } else {
-                badge.textContent = `⚠ Reconcile Δ ${__FORMAT__.moneyM(reconciliationError, 2)}`;
-                badge.className = 'reconciliation-badge fail';
-            }
-            
-            // Update footer metrics
-            document.getElementById('revenue-metric').textContent = __FORMAT__.moneyM(ttm.ttm_revenue, 2);
-            document.getElementById('reported-margin').textContent = __FORMAT__.pct(reported / ttm.ttm_revenue, 1);
-            document.getElementById('adjusted-margin').textContent = __FORMAT__.pct(adjusted / ttm.ttm_revenue, 1);
-            
-            // Create waterfall chart
-            createWaterfallChart(reported, ownerAddback, onetimeAddback, rentNorm, adjusted);
-            
+          // Load case data
+          const caseData = window.__CASE_DATA__;
+          if (!caseData) {
+            throw new Error('Case data not loaded');
+          }
+
+          const title = window.__CHART_CONFIG__.title || 'Investment Target';
+          const ttmWindow = caseData.company_info.ttm_window || 'TTM';
+
+          // Update header
+          document.getElementById('chart-title').textContent =
+            `${title} - EBITDA Bridge`;
+          document.getElementById('chart-subtitle').textContent =
+            `TTM Window: ${ttmWindow}`;
+
+          // Extract bridge data
+          const bridge = caseData.ebitda_bridge;
+          const ttm = caseData.ttm_metrics;
+
+          const reported = bridge.reported_ebitda;
+          const ownerAddback = bridge.owner_addback;
+          const onetimeAddback = bridge.onetime_addback;
+          const rentNorm = bridge.rent_normalization;
+          const adjusted = bridge.adjusted_ebitda;
+
+          // Run acceptance check
+          const calculatedAdjusted =
+            reported + ownerAddback + onetimeAddback + rentNorm;
+          const reconciliationError = Math.abs(calculatedAdjusted - adjusted);
+          const reconciliationTolerance = adjusted * 0.005; // 0.5%
+          const reconciliationPassed =
+            reconciliationError <= reconciliationTolerance;
+
+          // Update reconciliation badge
+          const badge = document.getElementById('reconciliation-badge');
+          if (reconciliationPassed) {
+            badge.textContent = '✓ Reconciled';
+            badge.className = 'reconciliation-badge pass';
+          } else {
+            badge.textContent = `⚠ Reconcile Δ ${__FORMAT__.moneyM(reconciliationError, 2)}`;
+            badge.className = 'reconciliation-badge fail';
+          }
+
+          // Update footer metrics
+          document.getElementById('revenue-metric').textContent =
+            __FORMAT__.moneyM(ttm.ttm_revenue, 2);
+          document.getElementById('reported-margin').textContent =
+            __FORMAT__.pct(reported / ttm.ttm_revenue, 1);
+          document.getElementById('adjusted-margin').textContent =
+            __FORMAT__.pct(adjusted / ttm.ttm_revenue, 1);
+
+          // Create waterfall chart
+          createWaterfallChart(
+            reported,
+            ownerAddback,
+            onetimeAddback,
+            rentNorm,
+            adjusted
+          );
         } catch (error) {
-            console.error('Bridge initialization error:', error);
-            document.getElementById('chart-title').textContent = 'Error Loading Bridge';
-            document.getElementById('chart-subtitle').textContent = error.message;
+          console.error('Bridge initialization error:', error);
+          document.getElementById('chart-title').textContent =
+            'Error Loading Bridge';
+          document.getElementById('chart-subtitle').textContent = error.message;
         }
-    }
-    
-    function createWaterfallChart(reported, ownerAddback, onetimeAddback, rentNorm, adjusted) {
+      }
+
+      function createWaterfallChart(
+        reported,
+        ownerAddback,
+        onetimeAddback,
+        rentNorm,
+        adjusted
+      ) {
         const chart = echarts.init(document.getElementById('bridge-chart'));
-        
+
         // Calculate cumulative values for waterfall
         const step1 = reported;
         const step2 = step1 + ownerAddback;
         const step3 = step2 + onetimeAddback; // Subtotal after one-time
-        const step4 = step3 + rentNorm;       // Final adjusted
-        
+        const step4 = step3 + rentNorm; // Final adjusted
+
         const option = {
-            grid: {
-                left: '8%',
-                right: '8%',
-                top: '15%',
-                bottom: '20%',
-                containLabel: true
-            },
-            xAxis: {
-                type: 'category',
-                data: ['Reported\nEBITDA', 'Owner\nAdd-back', 'One-time\nItems', 'Rent\nNormalization', 'Adjusted\nEBITDA'],
-                axisLabel: {
-                    fontSize: 12,
-                    color: '#475569',
-                    interval: 0,
-                    rotate: 0
-                },
-                axisTick: {
-                    show: false
-                },
-                axisLine: {
-                    lineStyle: {
-                        color: '#e2e8f0'
-                    }
-                }
-            },
-            yAxis: {
-                type: 'value',
-                name: 'EBITDA ($M)',
-                nameLocation: 'middle',
-                nameGap: 50,
-                nameTextStyle: {
-                    fontSize: 12,
-                    color: '#475569'
-                },
-                axisLabel: {
-                    formatter: function(value) {
-                        return __FORMAT__.moneyM(value, 1);
-                    },
-                    fontSize: 11,
-                    color: '#475569'
-                },
-                splitLine: {
-                    lineStyle: {
-                        color: '#e2e8f0',
-                        type: 'dashed'
-                    }
-                }
-            },
-            series: [
-                // Base bars (for waterfall effect)
-                {
-                    type: 'bar',
-                    stack: 'waterfall',
-                    itemStyle: {
-                        borderColor: 'rgba(0,0,0,0)',
-                        color: 'rgba(0,0,0,0)'
-                    },
-                    emphasis: {
-                        itemStyle: {
-                            borderColor: 'rgba(0,0,0,0)',
-                            color: 'rgba(0,0,0,0)'
-                        }
-                    },
-                    data: [0, step1, step2, step3, 0],
-                    silent: true
-                },
-                // Visible bars
-                {
-                    type: 'bar',
-                    stack: 'waterfall',
-                    itemStyle: {
-                        color: function(params) {
-                            if (params.dataIndex === 0) return '#64748b'; // Reported - neutral
-                            if (params.dataIndex === 1) return '#2563eb'; // Owner - input blue
-                            if (params.dataIndex === 2) return '#2563eb'; // One-time - input blue
-                            if (params.dataIndex === 3) return '#dc2626'; // Rent - negative red
-                            if (params.dataIndex === 4) return '#16a34a'; // Adjusted - output green
-                        },
-                        borderRadius: [4, 4, 0, 0],
-                        borderWidth: 1,
-                        borderColor: function(params) {
-                            if (params.dataIndex === 0) return '#475569';
-                            if (params.dataIndex === 1) return '#1e40af';
-                            if (params.dataIndex === 2) return '#1e40af';
-                            if (params.dataIndex === 3) return '#b91c1c';
-                            if (params.dataIndex === 4) return '#15803d';
-                        }
-                    },
-                    label: {
-                        show: true,
-                        position: function(params) {
-                            return params.data >= 0 ? 'top' : 'bottom';
-                        },
-                        formatter: function(params) {
-                            if (params.dataIndex === 0) return __FORMAT__.moneyM(reported, 2);
-                            if (params.dataIndex === 1) return `+${__FORMAT__.moneyM(ownerAddback, 2)}`;
-                            if (params.dataIndex === 2) return `+${__FORMAT__.moneyM(onetimeAddback, 2)}`;
-                            if (params.dataIndex === 3) return __FORMAT__.moneyM(rentNorm, 2); // Will show negative
-                            if (params.dataIndex === 4) return __FORMAT__.moneyM(adjusted, 2);
-                        },
-                        fontSize: 11,
-                        fontWeight: 'bold',
-                        color: function(params) {
-                            if (params.dataIndex === 0) return '#475569';
-                            if (params.dataIndex === 1) return '#1e40af';
-                            if (params.dataIndex === 2) return '#1e40af';
-                            if (params.dataIndex === 3) return '#dc2626';
-                            if (params.dataIndex === 4) return '#16a34a';
-                        }
-                    },
-                    data: [reported, ownerAddback, onetimeAddback, rentNorm, adjusted],
-                    markLine: {
-                        silent: true,
-                        symbol: 'none',
-                        lineStyle: {
-                            color: '#94a3b8',
-                            type: 'dashed',
-                            width: 1
-                        },
-                        data: [
-                            // Subtotal line after one-time items
-                            {
-                                xAxis: 2.5,
-                                yAxis: step3,
-                                label: {
-                                    show: true,
-                                    position: 'insideEndTop',
-                                    formatter: `Subtotal: ${__FORMAT__.moneyM(step3, 2)}`,
-                                    fontSize: 10,
-                                    color: '#64748b'
-                                }
-                            }
-                        ]
-                    }
-                }
+          grid: {
+            left: '8%',
+            right: '8%',
+            top: '15%',
+            bottom: '20%',
+            containLabel: true,
+          },
+          xAxis: {
+            type: 'category',
+            data: [
+              'Reported\nEBITDA',
+              'Owner\nAdd-back',
+              'One-time\nItems',
+              'Rent\nNormalization',
+              'Adjusted\nEBITDA',
             ],
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
+            axisLabel: {
+              fontSize: 12,
+              color: '#475569',
+              interval: 0,
+              rotate: 0,
+            },
+            axisTick: {
+              show: false,
+            },
+            axisLine: {
+              lineStyle: {
+                color: '#e2e8f0',
+              },
+            },
+          },
+          yAxis: {
+            type: 'value',
+            name: 'EBITDA ($M)',
+            nameLocation: 'middle',
+            nameGap: 50,
+            nameTextStyle: {
+              fontSize: 12,
+              color: '#475569',
+            },
+            axisLabel: {
+              formatter: function (value) {
+                return __FORMAT__.moneyM(value, 1);
+              },
+              fontSize: 11,
+              color: '#475569',
+            },
+            splitLine: {
+              lineStyle: {
+                color: '#e2e8f0',
+                type: 'dashed',
+              },
+            },
+          },
+          series: [
+            // Base bars (for waterfall effect)
+            {
+              type: 'bar',
+              stack: 'waterfall',
+              itemStyle: {
+                borderColor: 'rgba(0,0,0,0)',
+                color: 'rgba(0,0,0,0)',
+              },
+              emphasis: {
+                itemStyle: {
+                  borderColor: 'rgba(0,0,0,0)',
+                  color: 'rgba(0,0,0,0)',
                 },
-                formatter: function(params) {
-                    const dataIndex = params[0].dataIndex;
-                    if (dataIndex === 0) {
-                        return `<strong>Reported EBITDA</strong><br/>${__FORMAT__.moneyM(reported, 2)}`;
-                    } else if (dataIndex === 1) {
-                        return `<strong>Owner Add-back</strong><br/>+${__FORMAT__.moneyM(ownerAddback, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step2, 2)}`;
-                    } else if (dataIndex === 2) {
-                        return `<strong>One-time Items</strong><br/>+${__FORMAT__.moneyM(onetimeAddback, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step3, 2)}`;
-                    } else if (dataIndex === 3) {
-                        return `<strong>Rent Normalization</strong><br/>${__FORMAT__.moneyM(rentNorm, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step4, 2)}`;
-                    } else if (dataIndex === 4) {
-                        return `<strong>Adjusted EBITDA</strong><br/>${__FORMAT__.moneyM(adjusted, 2)}`;
-                    }
-                }
-            }
+              },
+              data: [0, step1, step2, step3, 0],
+              silent: true,
+            },
+            // Visible bars
+            {
+              type: 'bar',
+              stack: 'waterfall',
+              itemStyle: {
+                color: function (params) {
+                  if (params.dataIndex === 0) return '#64748b'; // Reported - neutral
+                  if (params.dataIndex === 1) return '#2563eb'; // Owner - input blue
+                  if (params.dataIndex === 2) return '#2563eb'; // One-time - input blue
+                  if (params.dataIndex === 3) return '#dc2626'; // Rent - negative red
+                  if (params.dataIndex === 4) return '#16a34a'; // Adjusted - output green
+                },
+                borderRadius: [4, 4, 0, 0],
+                borderWidth: 1,
+                borderColor: function (params) {
+                  if (params.dataIndex === 0) return '#475569';
+                  if (params.dataIndex === 1) return '#1e40af';
+                  if (params.dataIndex === 2) return '#1e40af';
+                  if (params.dataIndex === 3) return '#b91c1c';
+                  if (params.dataIndex === 4) return '#15803d';
+                },
+              },
+              label: {
+                show: true,
+                position: function (params) {
+                  return params.data >= 0 ? 'top' : 'bottom';
+                },
+                formatter: function (params) {
+                  if (params.dataIndex === 0)
+                    return __FORMAT__.moneyM(reported, 2);
+                  if (params.dataIndex === 1)
+                    return `+${__FORMAT__.moneyM(ownerAddback, 2)}`;
+                  if (params.dataIndex === 2)
+                    return `+${__FORMAT__.moneyM(onetimeAddback, 2)}`;
+                  if (params.dataIndex === 3)
+                    return __FORMAT__.moneyM(rentNorm, 2); // Will show negative
+                  if (params.dataIndex === 4)
+                    return __FORMAT__.moneyM(adjusted, 2);
+                },
+                fontSize: 11,
+                fontWeight: 'bold',
+                color: function (params) {
+                  if (params.dataIndex === 0) return '#475569';
+                  if (params.dataIndex === 1) return '#1e40af';
+                  if (params.dataIndex === 2) return '#1e40af';
+                  if (params.dataIndex === 3) return '#dc2626';
+                  if (params.dataIndex === 4) return '#16a34a';
+                },
+              },
+              data: [
+                reported,
+                ownerAddback,
+                onetimeAddback,
+                rentNorm,
+                adjusted,
+              ],
+              markLine: {
+                silent: true,
+                symbol: 'none',
+                lineStyle: {
+                  color: '#94a3b8',
+                  type: 'dashed',
+                  width: 1,
+                },
+                data: [
+                  // Subtotal line after one-time items
+                  {
+                    xAxis: 2.5,
+                    yAxis: step3,
+                    label: {
+                      show: true,
+                      position: 'insideEndTop',
+                      formatter: `Subtotal: ${__FORMAT__.moneyM(step3, 2)}`,
+                      fontSize: 10,
+                      color: '#64748b',
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow',
+            },
+            formatter: function (params) {
+              const dataIndex = params[0].dataIndex;
+              if (dataIndex === 0) {
+                return `<strong>Reported EBITDA</strong><br/>${__FORMAT__.moneyM(reported, 2)}`;
+              } else if (dataIndex === 1) {
+                return `<strong>Owner Add-back</strong><br/>+${__FORMAT__.moneyM(ownerAddback, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step2, 2)}`;
+              } else if (dataIndex === 2) {
+                return `<strong>One-time Items</strong><br/>+${__FORMAT__.moneyM(onetimeAddback, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step3, 2)}`;
+              } else if (dataIndex === 3) {
+                return `<strong>Rent Normalization</strong><br/>${__FORMAT__.moneyM(rentNorm, 2)}<br/>Running Total: ${__FORMAT__.moneyM(step4, 2)}`;
+              } else if (dataIndex === 4) {
+                return `<strong>Adjusted EBITDA</strong><br/>${__FORMAT__.moneyM(adjusted, 2)}`;
+              }
+            },
+          },
         };
-        
+
         chart.setOption(option);
-        
+
         // Responsive
-        window.addEventListener('resize', function() {
-            chart.resize();
+        window.addEventListener('resize', function () {
+          chart.resize();
         });
-    }
-    
-    // Initialize when data is loaded
-    if (window.__CASE_DATA__) {
+      }
+
+      // Initialize when data is loaded
+      if (window.__CASE_DATA__) {
         initializeBridge();
-    } else {
+      } else {
         window.addEventListener('caseDataLoaded', initializeBridge);
-    }
+      }
     </script>
-</body>
-</html> 
+  </body>
+</html>

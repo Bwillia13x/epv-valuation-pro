@@ -12,23 +12,26 @@
 ## 📊 **DELIVERABLES GENERATED**
 
 ### **1. Individual PNG Charts (High-Resolution)**
-| **File** | **Size** | **Description** | **Status** |
-|----------|----------|-----------------|------------|
-| `01_EBITDA_Bridge.png` | 169KB | Waterfall chart with TTM normalizations | ✅ Complete |
-| `02_Valuation_Matrix.png` | 198KB | 7.0×-10.0× multiple table with base case highlight | ✅ Complete |
-| `03_EPV_Panel.png` | 358KB | Formula + 3×3 sensitivity matrix | ✅ Complete |
-| `04_LBO_Summary.png` | 388KB | Sources/uses + debt schedule + exit metrics | ✅ Complete |
+
+| **File**                  | **Size** | **Description**                                    | **Status**  |
+| ------------------------- | -------- | -------------------------------------------------- | ----------- |
+| `01_EBITDA_Bridge.png`    | 169KB    | Waterfall chart with TTM normalizations            | ✅ Complete |
+| `02_Valuation_Matrix.png` | 198KB    | 7.0×-10.0× multiple table with base case highlight | ✅ Complete |
+| `03_EPV_Panel.png`        | 358KB    | Formula + 3×3 sensitivity matrix                   | ✅ Complete |
+| `04_LBO_Summary.png`      | 388KB    | Sources/uses + debt schedule + exit metrics        | ✅ Complete |
 
 ### **2. Comprehensive One-Pager PDF**
-| **File** | **Size** | **Layout** | **Status** |
-|----------|----------|------------|------------|
-| `CPP_OnePager.pdf` | 1.3MB | 2×2 grid with professional header/footer | ✅ Complete |
+
+| **File**           | **Size** | **Layout**                               | **Status**  |
+| ------------------ | -------- | ---------------------------------------- | ----------- |
+| `CPP_OnePager.pdf` | 1.3MB    | 2×2 grid with professional header/footer | ✅ Complete |
 
 ---
 
 ## 💰 **KEY FINANCIAL METRICS VALIDATED**
 
 ### **TTM Performance (2024-Q3 → 2025-Q2)**
+
 ```
 Revenue:           $7,610,000
 Reported EBITDA:   $1,520,500 (20.0% margin)
@@ -43,6 +46,7 @@ Bridge Reconciliation:
 ```
 
 ### **Valuation Matrix (Base Case: 8.5×)**
+
 ```
 Multiple   Enterprise Value   Equity to Seller   EV/Revenue
 7.0×       $11,798,500       $9,858,500         1.6×
@@ -55,6 +59,7 @@ Multiple   Enterprise Value   Equity to Seller   EV/Revenue
 ```
 
 ### **LBO Analysis (5-Year Hold)**
+
 ```
 SOURCES & USES:
 Entry EV:           $14,326,750
@@ -73,6 +78,7 @@ EBITDA CAGR:       9.0% (Y0 $1.69M → Y5 $2.59M)
 ```
 
 ### **EPV Analysis (Conservative Floor)**
+
 ```
 ASSUMPTIONS:
 EBIT:              $1,585,500 (Adj. EBITDA - $100k D&A)
@@ -93,11 +99,11 @@ vs Market Multiple:   0.6× (conservative floor)
 
 ## 🔬 **EPV SENSITIVITY MATRIX (Enterprise Value)**
 
-| **WACC →** | **11.0%** | **12.0%** | **13.0%** |
-|------------|-----------|-----------|-----------|
-| **Reinvest 5.0%** | $9.9M | $9.1M | $8.4M |
-| **Reinvest 10.0%** | $9.2M | $8.5M | $7.8M |
-| **Reinvest 15.0%** | $8.5M | $7.8M | $7.2M |
+| **WACC →**         | **11.0%** | **12.0%** | **13.0%** |
+| ------------------ | --------- | --------- | --------- |
+| **Reinvest 5.0%**  | $9.9M     | $9.1M     | $8.4M     |
+| **Reinvest 10.0%** | $9.2M     | $8.5M     | $7.8M     |
+| **Reinvest 15.0%** | $8.5M     | $7.8M     | $7.2M     |
 
 **Range:** $7.2M - $9.9M Enterprise Value  
 **Current Case:** $8.5M (12% WACC, 10% Reinvestment)
@@ -107,18 +113,21 @@ vs Market Multiple:   0.6× (conservative floor)
 ## ✅ **VALIDATION & QUALITY ASSURANCE**
 
 ### **Mathematical Accuracy**
+
 - **EBITDA Bridge**: 100% reconciliation ✅
 - **Valuation Matrix**: All multiples validated within 0.5% tolerance ✅
 - **LBO Exit Calc**: Exit EV - Exit Debt = Exit Equity verified ✅
 - **EPV Formula**: All sensitivity cells calculated correctly ✅
 
 ### **Professional Standards**
+
 - **High-Resolution**: All PNGs at 300 DPI for print quality ✅
 - **Color Convention**: Blue (inputs), Black (linked), Green (outputs) ✅
 - **Typography**: Clear sans-serif fonts with proper sizing ✅
 - **Layout**: Professional grid alignment and spacing ✅
 
 ### **CPP Requirements Met**
+
 - **TTM Window**: Clearly labeled on all relevant charts ✅
 - **Base Case**: 8.5× multiple highlighted throughout ✅
 - **Equity Distinction**: "Equity to Seller" vs "Sponsor Equity" clearly separated ✅
@@ -130,30 +139,35 @@ vs Market Multiple:   0.6× (conservative floor)
 ## 🎨 **VISUAL DESIGN FEATURES**
 
 ### **1. EBITDA Bridge (Waterfall Chart)**
+
 - **Floating bars** for adjustments with connecting lines
 - **Margin percentages** displayed below reported and adjusted bars
 - **Color coding** by adjustment type
 - **Value labels** on each bar for clarity
 
 ### **2. Valuation Matrix (Enhanced Table)**
+
 - **Highlighted base case** (8.5×) with yellow background
 - **Professional formatting** with alternating row colors
 - **Assumptions banner** with key inputs displayed
 - **EV/Revenue ratios** for context
 
 ### **3. EPV Panel (Split Layout)**
+
 - **Left side**: Formula box with step-by-step calculation
 - **Right side**: Color-coded 3×3 sensitivity heatmap
 - **Monospace font** for numerical precision
 - **Conservative floor messaging**
 
 ### **4. LBO Summary (Multi-Panel)**
+
 - **Top**: Sources & Uses bar chart with color coding
 - **Middle**: Debt amortization line chart with annotations
 - **Bottom**: Exit metrics and assumptions in formatted boxes
 - **Comprehensive coverage** of all LBO components
 
 ### **5. One-Pager PDF (2×2 Grid)**
+
 - **Professional header** with case title and TTM window
 - **Balanced layout** with consistent image sizing
 - **Institutional footer** with timestamp and branding
@@ -164,16 +178,19 @@ vs Market Multiple:   0.6× (conservative floor)
 ## 🚀 **STRATEGIC INSIGHTS FROM VISUALS**
 
 ### **Growth Story Validation**
+
 - **Strong EBITDA momentum**: 9.0% CAGR over 5-year projection
 - **Operational leverage**: Room utilization 73% → 85% during TTM
 - **Margin expansion**: Reported 20.0% → Adjusted 22.1%
 
 ### **Investment Attractiveness**
+
 - **Compelling returns**: 25.4% IRR, 3.1× MOIC over 5 years
 - **Reasonable leverage**: 72% debt with strong cash flow coverage
 - **Multiple expansion**: Entry 8.5× vs peer group positioning
 
 ### **Risk Management**
+
 - **Conservative EPV floor**: $8.5M provides 0.6× downside protection
 - **Debt paydown**: $10.3M → $8.3M over 5 years (20% reduction)
 - **Market positioning**: Nashville growth market with aesthetic demand
@@ -183,18 +200,21 @@ vs Market Multiple:   0.6× (conservative floor)
 ## 📋 **USAGE INSTRUCTIONS**
 
 ### **For Investment Committee**
+
 1. **Open `CPP_OnePager.pdf`** for comprehensive overview
 2. **Present individual PNGs** for detailed discussion
 3. **Highlight base case** (8.5× entry, 8.0× exit) throughout
 4. **Reference EPV sensitivity** for downside scenarios
 
 ### **For Due Diligence**
+
 1. **Use validation data** to verify broker packet assumptions
 2. **Reference TTM window** (Q3-2024 → Q2-2025) for context
 3. **Validate normalizations** against case-specific adjustments
 4. **Cross-check EPV assumptions** with market standards
 
 ### **For Client Presentation**
+
 1. **Start with EBITDA bridge** to establish adjusted earnings
 2. **Show valuation range** with base case rationale
 3. **Present LBO returns** with clear exit strategy
@@ -209,13 +229,13 @@ vs Market Multiple:   0.6× (conservative floor)
 ✅ **Investment Committee Presentation**  
 ✅ **Client Due Diligence Review**  
 ✅ **Regulatory Audit Requirements**  
-✅ **Professional Marketing Materials**  
+✅ **Professional Marketing Materials**
 
 **All visuals maintain consistent branding, mathematical accuracy, and professional presentation standards expected in private equity transactions.**
 
 ---
 
-*Generated: July 26, 2025*  
-*Platform: EPV Valuation Pro*  
-*Quality: Investment Grade*  
-*Status: CPP Ready ✅* 
+_Generated: July 26, 2025_  
+_Platform: EPV Valuation Pro_  
+_Quality: Investment Grade_  
+_Status: CPP Ready ✅_

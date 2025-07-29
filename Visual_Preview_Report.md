@@ -13,6 +13,7 @@
 ## 📋 **Sheet 1: "Valuation & Offer" - Data Tables**
 
 ### Table Layout Preview:
+
 ```
 | Item                           | Value ($000s) | Notes |
 |--------------------------------|---------------|-------|
@@ -42,6 +43,7 @@
 ## 📊 **Sheet 2: "Visuals" - Chart Layout**
 
 ### Chart Arrangement:
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    WATERFALL CHART                             │
@@ -84,21 +86,23 @@
 ## 🔍 **Detailed Chart Previews**
 
 ### 1. 🌊 **WATERFALL CHART** - Bridge from EV to Equity Value
+
 ```
 Chart Type: Excel Waterfall
 Data Points:
 ┌─────────────────┬──────────┐
 │ Enterprise Value│  4,813.38│ ████████████████████
 │ Net Debt        │ -1,948.12│ ████████▼▼▼▼▼▼▼▼
-│ Debt-like Items │      0.00│ 
-│ Cash-like Items │      0.00│ 
-│ NWC Adjustment  │      0.00│ 
-│ Transaction Fees│      0.00│ 
+│ Debt-like Items │      0.00│
+│ Cash-like Items │      0.00│
+│ NWC Adjustment  │      0.00│
+│ Transaction Fees│      0.00│
 │ Equity Value    │  2,865.26│ ████████████
 └─────────────────┴──────────┘
 ```
 
 ### 2. 🍩 **DOUGHNUT CHART** - Proceeds at Close
+
 ```
 Chart Type: Excel Doughnut
 Total: $2,865.26K
@@ -115,6 +119,7 @@ Total: $2,865.26K
 ```
 
 ### 3. 📊 **COLUMN CHART** - EBITDA vs Marketing Spend
+
 ```
 Chart Type: Excel Column
 EBITDA
@@ -135,12 +140,13 @@ Values: 687.6, 613.1, 538.6
 ```
 
 ### 4. 🔥 **HEATMAP** - Equity Value Sensitivity
+
 ```
 Chart Type: Conditional Formatting (3-Color Scale)
                 Marketing Spend %
 Multiple  10.0%   11.0%   12.0%   13.0%   14.0%
   5.5x    1,439   1,402   1,365   1,328   1,291  🟢→🟡→🔴
-  6.0x    1,691   1,654   1,617   1,580   1,543  
+  6.0x    1,691   1,654   1,617   1,580   1,543
   6.5x    1,943   1,906   1,869   1,832   1,795
   7.0x    2,195   2,158   2,121   2,084   2,047
   7.5x    2,447   2,410   2,373   2,336   2,299
@@ -149,12 +155,13 @@ Legend: 🟢 High Value | 🟡 Medium Value | 🔴 Low Value
 ```
 
 ### 5. 📈 **COMBO CHART** - Debt Rate vs Net Debt & Equity
+
 ```
 Chart Type: Excel Column + Line Combo
            Net Debt (Columns)    Equity Value (Line)
 Rate    │                    │                    │
   8%    │ ████████████████   │ ∘                  │ 2,378K
-  9%    │ ████████████       │   ∘                │ 2,647K  
+  9%    │ ████████████       │   ∘                │ 2,647K
  10%    │ ██████████         │     ∘              │ 2,865K
  11%    │ ████████           │       ∘            │ 3,043K
  12%    │ ███████            │         ∘          │ 3,190K
@@ -163,6 +170,7 @@ Rate    │                    │                    │
 ```
 
 ### 6. 🎯 **SCATTER PLOT** - Monte Carlo Simulation
+
 ```
 Chart Type: Excel XY Scatter
 1,000 simulation points with triangular distributions
@@ -206,11 +214,13 @@ Cash% + Rollover% = 100%:         TRUE
 ## 🚀 **To See These Charts in Excel:**
 
 ### Option 1: Office Script
+
 1. Copy `ValuationOfferVisuals_OfficeScript.ts`
 2. Paste in Excel Online → Automate → New Script
 3. Click **Run**
 
-### Option 2: VBA Macro  
+### Option 2: VBA Macro
+
 1. Copy `ValuationOfferVisuals_VBA.bas`
 2. Paste in Excel Desktop → Alt+F11 → Insert Module
 3. Press **Alt+F8** → Run `BuildValuationVisuals`
@@ -219,4 +229,4 @@ Cash% + Rollover% = 100%:         TRUE
 
 ---
 
-*All charts will have professional formatting, proper titles, legends, and data labels as appropriate for investment analysis.* 
+_All charts will have professional formatting, proper titles, legends, and data labels as appropriate for investment analysis._

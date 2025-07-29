@@ -54,8 +54,7 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-const formatPercentage = (value: number) =>
-  `${(value * 100).toFixed(1)}%`;
+const formatPercentage = (value: number) => `${(value * 100).toFixed(1)}%`;
 
 const formatNumber = (value: number) =>
   new Intl.NumberFormat('en-US', {
@@ -67,7 +66,11 @@ const formatDate = (value: Date | string) => {
   return date.toLocaleDateString();
 };
 
-const formatValue = (value: any, type: TableColumn['type'], customFormat?: (value: any) => string) => {
+const formatValue = (
+  value: any,
+  type: TableColumn['type'],
+  customFormat?: (value: any) => string
+) => {
   if (customFormat) return customFormat(value);
   if (value == null) return '-';
 
@@ -85,17 +88,23 @@ const formatValue = (value: any, type: TableColumn['type'], customFormat?: (valu
   }
 };
 
-const exportToCSV = (data: TableRow[], columns: TableColumn[], filename: string) => {
-  const headers = columns.map(col => col.label).join(',');
-  const rows = data.map(row =>
-    columns.map(col => {
-      let value = row[col.key];
-      if (value == null) return '';
-      if (typeof value === 'string' && value.includes(',')) {
-        return `"${value}"`;
-      }
-      return String(value);
-    }).join(',')
+const exportToCSV = (
+  data: TableRow[],
+  columns: TableColumn[],
+  filename: string
+) => {
+  const headers = columns.map((col) => col.label).join(',');
+  const rows = data.map((row) =>
+    columns
+      .map((col) => {
+        let value = row[col.key];
+        if (value == null) return '';
+        if (typeof value === 'string' && value.includes(',')) {
+          return `"${value}"`;
+        }
+        return String(value);
+      })
+      .join(',')
   );
 
   const csvContent = [headers, ...rows].join('\n');
@@ -144,9 +153,13 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
       if (aValue == null) return sortDirection === 'asc' ? -1 : 1;
       if (bValue == null) return sortDirection === 'asc' ? 1 : -1;
 
-      const column = columns.find(col => col.key === sortColumn);
-      
-      if (column?.type === 'number' || column?.type === 'currency' || column?.type === 'percentage') {
+      const column = columns.find((col) => col.key === sortColumn);
+
+      if (
+        column?.type === 'number' ||
+        column?.type === 'currency' ||
+        column?.type === 'percentage'
+      ) {
         const numA = Number(aValue);
         const numB = Number(bValue);
         return sortDirection === 'asc' ? numA - numB : numB - numA;
@@ -155,14 +168,14 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
       if (column?.type === 'date') {
         const dateA = new Date(aValue);
         const dateB = new Date(bValue);
-        return sortDirection === 'asc' 
-          ? dateA.getTime() - dateB.getTime() 
+        return sortDirection === 'asc'
+          ? dateA.getTime() - dateB.getTime()
           : dateB.getTime() - dateA.getTime();
       }
 
       const strA = String(aValue).toLowerCase();
       const strB = String(bValue).toLowerCase();
-      
+
       if (sortDirection === 'asc') {
         return strA < strB ? -1 : strA > strB ? 1 : 0;
       } else {
@@ -174,9 +187,9 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
   // Search filtering
   const filteredData = useMemo(() => {
     if (!searchTerm) return sortedData;
-    
-    return sortedData.filter(row =>
-      columns.some(column => {
+
+    return sortedData.filter((row) =>
+      columns.some((column) => {
         const value = row[column.key];
         if (value == null) return false;
         return String(value).toLowerCase().includes(searchTerm.toLowerCase());
@@ -187,7 +200,7 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
   // Pagination
   const paginatedData = useMemo(() => {
     if (!showPagination) return filteredData;
-    
+
     const startIndex = (currentPage - 1) * pageSize;
     return filteredData.slice(startIndex, startIndex + pageSize);
   }, [filteredData, currentPage, pageSize, showPagination]);
@@ -195,7 +208,7 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
   const totalPages = Math.ceil(filteredData.length / pageSize);
 
   const handleSort = (columnKey: string) => {
-    const column = columns.find(col => col.key === columnKey);
+    const column = columns.find((col) => col.key === columnKey);
     if (!column?.sortable) return;
 
     if (sortColumn === columnKey) {
@@ -217,7 +230,9 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
     if (onExport) {
       onExport(format, filteredData);
     } else if (format === 'csv') {
-      const filename = title ? title.replace(/\s+/g, '_').toLowerCase() : 'table_export';
+      const filename = title
+        ? title.replace(/\s+/g, '_').toLowerCase()
+        : 'table_export';
       exportToCSV(filteredData, columns, filename);
     }
   };
@@ -225,13 +240,22 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
   const getCellContent = (row: TableRow, column: TableColumn) => {
     const value = row[column.key];
     const formattedValue = formatValue(value, column.type, column.format);
-    
+
     if (!column.conditionalFormatting) return formattedValue;
 
-    const { positive, negative, neutral, threshold = 0 } = column.conditionalFormatting;
+    const {
+      positive,
+      negative,
+      neutral,
+      threshold = 0,
+    } = column.conditionalFormatting;
     let className = '';
 
-    if (column.type === 'number' || column.type === 'currency' || column.type === 'percentage') {
+    if (
+      column.type === 'number' ||
+      column.type === 'currency' ||
+      column.type === 'percentage'
+    ) {
       const numValue = Number(value);
       if (numValue > threshold && positive) {
         className = positive;
@@ -242,17 +266,11 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
       }
     }
 
-    return (
-      <span className={className}>
-        {formattedValue}
-      </span>
-    );
+    return <span className={className}>{formattedValue}</span>;
   };
 
   const tableClasses = `w-full border-collapse ${
-    theme === 'dark' 
-      ? 'bg-slate-800 text-white' 
-      : 'bg-white text-gray-900'
+    theme === 'dark' ? 'bg-slate-800 text-white' : 'bg-white text-gray-900'
   }`;
 
   const headerClasses = `px-6 py-3 text-left text-xs font-medium uppercase tracking-wider border-b ${
@@ -262,14 +280,12 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
   }`;
 
   const cellClasses = `px-6 py-4 whitespace-nowrap text-sm border-b ${
-    theme === 'dark'
-      ? 'border-slate-600'
-      : 'border-gray-200'
+    theme === 'dark' ? 'border-slate-600' : 'border-gray-200'
   }`;
 
   const containerClasses = `${className} rounded-lg border ${
-    theme === 'dark' 
-      ? 'border-slate-700 bg-slate-800' 
+    theme === 'dark'
+      ? 'border-slate-700 bg-slate-800'
       : 'border-gray-200 bg-white'
   } shadow-sm overflow-hidden`;
 
@@ -277,23 +293,25 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
     <div className={containerClasses}>
       {/* Header */}
       {(title || description || showSearch || exportOptions) && (
-        <div className={`px-6 py-4 border-b ${
-          theme === 'dark' ? 'border-slate-700' : 'border-gray-200'
-        }`}>
+        <div
+          className={`px-6 py-4 border-b ${
+            theme === 'dark' ? 'border-slate-700' : 'border-gray-200'
+          }`}
+        >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              {title && (
-                <h3 className="text-lg font-semibold">{title}</h3>
-              )}
+              {title && <h3 className="text-lg font-semibold">{title}</h3>}
               {description && (
-                <p className={`mt-1 text-sm ${
-                  theme === 'dark' ? 'text-slate-400' : 'text-gray-600'
-                }`}>
+                <p
+                  className={`mt-1 text-sm ${
+                    theme === 'dark' ? 'text-slate-400' : 'text-gray-600'
+                  }`}
+                >
                   {description}
                 </p>
               )}
             </div>
-            
+
             <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-4">
               {/* Search */}
               {showSearch && (
@@ -310,15 +328,27 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
                     }`}
                   />
                   <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg
+                      className="h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
                   </div>
                 </div>
               )}
 
               {/* Export Options */}
-              {(exportOptions?.csv || exportOptions?.excel || exportOptions?.pdf) && (
+              {(exportOptions?.csv ||
+                exportOptions?.excel ||
+                exportOptions?.pdf) && (
                 <div className="flex space-x-2">
                   {exportOptions.csv && (
                     <button
@@ -372,7 +402,10 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
                 <th
                   key={column.key}
                   className={`${headerClasses} ${column.sortable ? 'cursor-pointer hover:bg-opacity-80' : ''}`}
-                  style={{ width: column.width, textAlign: column.align || 'left' }}
+                  style={{
+                    width: column.width,
+                    textAlign: column.align || 'left',
+                  }}
                   onClick={() => column.sortable && handleSort(column.key)}
                 >
                   <div className="flex items-center space-x-1">
@@ -381,8 +414,8 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
                       <span className="flex flex-col">
                         <svg
                           className={`w-3 h-3 ${
-                            sortColumn === column.key && sortDirection === 'asc' 
-                              ? 'text-blue-500' 
+                            sortColumn === column.key && sortDirection === 'asc'
+                              ? 'text-blue-500'
                               : 'text-gray-400'
                           }`}
                           fill="currentColor"
@@ -392,7 +425,8 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
                         </svg>
                         <svg
                           className={`w-3 h-3 -mt-1 ${
-                            sortColumn === column.key && sortDirection === 'desc'
+                            sortColumn === column.key &&
+                            sortDirection === 'desc'
                               ? 'text-blue-500'
                               : 'text-gray-400'
                           }`}
@@ -420,8 +454,8 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
                       ? 'bg-blue-900/20'
                       : 'bg-blue-50'
                     : theme === 'dark'
-                    ? 'hover:bg-slate-700'
-                    : 'hover:bg-gray-50'
+                      ? 'hover:bg-slate-700'
+                      : 'hover:bg-gray-50'
                 }`}
                 onClick={() => onRowClick?.(row)}
               >
@@ -442,45 +476,55 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({
 
       {/* Pagination */}
       {showPagination && totalPages > 1 && (
-        <div className={`px-6 py-3 border-t flex items-center justify-between ${
-          theme === 'dark' ? 'border-slate-700' : 'border-gray-200'
-        }`}>
-          <div className={`text-sm ${
-            theme === 'dark' ? 'text-slate-400' : 'text-gray-700'
-          }`}>
-            Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, filteredData.length)} of {filteredData.length} results
+        <div
+          className={`px-6 py-3 border-t flex items-center justify-between ${
+            theme === 'dark' ? 'border-slate-700' : 'border-gray-200'
+          }`}
+        >
+          <div
+            className={`text-sm ${
+              theme === 'dark' ? 'text-slate-400' : 'text-gray-700'
+            }`}
+          >
+            Showing {(currentPage - 1) * pageSize + 1} to{' '}
+            {Math.min(currentPage * pageSize, filteredData.length)} of{' '}
+            {filteredData.length} results
           </div>
-          
+
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
               className={`px-3 py-1 text-sm rounded border transition-colors ${
                 currentPage === 1
                   ? 'opacity-50 cursor-not-allowed'
                   : theme === 'dark'
-                  ? 'border-slate-600 text-slate-300 hover:bg-slate-700'
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'border-slate-600 text-slate-300 hover:bg-slate-700'
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >
               Previous
             </button>
-            
-            <span className={`px-3 py-1 text-sm ${
-              theme === 'dark' ? 'text-slate-300' : 'text-gray-700'
-            }`}>
+
+            <span
+              className={`px-3 py-1 text-sm ${
+                theme === 'dark' ? 'text-slate-300' : 'text-gray-700'
+              }`}
+            >
               Page {currentPage} of {totalPages}
             </span>
-            
+
             <button
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
               disabled={currentPage === totalPages}
               className={`px-3 py-1 text-sm rounded border transition-colors ${
                 currentPage === totalPages
                   ? 'opacity-50 cursor-not-allowed'
                   : theme === 'dark'
-                  ? 'border-slate-600 text-slate-300 hover:bg-slate-700'
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    ? 'border-slate-600 text-slate-300 hover:bg-slate-700'
+                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >
               Next

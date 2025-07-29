@@ -1,136 +1,182 @@
+<!doctype html>
+<html>
+  <head>
+    <title>2025 Medispa Investment Analysis - Comprehensive Presentation</title>
+    <meta charset="utf-8" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+      .header {
+        text-align: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .section {
+        background: white;
+        padding: 30px;
+        margin: 20px 0;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .chart-container {
+        width: 100%;
+        height: 600px;
+        margin: 20px 0;
+      }
+      .summary-box {
+        background: #e8f5e8;
+        border-left: 5px solid #28a745;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 5px;
+      }
+      .metric {
+        display: inline-block;
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 25px;
+        font-weight: bold;
+      }
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        border-top: 1px solid #ddd;
+        margin-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🏥 2025 Medispa Investment Analysis</h1>
+      <h2>Enhanced Valuation Platform Results</h2>
+      <p>Comprehensive PE Investment Committee Presentation</p>
+      <div style="margin-top: 20px">
+        <span class="metric">$5.32M Equity Value</span>
+        <span class="metric">15.3% Revenue CAGR</span>
+        <span class="metric">30% Synergy Potential</span>
+        <span class="metric">5.8x EBITDA Multiple</span>
+      </div>
+    </div>
 
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>2025 Medispa Investment Analysis - Comprehensive Presentation</title>
-        <meta charset="utf-8">
-        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        <style>
-            body {
-                font-family: 'Arial', sans-serif;
-                margin: 0;
-                padding: 20px;
-                background-color: #f8f9fa;
-                color: #333;
-            }
-            .header {
-                text-align: center;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 40px 20px;
-                border-radius: 10px;
-                margin-bottom: 30px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }
-            .section {
-                background: white;
-                padding: 30px;
-                margin: 20px 0;
-                border-radius: 10px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            .chart-container {
-                width: 100%;
-                height: 600px;
-                margin: 20px 0;
-            }
-            .summary-box {
-                background: #e8f5e8;
-                border-left: 5px solid #28a745;
-                padding: 20px;
-                margin: 20px 0;
-                border-radius: 5px;
-            }
-            .metric {
-                display: inline-block;
-                background: #007bff;
-                color: white;
-                padding: 10px 20px;
-                margin: 5px;
-                border-radius: 25px;
-                font-weight: bold;
-            }
-            .footer {
-                text-align: center;
-                padding: 20px;
-                color: #666;
-                border-top: 1px solid #ddd;
-                margin-top: 40px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <h1>🏥 2025 Medispa Investment Analysis</h1>
-            <h2>Enhanced Valuation Platform Results</h2>
-            <p>Comprehensive PE Investment Committee Presentation</p>
-            <div style="margin-top: 20px;">
-                <span class="metric">$5.32M Equity Value</span>
-                <span class="metric">15.3% Revenue CAGR</span>
-                <span class="metric">30% Synergy Potential</span>
-                <span class="metric">5.8x EBITDA Multiple</span>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>📊 Executive Summary</h2>
-            <div class="summary-box">
-                <h3>🎯 Investment Highlights</h3>
-                <ul>
-                    <li><strong>Total Equity Value:</strong> $5.32M (29.7% uplift vs manual estimate)</li>
-                    <li><strong>Revenue Growth:</strong> 15.3% CAGR (2023-2027), above industry benchmark</li>
-                    <li><strong>EBITDA Expansion:</strong> 19.5% CAGR with margin improvement to 24.7%</li>
-                    <li><strong>Synergy Potential:</strong> 30% total value creation through CPP network integration</li>
-                    <li><strong>Market Position:</strong> Medium-sized clinic with premium growth profile</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>📈 Multi-Year Financial Performance</h2>
-            <div id="chart1" class="chart-container"></div>
-            <p><em>Strong revenue trajectory with expanding margins demonstrates operational excellence and market positioning.</em></p>
-        </div>
-        
-        <div class="section">
-            <h2>⚖️ Hybrid Valuation Methodology</h2>
-            <div id="chart2" class="chart-container"></div>
-            <p><em>Three-method approach with intelligent weighting based on data quality and growth profile.</em></p>
-        </div>
-        
-        <div class="section">
-            <h2>🌡️ Sensitivity Analysis</h2>
-            <div id="chart3" class="chart-container"></div>
-            <p><em>Robust valuation across different WACC and growth assumptions, indicating low sensitivity risk.</em></p>
-        </div>
-        
-        <div class="section">
-            <h2>🚀 Synergy Analysis</h2>
-            <div id="chart4" class="chart-container"></div>
-            <p><em>Multiple synergy vectors create substantial value-creation opportunities through network integration.</em></p>
-        </div>
-        
-        <div class="section">
-            <h2>🎭 Scenario Analysis</h2>
-            <div id="chart5" class="chart-container"></div>
-            <p><em>Favorable risk-return profile with limited downside and significant upside potential.</em></p>
-        </div>
-        
-        <div class="section">
-            <h2>📋 Executive Dashboard</h2>
-            <div id="chart6" class="chart-container"></div>
-            <p><em>Comprehensive investment thesis supported by strong fundamentals and growth prospects.</em></p>
-        </div>
-        
-        <div class="footer">
-            <p>Generated by Enhanced Valuation Platform | July 26, 2025</p>
-            <p>🎯 Comprehensive analysis using hybrid DCF/EPV/Multiple methodology with industry-specific adjustments</p>
-        </div>
-        
-        <script>
-            // The charts will be embedded here by the main function
-            console.log("2025 Medispa Presentation Dashboard Loaded");
-        </script>
-    </body>
-    </html>
-    
+    <div class="section">
+      <h2>📊 Executive Summary</h2>
+      <div class="summary-box">
+        <h3>🎯 Investment Highlights</h3>
+        <ul>
+          <li>
+            <strong>Total Equity Value:</strong> $5.32M (29.7% uplift vs manual
+            estimate)
+          </li>
+          <li>
+            <strong>Revenue Growth:</strong> 15.3% CAGR (2023-2027), above
+            industry benchmark
+          </li>
+          <li>
+            <strong>EBITDA Expansion:</strong> 19.5% CAGR with margin
+            improvement to 24.7%
+          </li>
+          <li>
+            <strong>Synergy Potential:</strong> 30% total value creation through
+            CPP network integration
+          </li>
+          <li>
+            <strong>Market Position:</strong> Medium-sized clinic with premium
+            growth profile
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📈 Multi-Year Financial Performance</h2>
+      <div id="chart1" class="chart-container"></div>
+      <p>
+        <em
+          >Strong revenue trajectory with expanding margins demonstrates
+          operational excellence and market positioning.</em
+        >
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>⚖️ Hybrid Valuation Methodology</h2>
+      <div id="chart2" class="chart-container"></div>
+      <p>
+        <em
+          >Three-method approach with intelligent weighting based on data
+          quality and growth profile.</em
+        >
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>🌡️ Sensitivity Analysis</h2>
+      <div id="chart3" class="chart-container"></div>
+      <p>
+        <em
+          >Robust valuation across different WACC and growth assumptions,
+          indicating low sensitivity risk.</em
+        >
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>🚀 Synergy Analysis</h2>
+      <div id="chart4" class="chart-container"></div>
+      <p>
+        <em
+          >Multiple synergy vectors create substantial value-creation
+          opportunities through network integration.</em
+        >
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>🎭 Scenario Analysis</h2>
+      <div id="chart5" class="chart-container"></div>
+      <p>
+        <em
+          >Favorable risk-return profile with limited downside and significant
+          upside potential.</em
+        >
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>📋 Executive Dashboard</h2>
+      <div id="chart6" class="chart-container"></div>
+      <p>
+        <em
+          >Comprehensive investment thesis supported by strong fundamentals and
+          growth prospects.</em
+        >
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>Generated by Enhanced Valuation Platform | July 26, 2025</p>
+      <p>
+        🎯 Comprehensive analysis using hybrid DCF/EPV/Multiple methodology with
+        industry-specific adjustments
+      </p>
+    </div>
+
+    <script>
+      // The charts will be embedded here by the main function
+      console.log('2025 Medispa Presentation Dashboard Loaded');
+    </script>
+  </body>
+</html>

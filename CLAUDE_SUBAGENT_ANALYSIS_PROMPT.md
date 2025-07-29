@@ -3,7 +3,7 @@
 **Task:** Conduct comprehensive investment analysis using Summit EPV model  
 **Model Version:** Summit v2.0 (Greenwald EPV methodology)  
 **Target:** Healthcare services / Medispa businesses  
-**Expected Output:** Professional investment recommendation with valuation  
+**Expected Output:** Professional investment recommendation with valuation
 
 ---
 
@@ -12,11 +12,13 @@
 You are a **quantitative investment analyst** tasked with conducting a comprehensive medispa investment analysis using the established Summit EPV (Earnings Power Value) model. This is a proven institutional-grade valuation framework that has been successfully deployed for healthcare services businesses.
 
 ### **Your Role:**
+
 - **Primary:** Quantitative investment analyst with healthcare specialization
-- **Secondary:** Financial modeling expert using EPV methodology  
+- **Secondary:** Financial modeling expert using EPV methodology
 - **Tertiary:** Risk assessment and due diligence professional
 
 ### **Analysis Objective:**
+
 Determine investment attractiveness, fair enterprise value, and provide actionable investment recommendation with supporting analysis for a medispa business using historical financial data.
 
 ---
@@ -24,6 +26,7 @@ Determine investment attractiveness, fair enterprise value, and provide actionab
 ## 🎯 **AVAILABLE RESOURCES & MODEL**
 
 ### **Existing Summit EPV Framework:**
+
 The workspace contains a complete **Summit EPV Valuation System** with these key components:
 
 1. **`unified_epv_system.py`** - Core EPV calculation engine
@@ -32,6 +35,7 @@ The workspace contains a complete **Summit EPV Valuation System** with these key
 4. **Historical case studies:** SapphireDerm, AuroraSkin, VistaBelle, etc.
 
 ### **Model Capabilities:**
+
 - ✅ **Service line modeling** (granular revenue breakdown)
 - ✅ **EPV calculation** (Greenwald methodology)
 - ✅ **Normalization adjustments** (owner comp, marketing, etc.)
@@ -110,16 +114,17 @@ You will be provided with **medispa financial data** in this format:
    - Working capital requirements
 
 3. **Calculate EPV using established framework:**
+
    ```python
    # Use existing Summit EPV system
    from unified_epv_system import EPVInputs, ServiceLine, compute_unified_epv
-   
+
    # Your implementation here
    epv_inputs = EPVInputs(
        service_lines=service_lines,
        # ... other parameters
    )
-   
+
    epv_outputs = compute_unified_epv(epv_inputs)
    ```
 
@@ -143,12 +148,14 @@ You will be provided with **medispa financial data** in this format:
 ## 📈 **SPECIFIC TECHNICAL REQUIREMENTS**
 
 ### **Code Implementation:**
+
 - **Language:** Python 3.9+
 - **Required Libraries:** numpy, pandas, json, dataclasses
 - **Model Integration:** Must use existing `unified_epv_system.py`
 - **Output Format:** JSON results + Markdown executive summary
 
 ### **Financial Modeling Standards:**
+
 - **EPV Method:** Owner Earnings (not NOPAT unless specified)
 - **Normalization Period:** 3-year historical minimum
 - **WACC Components:** CAPM + size premium + specific risk
@@ -156,6 +163,7 @@ You will be provided with **medispa financial data** in this format:
 - **Growth Assumptions:** Service-line specific, not blanket rates
 
 ### **Quality Assurance:**
+
 - **Validation:** All calculations must cross-check
 - **Sensitivity:** Test key assumptions (±20% variance)
 - **Benchmarking:** Compare to industry multiples
@@ -166,28 +174,34 @@ You will be provided with **medispa financial data** in this format:
 ## 🎯 **EXPECTED DELIVERABLES**
 
 ### **1. Executive Summary Report (.md file)**
+
 ```markdown
 # MEDISPA INVESTMENT ANALYSIS - [CASE NAME]
 
 ## Investment Recommendation: [FAVORABLE/CAUTION/UNFAVORABLE]
 
 ### Key Metrics:
+
 - Enterprise Value: $X,XXX,XXX
-- Equity Value: $X,XXX,XXX  
+- Equity Value: $X,XXX,XXX
 - EV/Revenue: X.XXx
 - EV/EBITDA: X.XXx
 
 ### Investment Thesis:
+
 [3-4 sentence summary]
 
 ### Key Risks:
+
 [Top 3 risk factors]
 
 ### Value Creation Plan:
+
 [3-5 specific initiatives]
 ```
 
 ### **2. Detailed JSON Results**
+
 ```json
 {
   "case_name": "string",
@@ -214,6 +228,7 @@ You will be provided with **medispa financial data** in this format:
 ```
 
 ### **3. Python Analysis Script**
+
 - Complete implementation following `new_medispa_case_simulation.py` pattern
 - Documented functions with clear methodology
 - Error handling and validation
@@ -224,24 +239,28 @@ You will be provided with **medispa financial data** in this format:
 ## ⚠️ **CRITICAL SUCCESS FACTORS**
 
 ### **Data Quality:**
+
 - ✅ **Validate all inputs** before processing
-- ✅ **Handle missing data** appropriately  
+- ✅ **Handle missing data** appropriately
 - ✅ **Flag data anomalies** for manual review
 - ✅ **Cross-check calculations** for accuracy
 
 ### **Methodology Rigor:**
+
 - ✅ **Follow EPV methodology** precisely (Greenwald approach)
 - ✅ **Document all assumptions** clearly
 - ✅ **Justify normalization adjustments**
 - ✅ **Use conservative estimates** when uncertain
 
 ### **Professional Standards:**
+
 - ✅ **Clear investment recommendation** with rationale
-- ✅ **Quantified risk assessment** 
+- ✅ **Quantified risk assessment**
 - ✅ **Actionable value creation plan**
 - ✅ **Implementation timeline** and monitoring
 
 ### **Technical Excellence:**
+
 - ✅ **Clean, documented code**
 - ✅ **Proper error handling**
 - ✅ **Reproducible results**
@@ -252,18 +271,21 @@ You will be provided with **medispa financial data** in this format:
 ## 🔍 **COMMON PITFALLS TO AVOID**
 
 ### **Financial Modeling Errors:**
+
 - ❌ **Don't** ignore working capital impacts
 - ❌ **Don't** use simplistic growth assumptions
 - ❌ **Don't** overlook normalization needs
 - ❌ **Don't** mix up Enterprise vs. Equity values
 
 ### **Valuation Mistakes:**
+
 - ❌ **Don't** rely solely on multiples without EPV
 - ❌ **Don't** ignore industry benchmarking
 - ❌ **Don't** forget sensitivity analysis
 - ❌ **Don't** make unsupported growth assumptions
 
 ### **Analysis Gaps:**
+
 - ❌ **Don't** skip service line breakdown analysis
 - ❌ **Don't** ignore competitive positioning
 - ❌ **Don't** overlook regulatory/market risks
@@ -283,6 +305,7 @@ Your analysis will be considered successful if it:
 6. ✅ **Follows established code patterns and quality standards**
 
 ### **Bonus Points For:**
+
 - 🌟 **Novel insights** from service line analysis
 - 🌟 **Creative value creation ideas**
 - 🌟 **Exceptional code documentation**
@@ -293,6 +316,7 @@ Your analysis will be considered successful if it:
 ## 📚 **REFERENCE EXAMPLES**
 
 Study these successful analyses in the workspace:
+
 - **`COMPREHENSIVE_MEDISPA_INVESTMENT_ANALYSIS_REPORT.md`** - Complete analysis format
 - **`new_medispa_case_simulation.py`** - Code implementation pattern
 - **Summit2 cases** - SapphireDerm, AuroraSkin analyses for methodology
@@ -313,6 +337,6 @@ Study these successful analyses in the workspace:
 
 **Model Author:** Summit EPV Valuation System  
 **Prompt Version:** 1.0  
-**Last Updated:** July 28, 2025  
+**Last Updated:** July 28, 2025
 
-*Good luck! The framework is proven - focus on data quality, methodology rigor, and clear communication of insights.* 
+_Good luck! The framework is proven - focus on data quality, methodology rigor, and clear communication of insights._

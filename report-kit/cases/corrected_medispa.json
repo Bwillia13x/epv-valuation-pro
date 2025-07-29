@@ -75,15 +75,15 @@
   },
   "sensitivity_analysis": {
     "revenue_growth_cases": [
-      {"growth": -0.05, "ebitda": 1529000, "ev": 8409500, "irr": 0.08},
-      {"growth": 0.00, "ebitda": 1699000, "ev": 9344500, "irr": 0.15},
-      {"growth": 0.06, "ebitda": 1801000, "ev": 9905500, "irr": 0.23},
-      {"growth": 0.12, "ebitda": 1902000, "ev": 10465500, "irr": 0.31}
+      { "growth": -0.05, "ebitda": 1529000, "ev": 8409500, "irr": 0.08 },
+      { "growth": 0.0, "ebitda": 1699000, "ev": 9344500, "irr": 0.15 },
+      { "growth": 0.06, "ebitda": 1801000, "ev": 9905500, "irr": 0.23 },
+      { "growth": 0.12, "ebitda": 1902000, "ev": 10465500, "irr": 0.31 }
     ],
     "multiple_cases": [
-      {"multiple": 4.5, "ev": 7645500, "irr": 0.12},
-      {"multiple": 5.5, "ev": 9344500, "irr": 0.23},
-      {"multiple": 6.5, "ev": 11043500, "irr": 0.34}
+      { "multiple": 4.5, "ev": 7645500, "irr": 0.12 },
+      { "multiple": 5.5, "ev": 9344500, "irr": 0.23 },
+      { "multiple": 6.5, "ev": 11043500, "irr": 0.34 }
     ]
   },
   "kpi_dashboard": {
@@ -97,7 +97,7 @@
   "monte_carlo": {
     "iterations": 10000,
     "mean_irr": 0.138,
-    "median_irr": 0.140,
+    "median_irr": 0.14,
     "std_irr": 0.08,
     "percentile_10": -0.002,
     "percentile_90": 0.277,
@@ -114,7 +114,7 @@
       "irr": 0.08
     },
     "base": {
-      "probability": 0.50,
+      "probability": 0.5,
       "revenue_growth": 0.06,
       "ebitda_margin": 0.456,
       "exit_multiple": 5.5,
@@ -123,18 +123,48 @@
     "bull": {
       "probability": 0.25,
       "revenue_growth": 0.12,
-      "ebitda_margin": 0.50,
+      "ebitda_margin": 0.5,
       "exit_multiple": 6.5,
       "irr": 0.31
     }
   },
   "tornado_chart": [
-    {"factor": "Exit Multiple", "low_irr": 0.12, "high_irr": 0.34, "impact": 0.22},
-    {"factor": "EBITDA Margin", "low_irr": 0.08, "high_irr": 0.31, "impact": 0.23},
-    {"factor": "Revenue Growth", "low_irr": 0.08, "high_irr": 0.31, "impact": 0.23},
-    {"factor": "Purchase Multiple", "low_irr": 0.18, "high_irr": 0.28, "impact": 0.10},
-    {"factor": "Debt Level", "low_irr": 0.20, "high_irr": 0.26, "impact": 0.06},
-    {"factor": "Hold Period", "low_irr": 0.21, "high_irr": 0.25, "impact": 0.04}
+    {
+      "factor": "Exit Multiple",
+      "low_irr": 0.12,
+      "high_irr": 0.34,
+      "impact": 0.22
+    },
+    {
+      "factor": "EBITDA Margin",
+      "low_irr": 0.08,
+      "high_irr": 0.31,
+      "impact": 0.23
+    },
+    {
+      "factor": "Revenue Growth",
+      "low_irr": 0.08,
+      "high_irr": 0.31,
+      "impact": 0.23
+    },
+    {
+      "factor": "Purchase Multiple",
+      "low_irr": 0.18,
+      "high_irr": 0.28,
+      "impact": 0.1
+    },
+    {
+      "factor": "Debt Level",
+      "low_irr": 0.2,
+      "high_irr": 0.26,
+      "impact": 0.06
+    },
+    {
+      "factor": "Hold Period",
+      "low_irr": 0.21,
+      "high_irr": 0.25,
+      "impact": 0.04
+    }
   ],
   "debt_structure": {
     "senior_debt": 2150000,
@@ -143,12 +173,27 @@
     "net_debt": 2175000
   },
   "service_lines": [
-    {"name": "Energy Devices", "revenue": 245800, "margin": 0.91, "growth": -0.12},
-    {"name": "Injectables", "revenue": 930000, "margin": 0.60, "growth": -0.09},
-    {"name": "Wellness", "revenue": 763800, "margin": 0.75, "growth": 0.35},
-    {"name": "Weightloss", "revenue": 718400, "margin": 0.64, "growth": 0.16},
-    {"name": "Retail Sales", "revenue": 335000, "margin": 0.53, "growth": 0.04},
-    {"name": "Surgery", "revenue": 733100, "margin": 0.89, "growth": 0.19}
+    {
+      "name": "Energy Devices",
+      "revenue": 245800,
+      "margin": 0.91,
+      "growth": -0.12
+    },
+    {
+      "name": "Injectables",
+      "revenue": 930000,
+      "margin": 0.6,
+      "growth": -0.09
+    },
+    { "name": "Wellness", "revenue": 763800, "margin": 0.75, "growth": 0.35 },
+    { "name": "Weightloss", "revenue": 718400, "margin": 0.64, "growth": 0.16 },
+    {
+      "name": "Retail Sales",
+      "revenue": 335000,
+      "margin": 0.53,
+      "growth": 0.04
+    },
+    { "name": "Surgery", "revenue": 733100, "margin": 0.89, "growth": 0.19 }
   ],
   "adjustments_explanation": {
     "marketing": "Normalized from $37K (1% of revenue) to $521K (14% industry standard) - Critical adjustment",
@@ -163,4 +208,4 @@
     "Growth in high-margin services (wellness +35%, surgery +19%)",
     "Corrected EBITDA validates STRONG BUY thesis"
   ]
-} 
+}

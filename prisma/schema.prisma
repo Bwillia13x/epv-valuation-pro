@@ -1,0 +1,214 @@
+// EPV Valuation Pro - Database Schema
+// Enterprise-grade PostgreSQL schema for financial analysis platform
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  organization String?
+  role         UserRole @default(ANALYST)
+  passwordHash String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  cases        Case[]
+  auditLogs    AuditLog[]
+  sessions     UserSession[]
+
+  @@map("users")
+}
+
+model UserSession {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  // Relationships
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+// Case Management
+model Case {
+  id           String     @id @default(cuid())
+  name         String
+  status       CaseStatus @default(DRAFT)
+  industry     String?
+  analysisType String     @default("EPV")
+  
+  // Financial data stored as JSONB for flexibility
+  financialData Json
+  assumptions   Json?
+  
+  // Metadata
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  version      Int      @default(1)
+  
+  // User association
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Relationships
+  analyses     Analysis[]
+  auditLogs    AuditLog[]
+  caseShares   CaseShare[]
+  
+  @@map("cases")
+}
+
+// Multi-Agent Analysis Results
+model Analysis {
+  id           String        @id @default(cuid())
+  caseId       String
+  agentType    String        // 'financial-analyst', 'quant-finance-modeler', etc.
+  methodology  String
+  
+  // Analysis results
+  enterpriseValue   Decimal
+  recommendation    Recommendation
+  confidence        ConfidenceLevel
+  
+  // Detailed results stored as JSONB
+  results          Json
+  keyRisks         String[]
+  strengths        String[]
+  notes            String?
+  
+  // Metadata
+  completedAt      DateTime @default(now())
+  processingTime   Int?     // milliseconds
+  
+  // Relationships
+  case Case @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  
+  @@map("analyses")
+}
+
+// Case Sharing and Collaboration
+model CaseShare {
+  id         String      @id @default(cuid())
+  caseId     String
+  sharedWith String      // email or user ID
+  permission Permission  @default(READ)
+  sharedAt   DateTime    @default(now())
+  expiresAt  DateTime?
+  
+  // Relationships
+  case Case @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  
+  @@unique([caseId, sharedWith])
+  @@map("case_shares")
+}
+
+// Comprehensive Audit Logging
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  caseId    String?
+  action    String   // 'CREATE', 'UPDATE', 'DELETE', 'SHARE', etc.
+  entity    String   // 'Case', 'Analysis', 'User', etc.
+  entityId  String?
+  
+  // Changes tracked as JSONB
+  oldValues Json?
+  newValues Json?
+  metadata  Json?
+  
+  // Context
+  ipAddress String?
+  userAgent String?
+  timestamp DateTime @default(now())
+  
+  // Relationships
+  user User? @relation(fields: [userId], references: [id])
+  case Case? @relation(fields: [caseId], references: [id])
+  
+  @@map("audit_logs")
+}
+
+// Market Data Cache
+model MarketData {
+  id        String   @id @default(cuid())
+  symbol    String
+  dataType  String   // 'price', 'benchmark', 'industry_avg', etc.
+  value     Decimal
+  currency  String   @default("USD")
+  date      DateTime
+  source    String   // 'Bloomberg', 'Alpha Vantage', etc.
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([symbol, dataType, date])
+  @@map("market_data")
+}
+
+// System Configuration
+model SystemConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  category  String   // 'auth', 'integration', 'feature_flags', etc.
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("system_config")
+}
+
+// Enums
+enum UserRole {
+  ANALYST
+  SENIOR_ANALYST
+  MANAGER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum CaseStatus {
+  DRAFT
+  ANALYZING
+  REVIEW
+  COMPLETE
+  ARCHIVED
+}
+
+enum Recommendation {
+  BUY
+  HOLD
+  SELL
+  CONDITIONAL
+  FAVORABLE
+  CAUTION
+  UNFAVORABLE
+}
+
+enum ConfidenceLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Permission {
+  READ
+  COMMENT
+  EDIT
+  ADMIN
+}

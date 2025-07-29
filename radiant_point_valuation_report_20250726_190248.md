@@ -1,20 +1,24 @@
-
 # RADIANT POINT AESTHETICS VALUATION ANALYSIS
+
 ## Radiant Point Aesthetics, LLC - Austin, TX
 
 ### EXECUTIVE SUMMARY
+
 **Target Profile:** Single-site MedSpa - Injectables-led (72%)
 **Location:** Austin, TX
 **Analysis Date:** July 26, 2025
 
 ### TARGET OVERVIEW
+
 **Operational Highlights:**
+
 - 6 treatment rooms with 2 injectors (MD + NP), 1 laser tech, 2 estheticians
 - 24,000 active patient file with strong referral flywheel
 - Recent growth drivers: NP addition (Q3-24), expanded hours, CRM optimization
 - Equipment: 2 lasers (2023), RF microneedling platform
 
 **Service Mix (TTM):**
+
 - Injectables: 72% ($5,068,800)
 - Laser/Devices: 13% ($915,200)
 - Facials/Peels: 10% ($704,000)
@@ -23,6 +27,7 @@
 ### FINANCIAL PERFORMANCE
 
 **Quarterly Revenue Progression:**
+
 - 2024-Q1: $1,470,000 revenue, $296,700 EBITDA
 - 2024-Q2: $1,545,000 revenue, $257,200 EBITDA
 - 2024-Q3: $1,605,000 revenue, $330,800 EBITDA
@@ -33,6 +38,7 @@
 ### EBITDA BRIDGE (TTM)
 
 **Reported to Adjusted EBITDA:**
+
 - Reported EBITDA: $1,790,900
 - Owner Salary Add-back: +$120,000
 - EMR Migration (Non-recurring): +$80,000
@@ -42,6 +48,7 @@
 - **Adjusted Margin: 28.2%**
 
 ### OPERATING METRICS PROGRESSION
+
 - 2024-Q1: 2,722 visits, $540 avg ticket, 70% utilization
 - 2024-Q2: 2,861 visits, $540 avg ticket, 73% utilization
 - 2024-Q3: 2,972 visits, $540 avg ticket, 75% utilization
@@ -52,6 +59,7 @@
 ### EPV VALUATION ANALYSIS
 
 **Enterprise Valuation:**
+
 - Enterprise EPV: $11,087,515
 - Equity EPV: $10,337,515
 - EV/Revenue Multiple: 1.58x
@@ -59,6 +67,7 @@
 - WACC: 12.81%
 
 **EPV vs. Market Multiples:**
+
 - EPV Enterprise Value: $11,087,515
 - Market Range (7.5-9.0x): $14,871,750 - $17,846,100
 - EPV Multiple: 5.59x
@@ -66,6 +75,7 @@
 ### VALUATION MATRIX
 
 **Entry Multiples (7.0x - 10.0x):**
+
 - 7.0x: EV $13,880,300, Equity $13,045,300
 - 7.5x: EV $14,871,750, Equity $14,036,750
 - 8.0x: EV $15,863,200, Equity $15,028,200
@@ -75,6 +85,7 @@
 - 10.0x: EV $19,829,000, Equity $18,994,000
 
 **Base Case (8.5x):**
+
 - Enterprise Value: $16,854,650
 - Less: Net Debt: $835,000
 - Equity Value: $16,019,650
@@ -82,18 +93,21 @@
 ### IRR ANALYSIS (5-Year Hold)
 
 **Entry Assumptions:**
+
 - Entry Multiple: 8.5x
 - Enterprise Value: $16,854,650
 - Debt (70% LTV): $11,798,255
 - Equity Investment: $5,056,395
 
 **Exit Assumptions:**
+
 - Exit Multiple: 8.0x
 - Exit EBITDA: $3,216,170
 - Exit Enterprise Value: $25,729,359
 - Exit Equity Value: $18,650,406
 
 **Returns:**
+
 - Total Return Multiple: 3.69x
 - Approximate IRR: 29.8%
 
@@ -116,6 +130,7 @@
 ### INVESTMENT RECOMMENDATION
 
 **Strengths:**
+
 - Premium Austin market location
 - Strong injectables focus (72%) with high margins
 - Consistent growth trajectory and improving utilization
@@ -123,6 +138,7 @@
 - Recent operational improvements (NP addition, expanded hours)
 
 **Valuation Summary:**
+
 - EPV: $11,087,515 (5.6x)
 - Market Range: $14,871,750 - $17,846,100
 - Base Case: $16,854,650 (8.5x)

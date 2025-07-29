@@ -3,17 +3,20 @@
 ## 🚀 **ESSENTIAL COMMANDS**
 
 ### **1. Generate Visuals**
+
 ```bash
 cd report-kit
 node scripts/render.mjs --case cases/{target}.json --title "Company Name" --ttm "TTM Window" --out {target}_exports
 ```
 
 ### **2. Create PDF**
+
 ```bash
 python3 create_fixed_charts_pdf.py {export_directory} "Company Name" {output_filename}.pdf
 ```
 
 ### **3. Fix Empty Charts**
+
 ```bash
 python3 fix_chart_data.py  # For KPIs, Monte Carlo, Tornado
 ```
@@ -23,6 +26,7 @@ python3 fix_chart_data.py  # For KPIs, Monte Carlo, Tornado
 ## 🔧 **INSTANT FIXES**
 
 ### **JSON Schema Issues**
+
 ```bash
 # Compare with working example:
 diff cases/vistabelle.json cases/{your_case}.json
@@ -32,6 +36,7 @@ grep -r "reported_ebitda\|ttm_revenue\|epv_enterprise" templates/
 ```
 
 ### **Empty Chart Fixes**
+
 ```json
 // KPI Dashboard (0% issue):
 "operating_kpis": {
@@ -70,14 +75,14 @@ open {target}_exports/{filename}.pdf
 
 ## 🆘 **EMERGENCY TROUBLESHOOTING**
 
-| **Problem** | **Quick Fix** |
-|-------------|---------------|
-| Browser launch failed | Continue anyway (fallback mode) |
-| Acceptance checks fail | Fix JSON field names/values |
-| Charts empty | Update data structures |
-| PDF blank charts | Run `create_fixed_charts_pdf.py` |
-| Wrong colors | Check CSS variables in `public/css/report.css` |
+| **Problem**            | **Quick Fix**                                  |
+| ---------------------- | ---------------------------------------------- |
+| Browser launch failed  | Continue anyway (fallback mode)                |
+| Acceptance checks fail | Fix JSON field names/values                    |
+| Charts empty           | Update data structures                         |
+| PDF blank charts       | Run `create_fixed_charts_pdf.py`               |
+| Wrong colors           | Check CSS variables in `public/css/report.css` |
 
 ---
 
-**🎯 SUCCESS = 8/8 charts + 9/9 acceptance checks + working PDF** 
+**🎯 SUCCESS = 8/8 charts + 9/9 acceptance checks + working PDF**

@@ -1,5 +1,5 @@
-import MedispaEPVProCliPage from '../components/MedispaEPVProCliPage'
+import MedispaEPVProCliPage from '../components/MedispaEPVProCliPage';
 
 export default function Home() {
-  return <MedispaEPVProCliPage />
-} 
+  return <MedispaEPVProCliPage />;
+}

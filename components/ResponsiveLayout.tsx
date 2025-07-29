@@ -32,7 +32,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
 
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
-    
+
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
@@ -69,13 +69,15 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
       )}
 
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         ${isMobile ? 'fixed' : 'relative'}
         ${isMobile ? 'z-50' : 'z-10'}
         ${isMobile && sidebarCollapsed ? 'transform -translate-x-full' : ''}
         transition-transform duration-300 ease-in-out
         h-screen
-      `}>
+      `}
+      >
         <SidebarNavigation
           activeSection={activeSection}
           onNavigate={(section) => {
@@ -96,13 +98,16 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
       <div className={mainContentClasses}>
         {/* Top Bar for Mobile */}
         {isMobile && sidebarCollapsed && (
-          <div className={`
+          <div
+            className={`
             flex items-center justify-between px-4 py-3 border-b
-            ${theme === 'dark' 
-              ? 'bg-slate-800 border-slate-700 text-white' 
-              : 'bg-white border-gray-200 text-gray-900'
+            ${
+              theme === 'dark'
+                ? 'bg-slate-800 border-slate-700 text-white'
+                : 'bg-white border-gray-200 text-gray-900'
             }
-          `}>
+          `}
+          >
             <button
               onClick={handleToggleSidebar}
               className={`p-2 rounded-lg transition-colors ${
@@ -112,21 +117,27 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({
               }`}
               aria-label="Open navigation menu"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
-            
             <h1 className="text-lg font-semibold">EPV Valuation Pro</h1>
-            
             <div className="w-10" /> {/* Spacer for center alignment */}
           </div>
         )}
 
         {/* Content Area */}
-        <main className={contentAreaClasses}>
-          {children}
-        </main>
+        <main className={contentAreaClasses}>{children}</main>
       </div>
     </div>
   );

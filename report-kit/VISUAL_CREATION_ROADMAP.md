@@ -1,6 +1,7 @@
 # CPP Visual Report Kit — Agent Creation Roadmap
 
 ## 🎯 **MISSION STATEMENT**
+
 Create investment-grade visual analysis packs for private equity deal evaluation using the CPP Visual Report Kit system. This roadmap provides step-by-step instructions for agents to generate professional, mathematically accurate, and presentation-ready financial visualizations.
 
 ---
@@ -8,13 +9,14 @@ Create investment-grade visual analysis packs for private equity deal evaluation
 ## 📋 **PHASE 1: SUMMIT MODEL EXECUTION**
 
 ### **1.1 Input Processing**
+
 When user provides a broker packet or case data:
 
 ```python
 # Create simulation script: {target_name}_simulation.py
 # Key components:
 - TTM window calculation (specific quarters)
-- EBITDA Bridge normalization 
+- EBITDA Bridge normalization
 - Valuation Matrix (7.0x - 10.0x multiples)
 - EPV Analysis (EBIT, NOPAT, reinvestment, WACC)
 - LBO Analysis (Sources/Uses, debt schedule, returns)
@@ -23,6 +25,7 @@ When user provides a broker packet or case data:
 ```
 
 ### **1.2 Required Output Format**
+
 ```python
 results = {
     'company_info': {
@@ -46,6 +49,7 @@ results = {
 ```
 
 ### **1.3 Critical Validations**
+
 - ✅ TTM calculations sum correctly
 - ✅ EBITDA Bridge reconciles (tolerance: 0.5%)
 - ✅ EPV Enterprise = EPV FCF / WACC
@@ -57,6 +61,7 @@ results = {
 ## 📊 **PHASE 2: JSON CASE FILE PREPARATION**
 
 ### **2.1 Schema Alignment**
+
 The JSON case file MUST match the expected schema:
 
 ```bash
@@ -66,7 +71,9 @@ cat cases/auroraskin.json | head -50
 ```
 
 ### **2.2 Critical Field Mappings**
+
 **TOP-LEVEL STRUCTURE:**
+
 ```json
 {
   "company_info": {
@@ -98,7 +105,8 @@ cat cases/auroraskin.json | head -50
 
 ### **2.3 Advanced Analytics Requirements**
 
-**OPERATING KPIs** *(for dashboard gauges)*:
+**OPERATING KPIs** _(for dashboard gauges)_:
+
 ```json
 "operating_kpis": {
   "revenue_growth": {"current": 8.5, "target": 10.0, "unit": "%"},
@@ -110,7 +118,8 @@ cat cases/auroraskin.json | head -50
 }
 ```
 
-**MONTE CARLO** *(for risk simulation)*:
+**MONTE CARLO** _(for risk simulation)_:
+
 ```json
 "monte_carlo": {
   "iterations": 10000,
@@ -128,7 +137,8 @@ cat cases/auroraskin.json | head -50
 }
 ```
 
-**SENSITIVITY ANALYSIS** *(for tornado chart)*:
+**SENSITIVITY ANALYSIS** _(for tornado chart)_:
+
 ```json
 "sensitivity_analysis": {
   "base_irr": 22.8,
@@ -151,16 +161,18 @@ cat cases/auroraskin.json | head -50
 ## 🎨 **PHASE 3: VISUAL GENERATION**
 
 ### **3.1 Standard Generation Command**
+
 ```bash
 cd report-kit
 node scripts/render.mjs --case cases/{target}.json --title "Company Name (Location)" --ttm "TTM Window" --out {target}_exports
 ```
 
 ### **3.2 Expected Outputs**
+
 ```
 {target}_exports/
 ├── 01_EBITDA_Bridge.png      # Waterfall with reconciliation
-├── 02_Valuation_Matrix.png   # 7.0x-10.0x comprehensive grid  
+├── 02_Valuation_Matrix.png   # 7.0x-10.0x comprehensive grid
 ├── 03_EPV_Panel.png          # 3×3 sensitivity with intrinsic value
 ├── 04_LBO_Summary.png        # Sources/uses, debt schedule, returns
 ├── 05_KPI_Dashboard.png      # Performance gauges
@@ -171,7 +183,9 @@ node scripts/render.mjs --case cases/{target}.json --title "Company Name (Locati
 ```
 
 ### **3.3 Acceptance Checks**
+
 The system runs 9 automatic validation checks:
+
 - EBITDA Bridge Reconciliation
 - Valuation Matrix (8.5× Multiple)
 - LBO Exit Equity Calculation
@@ -192,6 +206,7 @@ The system runs 9 automatic validation checks:
 
 **Error:** `Cannot read properties of undefined (reading 'reported_ebitda')`
 **Fix:** Field name mismatch. Check:
+
 ```bash
 grep -r "reported_ebitda" templates/
 # Ensure your JSON uses exact field names
@@ -199,6 +214,7 @@ grep -r "reported_ebitda" templates/
 
 **Error:** `Waiting failed: 10000ms exceeded`
 **Fix:** Missing required data arrays. Add:
+
 - `debt_schedule` array
 - `epv_sensitivity` matrix
 - Complete `assumptions` object
@@ -206,18 +222,20 @@ grep -r "reported_ebitda" templates/
 ### **4.2 Empty Chart Issues**
 
 **KPI Dashboard showing 0%:**
+
 ```python
 # Fix with proper gauge data structure:
 "operating_kpis": {
   "metric_name": {
     "current": 22.8,
-    "target": 20.0, 
+    "target": 20.0,
     "unit": "%"
   }
 }
 ```
 
 **Monte Carlo empty:**
+
 ```python
 # Add complete simulation results:
 "monte_carlo": {
@@ -229,6 +247,7 @@ grep -r "reported_ebitda" templates/
 ```
 
 **Tornado Chart empty:**
+
 ```python
 # Use sensitivity_analysis (not sensitivity_variables):
 "sensitivity_analysis": {
@@ -238,11 +257,13 @@ grep -r "reported_ebitda" templates/
 ```
 
 ### **4.3 Chart Enhancement Script**
+
 If charts render but need improvement, use:
+
 ```python
 # Create fix_chart_data.py with:
 - create_kpi_dashboard_data()
-- create_monte_carlo_chart() 
+- create_monte_carlo_chart()
 - create_tornado_chart()
 # Then replace original charts
 ```
@@ -252,12 +273,15 @@ If charts render but need improvement, use:
 ## 📄 **PHASE 5: PDF COMPILATION**
 
 ### **5.1 Standard PDF Creation**
+
 ```bash
 python3 create_fixed_charts_pdf.py {export_directory} "Company Name" {output_filename}.pdf
 ```
 
 ### **5.2 Image Compatibility Fix**
+
 If charts don't render in PDF:
+
 ```python
 # The script includes convert_png_for_pdf() function:
 - Converts RGBA to RGB format
@@ -267,6 +291,7 @@ If charts don't render in PDF:
 ```
 
 ### **5.3 Quality Validation**
+
 - ✅ All 8 charts display properly
 - ✅ High resolution (charts should be >150KB each)
 - ✅ Mathematical accuracy confirmed
@@ -277,28 +302,31 @@ If charts don't render in PDF:
 ## 🎯 **PHASE 6: STYLING STANDARDS**
 
 ### **6.1 CPP Color Palette**
+
 ```css
---color-input: #2563eb;      /* Blue for inputs */
---color-linked: #1e293b;     /* Dark slate for linked */
---color-output: #16a34a;     /* Green for outputs */
---color-negative: #dc2626;   /* Red for negatives */
---color-neutral: #64748b;    /* Gray for neutral */
+--color-input: #2563eb; /* Blue for inputs */
+--color-linked: #1e293b; /* Dark slate for linked */
+--color-output: #16a34a; /* Green for outputs */
+--color-negative: #dc2626; /* Red for negatives */
+--color-neutral: #64748b; /* Gray for neutral */
 ```
 
 ### **6.2 Typography Requirements**
+
 ```css
 --font-family: system-ui;
---font-size-base: 14px;      /* Standard text */
---font-size-caption: 12px;   /* Small labels */
---font-size-lg: 18px;        /* Headings */
+--font-size-base: 14px; /* Standard text */
+--font-size-caption: 12px; /* Small labels */
+--font-size-lg: 18px; /* Headings */
 ```
 
 ### **6.3 Currency Formatting**
+
 ```javascript
 // Use $X.XXM format consistently
-__FORMAT__.moneyM(value, 2)  // Results in "$15.35M"
-__FORMAT__.pct(value, 1)     // Results in "20.6%"
-__FORMAT__.multiple(value, 1) // Results in "8.5×"
+__FORMAT__.moneyM(value, 2); // Results in "$15.35M"
+__FORMAT__.pct(value, 1); // Results in "20.6%"
+__FORMAT__.multiple(value, 1); // Results in "8.5×"
 ```
 
 ---
@@ -306,10 +334,11 @@ __FORMAT__.multiple(value, 1) // Results in "8.5×"
 ## 🚀 **PHASE 7: FINAL DELIVERABLE**
 
 ### **7.1 Complete Package Contents**
+
 ```
 📁 {target}_complete_exports/
 ├── 📊 01_EBITDA_Bridge.png
-├── 📊 02_Valuation_Matrix.png  
+├── 📊 02_Valuation_Matrix.png
 ├── 📊 03_EPV_Panel.png
 ├── 📊 04_LBO_Summary.png
 ├── 📊 05_KPI_Dashboard.png
@@ -321,8 +350,9 @@ __FORMAT__.multiple(value, 1) // Results in "8.5×"
 ```
 
 ### **7.2 Quality Checklist**
+
 - [ ] All 9 acceptance checks passed
-- [ ] 8/8 charts rendered successfully  
+- [ ] 8/8 charts rendered successfully
 - [ ] PDF opens and displays all charts
 - [ ] Mathematical calculations validated
 - [ ] Professional styling applied
@@ -330,6 +360,7 @@ __FORMAT__.multiple(value, 1) // Results in "8.5×"
 - [ ] Investment committee ready
 
 ### **7.3 Success Metrics**
+
 - **File sizes:** PNGs ~150-200KB each, PDF ~1.5-2MB
 - **Resolution:** 300 DPI for presentation quality
 - **Accuracy:** 0.5% tolerance on all calculations
@@ -350,19 +381,22 @@ __FORMAT__.multiple(value, 1) // Results in "8.5×"
 ## 📞 **EMERGENCY PROCEDURES**
 
 **If visual generation completely fails:**
+
 1. Check JSON schema against working example
 2. Run acceptance checks manually
 3. Generate problematic charts with Python fallbacks
 4. Use create_fixed_charts_pdf.py for final compilation
 
 **If charts are blank/empty:**
+
 1. Verify data structure matches templates
 2. Check for missing required arrays
 3. Run chart-specific fix functions
 4. Regenerate with corrected data
 
 **If PDF won't open/display:**
-1. Check PNG format compatibility  
+
+1. Check PNG format compatibility
 2. Use convert_png_for_pdf() function
 3. Verify file sizes are reasonable
 4. Test with different PDF readers
@@ -372,6 +406,7 @@ __FORMAT__.multiple(value, 1) // Results in "8.5×"
 ## ✅ **FINAL VALIDATION**
 
 Before delivering to user:
+
 ```bash
 # Verify complete package:
 ls -la {target}_exports/*.png | wc -l    # Should be 8
@@ -386,4 +421,4 @@ open {target}_exports/{Company}_Analysis.pdf
 
 ---
 
-*This roadmap ensures consistent, high-quality deliverables for all CPP visual analysis projects.* 
+_This roadmap ensures consistent, high-quality deliverables for all CPP visual analysis projects._

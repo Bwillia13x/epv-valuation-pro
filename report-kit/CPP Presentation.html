@@ -1,0 +1,1271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Service Medispa Investment Case</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <style>
+      :root {
+        --primary-color: #1a5276;
+        --secondary-color: #2980b9;
+        --accent-color: #3498db;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Source Sans Pro', sans-serif;
+        color: var(--dark-color);
+      }
+
+      .slide {
+        width: 1280px;
+        min-height: 720px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        overflow: hidden;
+      }
+
+      .header {
+        padding: 20px 70px 8px;
+        border-bottom: 2px solid var(--light-color);
+      }
+
+      .title {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 0 0 8px 0;
+        line-height: 1.1;
+      }
+
+      .subheader {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 5px;
+      }
+
+      .chip {
+        background-color: var(--accent-color);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 16px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .content {
+        display: flex;
+        flex-grow: 1;
+        padding: 15px 70px;
+      }
+
+      .left-column {
+        flex: 1;
+        padding-right: 25px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .right-column {
+        flex: 1;
+        padding-left: 25px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 12px;
+        border-bottom: 2px solid var(--light-color);
+        padding-bottom: 4px;
+      }
+
+      .chart-container {
+        height: 180px;
+        margin-bottom: 12px;
+        position: relative;
+      }
+
+      .key-metrics {
+        background-color: var(--light-color);
+        padding: 10px 15px;
+        border-radius: 6px;
+        margin-top: 12px;
+      }
+
+      .metrics-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin: 0 0 6px 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .metrics-title i {
+        margin-right: 6px;
+      }
+
+      .metrics-content {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .metric {
+        text-align: center;
+      }
+
+      .metric-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--secondary-color);
+      }
+
+      .metric-label {
+        font-size: 13px;
+        color: var(--dark-color);
+      }
+
+      .footnote {
+        font-size: 11px;
+        color: #7f8c8d;
+        padding: 8px 70px;
+        border-top: 1px solid var(--light-color);
+        font-style: italic;
+        text-align: center;
+      }
+
+      .answers-panel {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--accent-color);
+        padding: 12px;
+        margin-bottom: 12px;
+        border-radius: 4px;
+      }
+
+      .answer-item {
+        display: flex;
+        margin-bottom: 6px;
+      }
+
+      .answer-icon {
+        color: var(--accent-color);
+        margin-right: 6px;
+        flex-shrink: 0;
+        font-size: 13px;
+        margin-top: 3px;
+      }
+
+      .answer-text {
+        font-size: 13px;
+        line-height: 1.3;
+      }
+
+      .answer-text strong {
+        color: var(--secondary-color);
+        font-weight: 600;
+      }
+
+      .missing-info {
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 4px;
+        padding: 10px;
+        margin-top: 12px;
+      }
+
+      .missing-title {
+        font-weight: 600;
+        color: #856404;
+        margin-bottom: 6px;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+      }
+
+      .missing-title i {
+        margin-right: 6px;
+      }
+
+      .missing-list {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 13px;
+      }
+
+      .missing-list li {
+        margin-bottom: 3px;
+      }
+
+      .deal-breakers {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 8px 10px;
+        margin-top: 10px;
+      }
+
+      .deal-breakers-title {
+        font-weight: 600;
+        color: #721c24;
+        margin-bottom: 5px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+      }
+
+      .deal-breakers-title i {
+        margin-right: 6px;
+      }
+
+      .deal-breakers-list {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 12px;
+      }
+
+      .deal-breakers-list li {
+        margin-bottom: 2px;
+      }
+
+      .service-mix {
+        display: flex;
+        justify-content: center;
+        margin-top: 8px;
+      }
+
+      .service-mix-chart {
+        width: 100px;
+        height: 100px;
+      }
+
+      .triangulation {
+        position: absolute;
+        right: 70px;
+        top: 100px;
+        font-size: 11px;
+        color: #7f8c8d;
+        font-style: italic;
+        max-width: 200px;
+        text-align: right;
+      }
+
+      .decision-tag {
+        background-color: #e8f4f8;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--secondary-color);
+        display: inline-block;
+        margin-top: 5px;
+      }
+
+      .marketing-note {
+        font-size: 11px;
+        color: #7f8c8d;
+        font-style: italic;
+        text-align: center;
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="header">
+        <h1 class="title">
+          Multi-Service Medispa — 2024 Normalized Investment Case
+        </h1>
+        <div class="subheader">
+          <div class="chip">Adj. EBITDA $688</div>
+          <div class="chip">EV (7.0×) $4,813</div>
+          <div class="chip">Equity $2,865</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="left-column">
+          <div class="chart-container">
+            <canvas id="waterfallChart"></canvas>
+          </div>
+
+          <div class="chart-container">
+            <canvas id="marketingChart"></canvas>
+            <div class="marketing-note">10% × $3,726 = $373; reported $37</div>
+          </div>
+
+          <div class="key-metrics">
+            <h3 class="metrics-title">
+              <i class="fas fa-chart-line"></i> Key Metrics ($000s)
+            </h3>
+            <div class="metrics-content">
+              <div class="metric">
+                <div class="metric-value">$3,726</div>
+                <div class="metric-label">Revenue 2024</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value">~70%</div>
+                <div class="metric-label">GP Margin</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value">1.29×</div>
+                <div class="metric-label">EV/Revenue</div>
+              </div>
+              <div class="metric">
+                <div class="metric-value">≈$135</div>
+                <div class="metric-label">Maint. Capex</div>
+              </div>
+            </div>
+            <div class="marketing-note">
+              Maint. capex ≈ depreciation (assumption)
+            </div>
+          </div>
+
+          <div class="service-mix">
+            <canvas id="serviceMixChart" class="service-mix-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="right-column">
+          <h2 class="section-title">Answers to CPP Prompts</h2>
+          <div class="answers-panel">
+            <div class="answer-item">
+              <i class="fas fa-exclamation-triangle answer-icon"></i>
+              <div class="answer-text">
+                <strong>Concerns:</strong> seasonality, marketing under-spend,
+                device uptime
+              </div>
+            </div>
+            <div class="answer-item">
+              <i class="fas fa-lightbulb answer-icon"></i>
+              <div class="answer-text">
+                <strong>Opportunities:</strong> memberships, pricing, injector
+                productivity
+              </div>
+            </div>
+            <div class="answer-item">
+              <i class="fas fa-calculator answer-icon"></i>
+              <div class="answer-text">
+                <strong>EBITDA Adj:</strong> owner comp +$300, strip one-offs,
+                reclass interest
+              </div>
+            </div>
+            <div class="answer-item">
+              <i class="fas fa-chart-line answer-icon"></i>
+              <div class="answer-text">
+                <strong>Fair Multiple:</strong> 6–8× range, 7× base, cash-pay
+                model
+              </div>
+            </div>
+            <div class="answer-item">
+              <i class="fas fa-balance-scale answer-icon"></i>
+              <div class="answer-text">
+                <strong>Other Methods:</strong> EPV, DCF, comps, precedents
+                triangulation
+              </div>
+            </div>
+            <div class="answer-item">
+              <i class="fas fa-coins answer-icon"></i>
+              <div class="answer-text">
+                <strong>Cash / Roll:</strong> retention incentives, capex needs,
+                leverage
+              </div>
+            </div>
+            <div class="answer-item">
+              <i class="fas fa-user-tie answer-icon"></i>
+              <div class="answer-text">
+                <strong>Owner Comp:</strong> SDE→EBITDA adjustment, market-rate
+                ladder
+              </div>
+            </div>
+          </div>
+
+          <div class="missing-info">
+            <div class="missing-title">
+              <i class="fas fa-exclamation-circle"></i> Missing Information
+              (Deal-Critical)
+            </div>
+            <ul class="missing-list">
+              <li>Debt schedule, cash at close, NWC target, fees</li>
+              <li>Injector productivity, retention/rollover intent</li>
+              <li>Device maintenance history, near-term capex</li>
+              <li>Lead sources, CPL/ROAS, membership retention</li>
+            </ul>
+          </div>
+
+          <div class="deal-breakers">
+            <div class="deal-breakers-title">
+              <i class="fas fa-times-circle"></i> What Breaks the Deal
+            </div>
+            <ul class="deal-breakers-list">
+              <li>90-day injector churn > 15%</li>
+              <li>30+ day device downtime → missed revenue</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footnote">
+        All figures in $000s • Draft for discussion • July 29, 2025 •
+        CPP_Case_v6.0.pptx
+      </div>
+    </div>
+
+    <script>
+      // Register Chart.js plugin for data labels
+      Chart.register(ChartDataLabels);
+
+      // Waterfall Chart
+      const waterfallCtx = document
+        .getElementById('waterfallChart')
+        .getContext('2d');
+      const waterfallChart = new Chart(waterfallCtx, {
+        type: 'bar',
+        data: {
+          labels: [
+            'GP',
+            'Sales & Marketing',
+            'Other OpEx',
+            'Owner add-back (+$300)',
+            'Depreciation',
+            'Interest (reclass from OpEx)',
+            'EBITDA',
+          ],
+          datasets: [
+            {
+              label: 'Value ($000s)',
+              data: [2623, -1040, -1526, 300, 135, 195, 688],
+              backgroundColor: [
+                'rgba(41, 128, 185, 0.8)',
+                'rgba(231, 76, 60, 0.8)',
+                'rgba(231, 76, 60, 0.8)',
+                'rgba(39, 174, 96, 0.8)',
+                'rgba(39, 174, 96, 0.8)',
+                'rgba(39, 174, 96, 0.8)',
+                'rgba(52, 152, 219, 0.8)',
+              ],
+              borderColor: [
+                'rgba(41, 128, 185, 1)',
+                'rgba(231, 76, 60, 1)',
+                'rgba(231, 76, 60, 1)',
+                'rgba(39, 174, 96, 1)',
+                'rgba(39, 174, 96, 1)',
+                'rgba(39, 174, 96, 1)',
+                'rgba(52, 152, 219, 1)',
+              ],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'GP → Adj. EBITDA (2024) ($000s)',
+              font: {
+                size: 16,
+                weight: 'bold',
+              },
+            },
+            legend: {
+              display: false,
+            },
+            datalabels: {
+              anchor: 'end',
+              align: 'end',
+              color: '#333',
+              font: {
+                weight: 'bold',
+                size: 11,
+              },
+              formatter: (value) => {
+                return value.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                });
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Value ($000s)',
+              },
+              ticks: {
+                stepSize: 500,
+                callback: function (value) {
+                  return value.toLocaleString();
+                },
+              },
+            },
+            x: {
+              ticks: {
+                maxRotation: 25,
+                minRotation: 25,
+              },
+            },
+          },
+        },
+      });
+
+      // Marketing Comparison Chart
+      const marketingCtx = document
+        .getElementById('marketingChart')
+        .getContext('2d');
+      const marketingChart = new Chart(marketingCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Reported', 'Normalized'],
+          datasets: [
+            {
+              label: 'Marketing Spend ($000s)',
+              data: [37, 373],
+              backgroundColor: [
+                'rgba(243, 156, 18, 0.8)',
+                'rgba(39, 174, 96, 0.8)',
+              ],
+              borderColor: ['rgba(243, 156, 18, 1)', 'rgba(39, 174, 96, 1)'],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Marketing Reported vs Normalized ($000s)',
+              font: {
+                size: 16,
+                weight: 'bold',
+              },
+            },
+            legend: {
+              display: false,
+            },
+            datalabels: {
+              anchor: 'end',
+              align: 'end',
+              color: '#333',
+              font: {
+                weight: 'bold',
+                size: 11,
+              },
+              formatter: (value) => {
+                return value.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                });
+              },
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Value ($000s)',
+              },
+              ticks: {
+                stepSize: 100,
+                callback: function (value) {
+                  return value.toLocaleString();
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Service Mix Pie Chart
+      const serviceMixCtx = document
+        .getElementById('serviceMixChart')
+        .getContext('2d');
+      const serviceMixChart = new Chart(serviceMixCtx, {
+        type: 'pie',
+        data: {
+          labels: ['Injectables', 'Devices', 'Other'],
+          datasets: [
+            {
+              data: [40, 35, 25],
+              backgroundColor: [
+                'rgba(41, 128, 185, 0.8)',
+                'rgba(39, 174, 96, 0.8)',
+                'rgba(243, 156, 18, 0.8)',
+              ],
+              borderColor: [
+                'rgba(41, 128, 185, 1)',
+                'rgba(39, 174, 96, 1)',
+                'rgba(243, 156, 18, 1)',
+              ],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Service Mix',
+              font: {
+                size: 12,
+                weight: 'bold',
+              },
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 10,
+                font: {
+                  size: 10,
+                },
+              },
+            },
+            datalabels: {
+              color: '#fff',
+              font: {
+                weight: 'bold',
+                size: 11,
+              },
+              formatter: (value) => {
+                return value + '%';
+              },
+            },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Service Medispa Investment Case</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --primary-color: #1a5276;
+        --secondary-color: #2980b9;
+        --accent-color: #3498db;
+        --light-color: #ecf0f1;
+        --dark-color: #2c3e50;
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Source Sans Pro', sans-serif;
+        color: var(--dark-color);
+      }
+
+      .slide {
+        width: 1280px;
+        min-height: 720px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        background-color: #fff;
+        overflow: hidden;
+      }
+
+      .header {
+        padding: 20px 70px 8px;
+        border-bottom: 2px solid var(--light-color);
+      }
+
+      .title {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 0;
+        line-height: 1.1;
+      }
+
+      .decision-tag {
+        background-color: #e8f4f8;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--secondary-color);
+        display: inline-block;
+        margin-top: 5px;
+      }
+
+      .content {
+        display: flex;
+        flex-grow: 1;
+        padding: 15px 70px;
+      }
+
+      .left-column {
+        flex: 1;
+        padding-right: 25px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .right-column {
+        flex: 1;
+        padding-left: 25px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 12px;
+        border-bottom: 2px solid var(--light-color);
+        padding-bottom: 4px;
+      }
+
+      .bridge-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .bridge-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--light-color);
+      }
+
+      .bridge-label {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .bridge-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--secondary-color);
+      }
+
+      .bridge-note {
+        font-size: 12px;
+        color: #7f8c8d;
+        font-style: italic;
+        margin-top: -5px;
+        padding-left: 5px;
+      }
+
+      .sensitivity-grid {
+        display: grid;
+        grid-template-columns: auto repeat(3, 1fr);
+        grid-template-rows: auto repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .grid-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 6px;
+        text-align: center;
+        font-weight: 600;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .grid-row-header {
+        background-color: var(--secondary-color);
+        color: white;
+        padding: 6px;
+        text-align: center;
+        font-weight: 600;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+
+      .grid-cell {
+        background-color: var(--light-color);
+        padding: 6px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 13px;
+      }
+
+      .grid-cell .equity {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--secondary-color);
+      }
+
+      .grid-cell .cash-rollover {
+        font-size: 12px;
+        color: var(--dark-color);
+      }
+
+      .grid-cell.base-case {
+        border: 2px solid var(--accent-color);
+        background-color: rgba(52, 152, 219, 0.1);
+      }
+
+      .ev-badges {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        position: relative;
+      }
+
+      .ev-badge {
+        background-color: var(--light-color);
+        border-radius: 8px;
+        padding: 8px 12px;
+        text-align: center;
+        flex: 1;
+        margin: 0 5px;
+        position: relative;
+      }
+
+      .ev-badge-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--secondary-color);
+      }
+
+      .ev-badge-label {
+        font-size: 13px;
+        color: var(--dark-color);
+      }
+
+      .diligence-integration {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 12px;
+      }
+
+      .diligence-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .diligence-title i {
+        margin-right: 8px;
+      }
+
+      .diligence-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .diligence-item {
+        background-color: white;
+        border-left: 3px solid var(--accent-color);
+        padding: 8px;
+        border-radius: 4px;
+      }
+
+      .diligence-item-title {
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+      }
+
+      .diligence-item-title i {
+        margin-right: 6px;
+        font-size: 12px;
+      }
+
+      .diligence-item-content {
+        font-size: 12px;
+        line-height: 1.3;
+      }
+
+      .footnote {
+        font-size: 11px;
+        color: #7f8c8d;
+        padding: 8px 70px;
+        border-top: 1px solid var(--light-color);
+        font-style: italic;
+        text-align: center;
+      }
+
+      .proceeds-donut {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+      }
+
+      .leverage-metric {
+        background-color: #e8f4f8;
+        border-radius: 20px;
+        padding: 6px 12px;
+        margin-top: 8px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--secondary-color);
+        display: inline-block;
+        align-self: center;
+      }
+
+      .triangulation {
+        position: absolute;
+        right: 70px;
+        top: 100px;
+        font-size: 11px;
+        color: #7f8c8d;
+        font-style: italic;
+        max-width: 200px;
+        text-align: right;
+      }
+
+      .connector {
+        position: absolute;
+        height: 1px;
+        background-color: rgba(52, 152, 219, 0.3);
+        transform-origin: left center;
+      }
+
+      .connector-6x {
+        width: 40px;
+        top: 50%;
+        left: 50%;
+        transform: rotate(45deg);
+      }
+
+      .connector-7x {
+        width: 30px;
+        top: 50%;
+        left: 50%;
+        transform: rotate(90deg);
+      }
+
+      .connector-8x {
+        width: 40px;
+        top: 50%;
+        left: 50%;
+        transform: rotate(135deg);
+      }
+
+      .percent-highlight {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--accent-color);
+      }
+
+      .donut-center-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--secondary-color);
+      }
+
+      .donut-labels {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, 20px);
+        font-size: 12px;
+        color: var(--dark-color);
+        text-align: center;
+        width: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <div class="header">
+        <h1 class="title">Valuation & Offer (EV → Equity → Proceeds)</h1>
+        <div class="decision-tag">
+          Proceed to IOI at 7.0×, 70/30 Cash / Roll, subject to QoE = $688k and
+          no debt-like items beyond Method A
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="left-column">
+          <h2 class="section-title">EV → Equity Bridge</h2>
+          <div class="bridge-container">
+            <div class="bridge-item">
+              <div class="bridge-label">EV</div>
+              <div class="bridge-value">$4,813</div>
+            </div>
+            <div class="bridge-item">
+              <div class="bridge-label">Implied Net Debt</div>
+              <div class="bridge-value">$1,948</div>
+            </div>
+            <div class="bridge-note">
+              Method A = Interest ÷
+              <span class="percent-highlight">10%</span> Cost of debt = 194.812
+              ÷ 10% = $1,948 ($000s)
+            </div>
+            <div class="bridge-item">
+              <div class="bridge-label">
+                (Debt-like tbd / Cash-like tbd / NWC tbd / Fees tbd)
+              </div>
+            </div>
+            <div class="bridge-item">
+              <div class="bridge-label">Equity Value</div>
+              <div class="bridge-value">$2,865</div>
+            </div>
+            <div class="bridge-item">
+              <div class="bridge-label">Proceeds at Close (70%/30%)</div>
+              <div class="bridge-value">Cash $2,006 / Roll $860</div>
+            </div>
+            <div class="leverage-metric">ND/EBITDA = 2.8×</div>
+            <div class="leverage-metric">EBITDA/Interest ≈ 3.5×</div>
+          </div>
+
+          <div class="mt-4 flex justify-center relative">
+            <canvas id="proceedsDonut" class="proceeds-donut"></canvas>
+            <div class="donut-center-text">70/30</div>
+            <div class="donut-labels">$2,006 / $860</div>
+          </div>
+        </div>
+
+        <div class="right-column">
+          <h2 class="section-title">QoE × Multiple Sensitivity Grid</h2>
+
+          <div class="sensitivity-grid">
+            <div class="grid-header">Multiple →</div>
+            <div class="grid-header">6×</div>
+            <div class="grid-header">7×</div>
+            <div class="grid-header">8×</div>
+
+            <div class="grid-row-header">EBITDA -10%</div>
+            <div class="grid-cell">
+              <div class="equity">$1,767</div>
+              <div class="cash-rollover">Cash $1,237 / Roll $530</div>
+            </div>
+            <div class="grid-cell">
+              <div class="equity">$2,386</div>
+              <div class="cash-rollover">Cash $1,670 / Roll $716</div>
+            </div>
+            <div class="grid-cell">
+              <div class="equity">$3,006</div>
+              <div class="cash-rollover">Cash $2,104 / Roll $902</div>
+            </div>
+
+            <div class="grid-row-header">EBITDA Base</div>
+            <div class="grid-cell">
+              <div class="equity">$2,180</div>
+              <div class="cash-rollover">Cash $1,526 / Roll $654</div>
+            </div>
+            <div class="grid-cell base-case">
+              <div class="equity">$2,868</div>
+              <div class="cash-rollover">Cash $2,008 / Roll $860</div>
+            </div>
+            <div class="grid-cell">
+              <div class="equity">$3,556</div>
+              <div class="cash-rollover">Cash $2,489 / Roll $1,067</div>
+            </div>
+
+            <div class="grid-row-header">EBITDA +10%</div>
+            <div class="grid-cell">
+              <div class="equity">$2,593</div>
+              <div class="cash-rollover">Cash $1,815 / Roll $778</div>
+            </div>
+            <div class="grid-cell">
+              <div class="equity">$3,350</div>
+              <div class="cash-rollover">Cash $2,345 / Roll $1,005</div>
+            </div>
+            <div class="grid-cell">
+              <div class="equity">$4,106</div>
+              <div class="cash-rollover">Cash $2,874 / Roll $1,232</div>
+            </div>
+          </div>
+
+          <div class="ev-badges">
+            <div class="ev-badge">
+              <div class="ev-badge-value">6×</div>
+              <div class="ev-badge-label">EV $4,128</div>
+              <div class="connector connector-6x"></div>
+            </div>
+            <div class="ev-badge">
+              <div class="ev-badge-value">7×</div>
+              <div class="ev-badge-label">EV $4,816</div>
+              <div class="connector connector-7x"></div>
+            </div>
+            <div class="ev-badge">
+              <div class="ev-badge-value">8×</div>
+              <div class="ev-badge-label">EV $5,504</div>
+              <div class="connector connector-8x"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="diligence-integration">
+        <div class="diligence-title">
+          <i class="fas fa-tasks"></i> Diligence & Integration
+        </div>
+        <div class="diligence-grid">
+          <div class="diligence-item">
+            <div class="diligence-item-title">
+              <i class="fas fa-list-ol"></i> Top DD Workstreams
+            </div>
+            <div class="diligence-item-content">
+              QoE & revenue recognition → Provider comp/retention → Device fleet
+              & SLAs → Legal/leases
+            </div>
+          </div>
+          <div class="diligence-item">
+            <div class="diligence-item-title">
+              <i class="fas fa-rocket"></i> Day-1 Readiness
+            </div>
+            <div class="diligence-item-content">
+              Payroll & comp ladder; scheduling; pricing governance; marketing
+              ROAS tracking
+            </div>
+          </div>
+          <div class="diligence-item">
+            <div class="diligence-item-title">
+              <i class="fas fa-file-contract"></i> Close-Prep
+            </div>
+            <div class="diligence-item-content">
+              Payoff letters & debt schedule; cap debt-like items; set NWC peg;
+              escrow % TBD
+            </div>
+          </div>
+          <div class="diligence-item">
+            <div class="diligence-item-title">
+              <i class="fas fa-calendar-check"></i> 90-Day Ops Plan
+            </div>
+            <div class="diligence-item-content">
+              Utilization targets; membership attach-rate; device downtime KPI
+              cadence
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footnote">
+        All figures in $000s • Draft for discussion • July 29, 2025 •
+        CPP_Case_v6.0.pptx
+      </div>
+
+      <div class="triangulation">
+        Valuation triangulation: EPV & simple DCF sanity (not shown)
+      </div>
+    </div>
+
+    <script>
+      // Proceeds Donut Chart
+      const proceedsCtx = document
+        .getElementById('proceedsDonut')
+        .getContext('2d');
+      const proceedsDonut = new Chart(proceedsCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Cash', 'Roll'],
+          datasets: [
+            {
+              data: [70, 30],
+              backgroundColor: [
+                'rgba(41, 128, 185, 0.8)',
+                'rgba(39, 174, 96, 0.8)',
+              ],
+              borderColor: ['rgba(41, 128, 185, 1)', 'rgba(39, 174, 96, 1)'],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: {
+            title: {
+              display: true,
+              text: 'Proceeds Split',
+              font: {
+                size: 14,
+                weight: 'bold',
+              },
+            },
+            legend: {
+              display: false,
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  if (label === 'Cash') {
+                    return `Cash: $2,006 (${value}%)`;
+                  } else {
+                    return `Roll: $860 (${value}%)`;
+                  }
+                },
+              },
+            },
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

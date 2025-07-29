@@ -1,0 +1,420 @@
+/* EPV Valuation Pro - Enhanced Design System */
+
+/* Typography Scale - Professional Financial Software */
+.hero-number {
+  @apply text-5xl font-bold tabular-nums tracking-tight;
+}
+
+.hero-metric {
+  @apply text-4xl font-bold text-gray-900 tabular-nums;
+}
+
+.metric-primary {
+  @apply text-2xl font-semibold text-gray-900 tabular-nums;
+}
+
+.metric-secondary {
+  @apply text-base font-medium text-gray-700;
+}
+
+.metric-supporting {
+  @apply text-sm text-gray-500;
+}
+
+.metric-label {
+  @apply text-xs font-medium text-gray-400 uppercase tracking-wide;
+}
+
+/* Professional Financial Color System */
+.text-financial-positive {
+  @apply text-green-600;
+}
+
+.text-financial-negative {
+  @apply text-red-600;
+}
+
+.text-financial-neutral {
+  @apply text-gray-600;
+}
+
+.text-financial-highlight {
+  @apply text-blue-600;
+}
+
+.bg-financial-positive {
+  @apply bg-green-50 text-green-800;
+}
+
+.bg-financial-negative {
+  @apply bg-red-50 text-red-800;
+}
+
+.bg-financial-neutral {
+  @apply bg-gray-50 text-gray-800;
+}
+
+.bg-financial-highlight {
+  @apply bg-blue-50 text-blue-800;
+}
+
+/* Enhanced Button System */
+.btn-primary {
+  @apply bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-all duration-200;
+}
+
+.btn-outline {
+  @apply border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200;
+}
+
+.btn-success {
+  @apply bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-all duration-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-all duration-200;
+}
+
+/* Card System */
+.card-primary {
+  @apply bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all duration-200;
+}
+
+.card-hero {
+  @apply bg-white rounded-2xl border border-gray-200 p-8 shadow-sm;
+}
+
+.card-metric {
+  @apply bg-gray-50 rounded-xl p-6 border border-gray-100;
+}
+
+/* Status Indicators */
+.status-draft {
+  @apply bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.status-analyzing {
+  @apply bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-medium;
+}
+
+.status-complete {
+  @apply bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium;
+}
+
+/* Progressive Disclosure */
+.disclosure-trigger {
+  @apply flex items-center justify-between w-full p-4 text-left bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200;
+}
+
+.disclosure-panel {
+  @apply mt-4 p-4 bg-white rounded-lg border border-gray-200;
+}
+
+/* Input System */
+.input-primary {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
+}
+
+.input-group {
+  @apply space-y-2;
+}
+
+.input-label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+.input-help {
+  @apply text-xs text-gray-500;
+}
+
+.input-error {
+  @apply text-xs text-red-600;
+}
+
+/* Navigation */
+.nav-primary {
+  @apply flex items-center space-x-1 text-sm font-medium;
+}
+
+.nav-item {
+  @apply px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200;
+}
+
+.nav-item-active {
+  @apply px-3 py-2 rounded-md text-blue-600 bg-blue-50;
+}
+
+/* Progress Indicators */
+.progress-container {
+  @apply w-full bg-gray-200 rounded-full h-2;
+}
+
+.progress-bar {
+  @apply bg-blue-600 h-2 rounded-full transition-all duration-300;
+}
+
+.step-indicator {
+  @apply flex items-center justify-center w-8 h-8 rounded-full border-2 text-sm font-medium;
+}
+
+.step-complete {
+  @apply bg-blue-600 text-white border-blue-600;
+}
+
+.step-current {
+  @apply bg-white text-blue-600 border-blue-600;
+}
+
+.step-pending {
+  @apply bg-white text-gray-400 border-gray-300;
+}
+
+/* Animation Classes */
+.fade-in {
+  @apply opacity-0;
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+.slide-up {
+  @apply transform translate-y-4 opacity-0;
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+.slide-down {
+  @apply transform -translate-y-4 opacity-0;
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.scale-hover:hover {
+  @apply transform scale-105 transition-transform duration-200;
+}
+
+.hover-lift:hover {
+  @apply transform -translate-y-1 shadow-lg transition-all duration-200;
+}
+
+.smooth-transition {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Enhanced Loading States */
+.skeleton {
+  @apply bg-gray-200 rounded;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeleton-text {
+  @apply h-4 bg-gray-200 rounded w-3/4;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.skeleton-avatar {
+  @apply w-10 h-10 bg-gray-200 rounded-full;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.loading-dots {
+  @apply inline-flex space-x-1;
+}
+
+.loading-dot {
+  @apply w-2 h-2 bg-gray-400 rounded-full;
+  animation: bounce 1s infinite;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.loading-dot:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.loading-spinner {
+  @apply w-6 h-6 border-2 border-gray-300 border-t-blue-600 rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accessibility Enhancements */
+.focus-visible:focus {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+/* Responsive Design Utilities */
+.container-narrow {
+  @apply max-w-2xl mx-auto;
+}
+
+.container-wide {
+  @apply max-w-7xl mx-auto;
+}
+
+.grid-auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Professional Data Tables */
+.table-professional {
+  @apply w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm;
+}
+
+.table-header {
+  @apply bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wide px-6 py-3;
+}
+
+.table-cell {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200;
+}
+
+.table-cell-numeric {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 border-b border-gray-200 tabular-nums text-right;
+}
+
+/* Error States & Empty States */
+.error-state {
+  @apply bg-red-50 border border-red-200 rounded-lg p-6 text-center;
+}
+
+.error-title {
+  @apply text-lg font-semibold text-red-800 mb-2;
+}
+
+.error-message {
+  @apply text-sm text-red-600 mb-4;
+}
+
+.empty-state {
+  @apply bg-gray-50 border border-gray-200 rounded-lg p-8 text-center;
+}
+
+.empty-state-icon {
+  @apply w-12 h-12 mx-auto mb-4 text-gray-400;
+}
+
+.empty-state-title {
+  @apply text-lg font-semibold text-gray-700 mb-2;
+}
+
+.empty-state-message {
+  @apply text-sm text-gray-500 mb-4;
+}
+
+/* Toast Notifications */
+.toast {
+  @apply fixed top-4 right-4 z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm;
+  animation: slideDown 0.3s ease-out;
+}
+
+.toast-success {
+  @apply border-l-4 border-green-500;
+}
+
+.toast-error {
+  @apply border-l-4 border-red-500;
+}
+
+.toast-warning {
+  @apply border-l-4 border-yellow-500;
+}
+
+.toast-info {
+  @apply border-l-4 border-blue-500;
+}
+
+/* Modal & Overlay */
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 z-40;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl shadow-2xl z-50 max-w-2xl w-full max-h-[90vh] overflow-y-auto;
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Micro-interactions */
+.button-click {
+  @apply transform active:scale-95 transition-transform duration-75;
+}
+
+.card-hover {
+  @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+}
+
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-shadow duration-200;
+}

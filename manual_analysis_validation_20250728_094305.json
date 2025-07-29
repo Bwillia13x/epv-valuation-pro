@@ -5,31 +5,10 @@
     "owner_comp_addback": 300,
     "revenue_2024": 3726,
     "gross_profit_2024": 2623,
-    "blended_rates": [
-      8.0,
-      9.0,
-      10.0,
-      11.0,
-      12.0
-    ],
-    "implied_valuations": [
-      4813,
-      4444,
-      3569,
-      860
-    ],
-    "cash_percentages": [
-      66.4,
-      62.6,
-      52.6,
-      81.8
-    ],
-    "equity_percentages": [
-      32,
-      37,
-      47,
-      18
-    ]
+    "blended_rates": [8.0, 9.0, 10.0, 11.0, 12.0],
+    "implied_valuations": [4813, 4444, 3569, 860],
+    "cash_percentages": [66.4, 62.6, 52.6, 81.8],
+    "equity_percentages": [32, 37, 47, 18]
   },
   "our_baseline": {
     "normalized_ebitda": 1649,
@@ -69,13 +48,7 @@
   "valuation_comparison": {
     "user_methodology": {
       "approach": "Cash-on-cash / Blended rate methodology",
-      "blended_rates": [
-        8.0,
-        9.0,
-        10.0,
-        11.0,
-        12.0
-      ],
+      "blended_rates": [8.0, 9.0, 10.0, 11.0, 12.0],
       "strengths": [
         "Focuses on actual cash returns to investor",
         "Models different leverage scenarios",
@@ -103,9 +76,7 @@
       ]
     },
     "user_implied_multiples": [
-      6.999403749109259,
-      6.462777947442666,
-      5.190291290374184,
+      6.999403749109259, 6.462777947442666, 5.190291290374184,
       1.2506726000901647
     ],
     "our_multiple": 5.5,

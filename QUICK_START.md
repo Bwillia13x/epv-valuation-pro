@@ -24,12 +24,17 @@ npm run dev
 ## 🎯 Your First Analysis
 
 ### Step 1: Prepare Financial Data
+
 Create a JSON file with your company's financials:
 
 ```json
 {
   "case_name": "Your Company Name",
-  "periods": {"2022": "2022-12-31", "2023": "2023-12-31", "2024": "2024-12-31"},
+  "periods": {
+    "2022": "2022-12-31",
+    "2023": "2023-12-31",
+    "2024": "2024-12-31"
+  },
   "revenue": {
     "service_line_1": [1000000, 1100000, 1200000],
     "service_line_2": [500000, 550000, 600000],
@@ -47,15 +52,18 @@ Create a JSON file with your company's financials:
 ```
 
 ### Step 2: Run Multi-Agent Analysis
+
 Load the EPV Platform and use the 4-agent analysis system:
 
 1. **Financial Analyst**: General analysis and EBITDA normalization
-2. **Financial Analyst-B**: Advanced business model assessment  
+2. **Financial Analyst-B**: Advanced business model assessment
 3. **Quantitative Modeler**: Monte Carlo risk analysis
 4. **Value Investing Analyst**: Conservative valuation approach
 
 ### Step 3: Review Consensus Results
+
 The platform automatically synthesizes all 4 agent recommendations into:
+
 - **Enterprise Value Range**: Minimum to maximum estimates
 - **Investment Recommendation**: Consensus buy/hold/sell decision
 - **Key Risk Factors**: Prioritized list of concerns
@@ -64,7 +72,8 @@ The platform automatically synthesizes all 4 agent recommendations into:
 ## 🏥 Example: Medispa Case Study
 
 **Input**: $3.7M revenue healthcare services business with 6 service lines
-**Output**: 
+**Output**:
+
 - Enterprise values ranging $1.58M - $10.4M
 - 4 independent agent analyses
 - Marketing normalization ($484K adjustment identified)
@@ -73,18 +82,21 @@ The platform automatically synthesizes all 4 agent recommendations into:
 ## 📊 Key Features Demo
 
 ### EPV Calculation
+
 ```javascript
 // The platform automatically calculates:
-Enterprise_Value = Normalized_EBITDA / WACC
-Equity_Value = Enterprise_Value - Net_Debt
+Enterprise_Value = Normalized_EBITDA / WACC;
+Equity_Value = Enterprise_Value - Net_Debt;
 ```
 
 ### Risk Modeling
+
 - **Monte Carlo**: 10,000 simulation runs
 - **Sensitivity Analysis**: Tornado charts for key variables
 - **Scenario Planning**: Bull/Base/Bear case modeling
 
 ### Professional Reporting
+
 - Investment committee presentations
 - Executive summaries with key metrics
 - Detailed analysis with supporting calculations
@@ -92,31 +104,34 @@ Equity_Value = Enterprise_Value - Net_Debt
 ## 🛠️ Customization
 
 ### Add New Service Lines
+
 ```typescript
 const newServiceLine: ServiceLine = {
-  id: "new_service",
-  name: "New Service",
+  id: 'new_service',
+  name: 'New Service',
   price: 500,
   volume: 100,
   cogsPct: 0.3,
-  kind: "service"
+  kind: 'service',
 };
 ```
 
 ### Modify WACC Assumptions
+
 ```typescript
 const waccInputs = {
   riskFreeRate: 0.045,
   marketRisk: 0.065,
   beta: 1.2,
   sizePremium: 0.02,
-  specificRisk: 0.03
+  specificRisk: 0.03,
 };
 ```
 
 ## 🔍 Troubleshooting
 
 **Build Issues**:
+
 ```bash
 rm -rf node_modules .next
 npm install
@@ -124,10 +139,12 @@ npm run build
 ```
 
 **Performance Issues**:
+
 - Reduce Monte Carlo iterations for faster simulation
 - Use production build: `npm run build && npm start`
 
 **Data Issues**:
+
 - Ensure all financial data ties out (revenue = sum of service lines)
 - Validate that EBITDA = Operating Income + D&A
 - Check for missing required fields

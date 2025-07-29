@@ -21,19 +21,23 @@ A self-contained report kit that generates institutional-quality CPP visuals fro
 ## 🚀 **Quick Start**
 
 ### **1. Install Dependencies**
+
 ```bash
 cd report-kit
 npm install
 ```
 
 ### **2. Prepare Case Data**
+
 Drop your case JSON file into `cases/` directory:
+
 ```bash
 # Example: Copy HarborGlow case data
 cp ../harborglow_aesthetic_simulation_results.json cases/harborglow.json
 ```
 
 ### **3. Generate Visuals**
+
 ```bash
 node scripts/render.mjs \
   --case cases/harborglow.json \
@@ -43,7 +47,9 @@ node scripts/render.mjs \
 ```
 
 ### **4. View Results**
+
 Open `/exports` directory to find:
+
 - Four high-resolution PNG charts
 - Professional one-pager PDF
 - Summary validation report
@@ -125,18 +131,21 @@ The renderer performs automatic validation with ±0.5% tolerance:
 ## 🎨 **Visual Design Features**
 
 ### **Color Scheme (CPP Convention)**
+
 - **Blue (#2563eb)**: Input values and user assumptions
 - **Black (#1f2937)**: Linked/calculated values
 - **Green (#16a34a)**: Output results and final values
 - **Light Grey (#f8f9fa)**: Neutral backgrounds
 
 ### **Typography & Layout**
+
 - **System font stack** for cross-platform consistency
 - **Grid-based layouts** with consistent spacing
 - **Print-optimized CSS** for high-quality PDF output
 - **Responsive scaling** for different output sizes
 
 ### **Chart Specifications**
+
 - **EBITDA Bridge**: Floating waterfall bars with connecting lines
 - **Valuation Matrix**: Professional table with highlighted base case
 - **EPV Panel**: Split layout with KaTeX formula + color-coded sensitivity
@@ -180,17 +189,20 @@ Your case JSON must include these fields:
 ## 🛠 **Development**
 
 ### **Adding New Chart Types**
+
 1. Create new template in `templates/`
 2. Add ECharts configuration
 3. Update renderer script to include new template
 4. Test with sample data
 
 ### **Customizing Styling**
+
 - Edit `public/css/report.css` for layout changes
 - Modify chart options in individual templates
 - Update color scheme in CSS variables
 
 ### **Testing Locally**
+
 ```bash
 # Test with sample data
 node scripts/render.mjs \
@@ -208,6 +220,7 @@ ls -la test_exports/
 ### **Common Issues**
 
 1. **"Cannot find module 'puppeteer'"**
+
    ```bash
    npm install puppeteer
    ```
@@ -228,6 +241,7 @@ ls -la test_exports/
    - Verify bridge reconciliation manually
 
 ### **Performance Tips**
+
 - Use `--out` to specify different directories for concurrent runs
 - Close other applications during PDF generation for better performance
 - Consider increasing Node.js memory limit for large datasets
@@ -240,11 +254,12 @@ This report kit meets institutional requirements:
 ✅ **Professional Design**: CPP color convention and typography  
 ✅ **Print Quality**: 300 DPI equivalent resolution  
 ✅ **Audit Ready**: Full transparency and validation  
-✅ **Self-Contained**: No external dependencies or cloud services  
+✅ **Self-Contained**: No external dependencies or cloud services
 
 ## 📞 **Support**
 
 For issues or feature requests:
+
 1. Check this README for common solutions
 2. Verify your case JSON structure
 3. Test with provided sample data
@@ -252,5 +267,5 @@ For issues or feature requests:
 
 ---
 
-*Generated for CPP Private Equity Analysis*  
-*Quality: Investment Grade | Status: Production Ready* 
+_Generated for CPP Private Equity Analysis_  
+_Quality: Investment Grade | Status: Production Ready_

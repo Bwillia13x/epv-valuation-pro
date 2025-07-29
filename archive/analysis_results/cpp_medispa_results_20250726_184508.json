@@ -126,32 +126,14 @@
       }
     },
     "industry_multiples": {
-      "ev_ebitda": [
-        5.0,
-        8.0
-      ],
-      "ev_revenue": [
-        1.5,
-        3.2
-      ],
-      "price_earnings": [
-        12.0,
-        18.0
-      ]
+      "ev_ebitda": [5.0, 8.0],
+      "ev_revenue": [1.5, 3.2],
+      "price_earnings": [12.0, 18.0]
     },
     "industry_margins": {
-      "gross_margin": [
-        0.71,
-        0.75
-      ],
-      "ebitda_margin": [
-        0.2,
-        0.25
-      ],
-      "adjusted_ebitda_margin": [
-        0.22,
-        0.26
-      ]
+      "gross_margin": [0.71, 0.75],
+      "ebitda_margin": [0.2, 0.25],
+      "adjusted_ebitda_margin": [0.22, 0.26]
     },
     "growth_benchmarks": {
       "cagr_range_low": 0.11,
@@ -356,11 +338,7 @@
       "avg_adjusted_ebitda": 807483.0,
       "avg_adjustments": 431977.0,
       "ebitda_margin": 0.21496633809179883,
-      "years_analyzed": [
-        2025,
-        2026,
-        2027
-      ]
+      "years_analyzed": [2025, 2026, 2027]
     }
   }
 }

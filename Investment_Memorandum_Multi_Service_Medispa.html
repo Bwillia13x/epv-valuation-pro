@@ -1,373 +1,604 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Investment Memorandum — Multi-Service Medispa (2024 Normalized)</title>
-<style>
-  :root{
-    --ink:#0f172a;            /* Slate-900 */
-    --muted:#475569;          /* Slate-600 */
-    --faint:#94a3b8;          /* Slate-400 */
-    --accent:#0f766e;         /* Teal-700 */
-    --accent-ink:#0b5c56;
-    --bg:#ffffff;
-    --rule:#e2e8f0;           /* Slate-200 */
-  }
-  @page{
-    size: Letter;
-    margin: 20mm 16mm 18mm 16mm;
-  }
-  @media print{
-    .no-print{ display:none !important; }
-    a[href^="http"]::after{ content:""; } /* suppress print URL tails */
-    header, footer { position: fixed; left:0; right:0; }
-    header { top: 8mm; }
-    footer { bottom: 8mm; color: var(--muted); font-size: 10.5px; }
-    .page-num:after { content: counter(page) " of " counter(pages); }
-    .pb { page-break-before: always; }
-    .pba { page-break-after: always; }
-  }
-  body{
-    font: 12.4px/1.5 "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    color: var(--ink);
-    background: var(--bg);
-    -webkit-font-smoothing: antialiased;
-    margin: 0;
-  }
-  header{
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: end;
-    border-bottom: 1px solid var(--rule);
-    padding-bottom: 8px;
-    margin-bottom: 14px;
-  }
-  .brand{
-    font-weight: 700;
-    letter-spacing: .2px;
-    color: var(--accent);
-    font-size: 13.5px;
-    text-transform: uppercase;
-  }
-  .doc-title{
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: .2px;
-    color: var(--ink);
-    margin: 2px 0 0 0;
-  }
-  .meta{
-    text-align: right;
-    color: var(--muted);
-    font-size: 12px;
-  }
-  .grid{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px 18px;
-  }
-  h2{
-    font-size: 13.8px;
-    letter-spacing: .2px;
-    color: var(--accent-ink);
-    margin: 16px 0 6px 0;
-    border-bottom: 1px solid var(--rule);
-    padding-bottom: 4px;
-  }
-  h3{
-    font-size: 12.6px;
-    margin: 10px 0 6px 0;
-    color: var(--ink);
-  }
-  p{ margin: 6px 0 8px 0; color: var(--ink); }
-  .small{ color: var(--muted); font-size: 11px; }
-  .lead{
-    border-left: 3px solid var(--accent);
-    padding: 8px 10px;
-    background: linear-gradient(90deg, #f8fafc 0, transparent 100%);
-    margin: 6px 0 10px 0;
-  }
-  .badge{
-    display: inline-block; padding: 2px 8px; border-radius: 999px;
-    background: #ecfeff; color: var(--accent-ink); border: 1px solid #99f6e4;
-    font-weight: 600; font-size: 11px; letter-spacing: .2px; margin-right: 6px;
-  }
-  .kpi{
-    display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;
-  }
-  .kpi .pill{
-    border:1px solid var(--rule); border-radius:10px; padding:8px 10px; min-width: 150px;
-  }
-  .pill .label{ color: var(--muted); font-size: 11px; margin-bottom: 2px; }
-  .pill .value{ font-weight: 700; color: var(--ink); }
-  ul{ margin: 6px 0 8px 18px; }
-  li{ margin: 3px 0; }
-  .table{
-    width: 100%;
-    border-collapse: collapse;
-    margin: 6px 0 10px 0;
-    font-variant-numeric: tabular-nums lining-nums;
-  }
-  .table th{
-    text-align: left; color: var(--muted); font-weight: 600; font-size: 11.5px;
-    border-bottom: 1px solid var(--rule); padding: 6px 6px 6px 0;
-  }
-  .table td{
-    padding: 6px 6px 6px 0; border-bottom: 1px dashed #eef2f7;
-  }
-  .num{ text-align: right; }
-  .callout{
-    border:1px solid var(--rule); border-left:3px solid var(--accent);
-    border-radius: 6px; padding: 8px 10px; background: #fbfdff;
-    margin: 8px 0 10px 0;
-  }
-  .footer-note{ margin-top: 6px; color: var(--muted); font-size: 11px; }
-  .cols-3{
-    display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px;
-  }
-  .checklist li{ margin: 4px 0; }
-  hr.sep{ border:0; border-top:1px solid var(--rule); margin: 10px 0; }
-</style>
-</head>
-<body>
-
-<header>
-  <div>
-    <div class="brand">CPP — Investment Committee</div>
-    <div class="doc-title">Investment Memorandum — Multi-Service Medispa (2024 Normalized)</div>
-    <div class="small">All figures in <strong>$000s</strong> unless noted.</div>
-  </div>
-  <div class="meta">
-    <div><strong>From:</strong> Drew Williams (M&amp;A)</div>
-    <div><strong>Date:</strong> July 28, 2025</div>
-    <div><strong>Subject:</strong> IOI Recommendation — Single-Site Medispa</div>
-  </div>
-</header>
-
-<main>
-
-  <section>
-    <h2>1) Executive Summary &amp; Recommendation</h2>
-    <div class="lead">
-      <span class="badge">Recommendation</span> Submit IOI at <strong>7.0× Adj. EBITDA</strong>, structured <strong>70% Cash / 30% Roll</strong>, contingent upon:
-      <ul>
-        <li><strong>QoE</strong> confirming Adjusted EBITDA = <strong>$688</strong>.</li>
-        <li><strong>Verification of net debt &amp; debt-like items</strong> (price adjusted for net debt and NWC at close).</li>
-      </ul>
-    </div>
-
-    <div class="kpi">
-      <div class="pill"><div class="label">Enterprise Value (EV)</div><div class="value">$4,813</div></div>
-      <div class="pill"><div class="label">Estimated Net Debt (inferred)</div><div class="value">$1,948</div></div>
-      <div class="pill"><div class="label">Equity Value</div><div class="value">$2,865</div></div>
-      <div class="pill"><div class="label">Proceeds (70/30)</div><div class="value">Cash $2,006 / Roll $860</div></div>
-    </div>
-
-    <p class="small"><em>Net debt inference basis:</em> reported interest expense <strong>$194.8</strong> at assumed 10% cost of debt ⇒ <strong>$1,948</strong>. Replaced by actual loan/lease schedules and payoff letters in diligence.</p>
-
-    <p><strong>Rationale.</strong> Cash-pay revenue, ~70% GP, and recurring injectables support a mid-band multiple; single-site/provider concentration and device uptime risk keep me at <strong>7×</strong> (range 6–8×). 30% Roll aligns retention and near-term execution.</p>
-  </section>
-
-  <section class="grid">
-    <div>
-      <h2>2) Normalization to Adjusted EBITDA $688</h2>
-      <table class="table" style="table-layout: fixed; width: 100%;">
-        <colgroup>
-          <col style="width: 70%;">
-          <col style="width: 30%;">
-        </colgroup>
-        <thead>
-          <tr>
-            <th style="text-align: left;">Bridge (2024)</th>
-            <th style="text-align: right;">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Revenue</td><td style="text-align: right;">$3,726</td></tr>
-          <tr><td>Gross Profit (~70%)</td><td style="text-align: right;">$2,623</td></tr>
-          <tr><td>Sales &amp; Marketing (normalized to 10% rev)</td><td style="text-align: right;">($373)</td></tr>
-          <tr><td>Owner add-back (+$300)</td><td style="text-align: right;">+300</td></tr>
-          <tr><td>Interest (reclass below EBITDA)</td><td style="text-align: right;">+195</td></tr>
-          <tr><td>Depreciation (non-cash)</td><td style="text-align: right;">+135</td></tr>
-          <tr><td><strong>Adjusted EBITDA</strong></td><td style="text-align: right;"><strong>$688</strong></td></tr>
-        </tbody>
-      </table>
-      <div class="callout">
-        <strong>Sanity checks.</strong> ND/EBITDA = <strong>2.8×</strong>; EBITDA/Interest ≈ <strong>3.5×</strong>. Marketing reset supports sustainable demand generation; owner add-back reflects only excess above post-close comp ladder.
-      </div>
-    </div>
-    <div>
-      <h2>3) Investment Analysis — Chain of Thought</h2>
-      <h3>a) Concerns (what could break the case)</h3>
-      <ul>
-        <li>Seasonality; risk 10% S&amp;M insufficient to maintain lead flow.</li>
-        <li>Device downtime &gt;10% for 30+ days.</li>
-        <li>Key-provider dependency: injector churn &gt;15% in first 90 days.</li>
-      </ul>
-      <h3>b) Opportunities</h3>
-      <ul>
-        <li>Memberships &amp; pricing governance to lift LTV and revenue/hour.</li>
-        <li>Injector productivity ladder (utilization, mix, scheduling discipline).</li>
-      </ul>
-      <h3>c) Adjustments</h3>
-      <ul>
-        <li>S&amp;M to 10% rev; owner +$300; remove one-offs; reclass interest; add back depreciation → <strong>$688</strong>.</li>
-      </ul>
-      <h3>d) Fair multiple</h3>
-      <ul><li><strong>7.0×</strong> (band 6–8×) — cash-pay, ~70% GP, recurring mix vs single-site risk.</li></ul>
-      <h3>e) Other methods</h3>
-      <ul><li>EPV, simple DCF, comps/precedents bracket 6–8×; support 7× midpoint.</li></ul>
-      <h3>f) Cash vs Equity split</h3>
-      <ul><li>70/30 improves retention/alignment; preserves growth capex and leverage headroom.</li></ul>
-      <h3>g) Owner compensation impact</h3>
-      <ul><li>Keep market post-close comp; add back only the excess ($300). Producer continuity secured via employment + rollover.</li></ul>
-    </div>
-  </section>
-
-  <section class="grid">
-    <div>
-      <h2>4) Valuation &amp; Offer (Completed) + Sensitivities</h2>
-      <table class="table" style="table-layout: fixed; width: 100%;">
-        <colgroup>
-          <col style="width: 45%;">
-          <col style="width: 18.33%;">
-          <col style="width: 18.33%;">
-          <col style="width: 18.33%;">
-        </colgroup>
-        <thead>
-          <tr>
-            <th style="text-align: left;">QoE × Multiple — <span class="small">Equity Value</span></th>
-            <th style="text-align: center;">6×</th>
-            <th style="text-align: center;">7× (base)</th>
-            <th style="text-align: center;">8×</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>EBITDA −10% (619)</td>
-            <td style="text-align: center;">1,767</td>
-            <td style="text-align: center;">2,386</td>
-            <td style="text-align: center;">3,006</td>
-          </tr>
-          <tr>
-            <td>EBITDA Base (688)</td>
-            <td style="text-align: center;">2,180</td>
-            <td style="text-align: center;"><strong>2,865</strong></td>
-            <td style="text-align: center;">3,556</td>
-          </tr>
-          <tr>
-            <td>EBITDA +10% (757)</td>
-            <td style="text-align: center;">2,593</td>
-            <td style="text-align: center;">3,350</td>
-            <td style="text-align: center;">4,106</td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="small">Proceeds per cell: 70% Cash / 30% Roll (e.g., base 7× ≈ Cash $2,006 / Roll $860; rounded in deck to $2,006 / $860).</p>
-      <div class="callout">
-        <strong>Marketing sensitivity (no revenue response).</strong> ΔEquity per 1% S&amp;M = Multiple × (1% × Revenue). At 7×, ≈ <strong>$261</strong> (1% of $3,726 ≈ $37.3; ×7 ≈ $261).
-      </div>
-    </div>
-
-    <div>
-      <h2>5) Major Risks &amp; Mitigations</h2>
-      <div class="cols-3">
-        <div>
-          <h3>Injector retention</h3>
-          <ul class="checklist">
-            <li>Rollover alignment (30%).</li>
-            <li>Employment &amp; stay bonuses.</li>
-            <li>Comp ladder; recruiting bench.</li>
-          </ul>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Investment Memorandum — Multi-Service Medispa (2024 Normalized)
+    </title>
+    <style>
+      :root {
+        --ink: #0f172a; /* Slate-900 */
+        --muted: #475569; /* Slate-600 */
+        --faint: #94a3b8; /* Slate-400 */
+        --accent: #0f766e; /* Teal-700 */
+        --accent-ink: #0b5c56;
+        --bg: #ffffff;
+        --rule: #e2e8f0; /* Slate-200 */
+      }
+      @page {
+        size: Letter;
+        margin: 20mm 16mm 18mm 16mm;
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        a[href^='http']::after {
+          content: '';
+        } /* suppress print URL tails */
+        header,
+        footer {
+          position: fixed;
+          left: 0;
+          right: 0;
+        }
+        header {
+          top: 8mm;
+        }
+        footer {
+          bottom: 8mm;
+          color: var(--muted);
+          font-size: 10.5px;
+        }
+        .page-num:after {
+          content: counter(page) ' of ' counter(pages);
+        }
+        .pb {
+          page-break-before: always;
+        }
+        .pba {
+          page-break-after: always;
+        }
+      }
+      body {
+        font:
+          12.4px/1.5 'Inter',
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Arial,
+          sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+      }
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        border-bottom: 1px solid var(--rule);
+        padding-bottom: 8px;
+        margin-bottom: 14px;
+      }
+      .brand {
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        color: var(--accent);
+        font-size: 13.5px;
+        text-transform: uppercase;
+      }
+      .doc-title {
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: 0.2px;
+        color: var(--ink);
+        margin: 2px 0 0 0;
+      }
+      .meta {
+        text-align: right;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px 18px;
+      }
+      h2 {
+        font-size: 13.8px;
+        letter-spacing: 0.2px;
+        color: var(--accent-ink);
+        margin: 16px 0 6px 0;
+        border-bottom: 1px solid var(--rule);
+        padding-bottom: 4px;
+      }
+      h3 {
+        font-size: 12.6px;
+        margin: 10px 0 6px 0;
+        color: var(--ink);
+      }
+      p {
+        margin: 6px 0 8px 0;
+        color: var(--ink);
+      }
+      .small {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .lead {
+        border-left: 3px solid var(--accent);
+        padding: 8px 10px;
+        background: linear-gradient(90deg, #f8fafc 0, transparent 100%);
+        margin: 6px 0 10px 0;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #ecfeff;
+        color: var(--accent-ink);
+        border: 1px solid #99f6e4;
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.2px;
+        margin-right: 6px;
+      }
+      .kpi {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+      .kpi .pill {
+        border: 1px solid var(--rule);
+        border-radius: 10px;
+        padding: 8px 10px;
+        min-width: 150px;
+      }
+      .pill .label {
+        color: var(--muted);
+        font-size: 11px;
+        margin-bottom: 2px;
+      }
+      .pill .value {
+        font-weight: 700;
+        color: var(--ink);
+      }
+      ul {
+        margin: 6px 0 8px 18px;
+      }
+      li {
+        margin: 3px 0;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 6px 0 10px 0;
+        font-variant-numeric: tabular-nums lining-nums;
+      }
+      .table th {
+        text-align: left;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 11.5px;
+        border-bottom: 1px solid var(--rule);
+        padding: 6px 6px 6px 0;
+      }
+      .table td {
+        padding: 6px 6px 6px 0;
+        border-bottom: 1px dashed #eef2f7;
+      }
+      .num {
+        text-align: right;
+      }
+      .callout {
+        border: 1px solid var(--rule);
+        border-left: 3px solid var(--accent);
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: #fbfdff;
+        margin: 8px 0 10px 0;
+      }
+      .footer-note {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .cols-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px 16px;
+      }
+      .checklist li {
+        margin: 4px 0;
+      }
+      hr.sep {
+        border: 0;
+        border-top: 1px solid var(--rule);
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div>
+        <div class="brand">CPP — Investment Committee</div>
+        <div class="doc-title">
+          Investment Memorandum — Multi-Service Medispa (2024 Normalized)
         </div>
-        <div>
-          <h3>Device uptime / capex</h3>
-          <ul class="checklist">
-            <li>OEM SLAs; preventive maintenance.</li>
-            <li>Capex reserve &amp; schedule.</li>
-            <li>Downtime KPI cadence.</li>
-          </ul>
-        </div>
-        <div>
-          <h3>Competition &amp; pricing</h3>
-          <ul class="checklist">
-            <li>Pricing governance (floors/ceiling).</li>
-            <li>Promo calendar; geo-targeting.</li>
-            <li>Membership benefits (stickiness).</li>
-          </ul>
+        <div class="small">
+          All figures in <strong>$000s</strong> unless noted.
         </div>
       </div>
-      <h3>Regulatory/structural</h3>
-      <ul class="checklist">
-        <li>Transact via MSO where required.</li>
-        <li>Confirm licensure, delegation protocols.</li>
-        <li>Advertising/claims compliance.</li>
-      </ul>
-    </div>
-  </section>
+      <div class="meta">
+        <div><strong>From:</strong> Drew Williams (M&amp;A)</div>
+        <div><strong>Date:</strong> July 28, 2025</div>
+        <div>
+          <strong>Subject:</strong> IOI Recommendation — Single-Site Medispa
+        </div>
+      </div>
+    </header>
 
-  <section class="grid">
-    <div>
-      <h2>6) Due Diligence Priorities (30–45 Days)</h2>
-      <ul class="checklist">
-        <li><strong>QoE &amp; revenue recognition</strong> — validate $688; seasonality; one-offs.</li>
-        <li><strong>Debt &amp; debt-like</strong> — loan/lease schedules; payoff letters; gift cards/prepaids; fees/taxes; cash at close.</li>
-        <li><strong>Working capital</strong> — NWC peg = LTM monthly average; purchase price adjustment.</li>
-        <li><strong>Provider agreements</strong> — employment terms, non-competes, schedules; rollover intentions.</li>
-        <li><strong>Device fleet</strong> — uptime logs; SLAs; near-term capex.</li>
-        <li><strong>Marketing analytics</strong> — lead sources; CPL/CPA; cohort retention; membership penetration.</li>
-      </ul>
-      <p class="small">Each item closes a direct valuation risk: QoE → EBITDA; debt-like/NWC → equity; provider/device → run-rate stability.</p>
-    </div>
-    <div>
-      <h2>7) Integration &amp; Value-Creation (Day 1 → Day 100)</h2>
-      <h3>Day-1 readiness (go-live controls)</h3>
-      <ul>
-        <li>Payroll &amp; comp ladder; scheduling discipline; pricing governance.</li>
-        <li>ROAS instrumentation; KPI baseline.</li>
-      </ul>
-      <h3>90-day goals</h3>
-      <ul>
-        <li>Provider/room utilization targets; membership attach-rate.</li>
-        <li>Downtime KPI cadence; monthly GP→EBITDA bridge review.</li>
-      </ul>
-      <h3>People &amp; incentives</h3>
-      <ul>
-        <li>Finalize provider retention/stay bonuses.</li>
-        <li>Stand up equity/bonus pool tied to productivity &amp; patient satisfaction.</li>
-      </ul>
-    </div>
-  </section>
+    <main>
+      <section>
+        <h2>1) Executive Summary &amp; Recommendation</h2>
+        <div class="lead">
+          <span class="badge">Recommendation</span> Submit IOI at
+          <strong>7.0× Adj. EBITDA</strong>, structured
+          <strong>70% Cash / 30% Roll</strong>, contingent upon:
+          <ul>
+            <li>
+              <strong>QoE</strong> confirming Adjusted EBITDA =
+              <strong>$688</strong>.
+            </li>
+            <li>
+              <strong>Verification of net debt &amp; debt-like items</strong>
+              (price adjusted for net debt and NWC at close).
+            </li>
+          </ul>
+        </div>
 
-  <section>
-    <h2>8) Proposed IOI Terms</h2>
-    <table class="table">
-      <tbody>
-        <tr><td><strong>Valuation</strong></td><td>7.0× Adjusted EBITDA (base $688)</td></tr>
-        <tr><td><strong>Consideration</strong></td><td>70% Cash / 30% Roll (sized off Equity at close)</td></tr>
-        <tr><td><strong>Conditions</strong></td><td>QoE confirmation; verification of debt &amp; debt-like items; customary reps &amp; warranties</td></tr>
-        <tr><td><strong>Exclusivity</strong></td><td>45 days for confirmatory diligence &amp; definitive documentation</td></tr>
-        <tr><td><strong>Escrow</strong></td><td>TBD% to cover undisclosed liabilities</td></tr>
-        <tr><td><strong>NWC Peg</strong></td><td>LTM monthly average; purchase price adjusted at close</td></tr>
-      </tbody>
-    </table>
+        <div class="kpi">
+          <div class="pill">
+            <div class="label">Enterprise Value (EV)</div>
+            <div class="value">$4,813</div>
+          </div>
+          <div class="pill">
+            <div class="label">Estimated Net Debt (inferred)</div>
+            <div class="value">$1,948</div>
+          </div>
+          <div class="pill">
+            <div class="label">Equity Value</div>
+            <div class="value">$2,865</div>
+          </div>
+          <div class="pill">
+            <div class="label">Proceeds (70/30)</div>
+            <div class="value">Cash $2,006 / Roll $860</div>
+          </div>
+        </div>
 
-    <hr class="sep" />
+        <p class="small">
+          <em>Net debt inference basis:</em> reported interest expense
+          <strong>$194.8</strong> at assumed 10% cost of debt ⇒
+          <strong>$1,948</strong>. Replaced by actual loan/lease schedules and
+          payoff letters in diligence.
+        </p>
 
-    <div class="small">
-      <strong>Valuation triangulation.</strong> EPV (steady-state after maintenance capex), simple DCF, and comps/precedents collectively support the 6–8× bracket and my 7× anchor.
-    </div>
-  </section>
+        <p>
+          <strong>Rationale.</strong> Cash-pay revenue, ~70% GP, and recurring
+          injectables support a mid-band multiple; single-site/provider
+          concentration and device uptime risk keep me at
+          <strong>7×</strong> (range 6–8×). 30% Roll aligns retention and
+          near-term execution.
+        </p>
+      </section>
 
-</main>
+      <section class="grid">
+        <div>
+          <h2>2) Normalization to Adjusted EBITDA $688</h2>
+          <table class="table" style="table-layout: fixed; width: 100%">
+            <colgroup>
+              <col style="width: 70%" />
+              <col style="width: 30%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th style="text-align: left">Bridge (2024)</th>
+                <th style="text-align: right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Revenue</td>
+                <td style="text-align: right">$3,726</td>
+              </tr>
+              <tr>
+                <td>Gross Profit (~70%)</td>
+                <td style="text-align: right">$2,623</td>
+              </tr>
+              <tr>
+                <td>Sales &amp; Marketing (normalized to 10% rev)</td>
+                <td style="text-align: right">($373)</td>
+              </tr>
+              <tr>
+                <td>Owner add-back (+$300)</td>
+                <td style="text-align: right">+300</td>
+              </tr>
+              <tr>
+                <td>Interest (reclass below EBITDA)</td>
+                <td style="text-align: right">+195</td>
+              </tr>
+              <tr>
+                <td>Depreciation (non-cash)</td>
+                <td style="text-align: right">+135</td>
+              </tr>
+              <tr>
+                <td><strong>Adjusted EBITDA</strong></td>
+                <td style="text-align: right"><strong>$688</strong></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="callout">
+            <strong>Sanity checks.</strong> ND/EBITDA = <strong>2.8×</strong>;
+            EBITDA/Interest ≈ <strong>3.5×</strong>. Marketing reset supports
+            sustainable demand generation; owner add-back reflects only excess
+            above post-close comp ladder.
+          </div>
+        </div>
+        <div>
+          <h2>3) Investment Analysis — Chain of Thought</h2>
+          <h3>a) Concerns (what could break the case)</h3>
+          <ul>
+            <li>
+              Seasonality; risk 10% S&amp;M insufficient to maintain lead flow.
+            </li>
+            <li>Device downtime &gt;10% for 30+ days.</li>
+            <li>
+              Key-provider dependency: injector churn &gt;15% in first 90 days.
+            </li>
+          </ul>
+          <h3>b) Opportunities</h3>
+          <ul>
+            <li>
+              Memberships &amp; pricing governance to lift LTV and revenue/hour.
+            </li>
+            <li>
+              Injector productivity ladder (utilization, mix, scheduling
+              discipline).
+            </li>
+          </ul>
+          <h3>c) Adjustments</h3>
+          <ul>
+            <li>
+              S&amp;M to 10% rev; owner +$300; remove one-offs; reclass
+              interest; add back depreciation → <strong>$688</strong>.
+            </li>
+          </ul>
+          <h3>d) Fair multiple</h3>
+          <ul>
+            <li>
+              <strong>7.0×</strong> (band 6–8×) — cash-pay, ~70% GP, recurring
+              mix vs single-site risk.
+            </li>
+          </ul>
+          <h3>e) Other methods</h3>
+          <ul>
+            <li>
+              EPV, simple DCF, comps/precedents bracket 6–8×; support 7×
+              midpoint.
+            </li>
+          </ul>
+          <h3>f) Cash vs Equity split</h3>
+          <ul>
+            <li>
+              70/30 improves retention/alignment; preserves growth capex and
+              leverage headroom.
+            </li>
+          </ul>
+          <h3>g) Owner compensation impact</h3>
+          <ul>
+            <li>
+              Keep market post-close comp; add back only the excess ($300).
+              Producer continuity secured via employment + rollover.
+            </li>
+          </ul>
+        </div>
+      </section>
 
-<footer>
-  <div style="display:flex;justify-content:space-between;">
-    <div>CPP &middot; Multi-Service Medispa &middot; July 28, 2025</div>
-    <div>Page <span class="page-num"></span></div>
-  </div>
-</footer>
+      <section class="grid">
+        <div>
+          <h2>4) Valuation &amp; Offer (Completed) + Sensitivities</h2>
+          <table class="table" style="table-layout: fixed; width: 100%">
+            <colgroup>
+              <col style="width: 45%" />
+              <col style="width: 18.33%" />
+              <col style="width: 18.33%" />
+              <col style="width: 18.33%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th style="text-align: left">
+                  QoE × Multiple — <span class="small">Equity Value</span>
+                </th>
+                <th style="text-align: center">6×</th>
+                <th style="text-align: center">7× (base)</th>
+                <th style="text-align: center">8×</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>EBITDA −10% (619)</td>
+                <td style="text-align: center">1,767</td>
+                <td style="text-align: center">2,386</td>
+                <td style="text-align: center">3,006</td>
+              </tr>
+              <tr>
+                <td>EBITDA Base (688)</td>
+                <td style="text-align: center">2,180</td>
+                <td style="text-align: center"><strong>2,865</strong></td>
+                <td style="text-align: center">3,556</td>
+              </tr>
+              <tr>
+                <td>EBITDA +10% (757)</td>
+                <td style="text-align: center">2,593</td>
+                <td style="text-align: center">3,350</td>
+                <td style="text-align: center">4,106</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="small">
+            Proceeds per cell: 70% Cash / 30% Roll (e.g., base 7× ≈ Cash $2,006
+            / Roll $860; rounded in deck to $2,006 / $860).
+          </p>
+          <div class="callout">
+            <strong>Marketing sensitivity (no revenue response).</strong>
+            ΔEquity per 1% S&amp;M = Multiple × (1% × Revenue). At 7×, ≈
+            <strong>$261</strong> (1% of $3,726 ≈ $37.3; ×7 ≈ $261).
+          </div>
+        </div>
 
-</body>
-</html> 
+        <div>
+          <h2>5) Major Risks &amp; Mitigations</h2>
+          <div class="cols-3">
+            <div>
+              <h3>Injector retention</h3>
+              <ul class="checklist">
+                <li>Rollover alignment (30%).</li>
+                <li>Employment &amp; stay bonuses.</li>
+                <li>Comp ladder; recruiting bench.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Device uptime / capex</h3>
+              <ul class="checklist">
+                <li>OEM SLAs; preventive maintenance.</li>
+                <li>Capex reserve &amp; schedule.</li>
+                <li>Downtime KPI cadence.</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Competition &amp; pricing</h3>
+              <ul class="checklist">
+                <li>Pricing governance (floors/ceiling).</li>
+                <li>Promo calendar; geo-targeting.</li>
+                <li>Membership benefits (stickiness).</li>
+              </ul>
+            </div>
+          </div>
+          <h3>Regulatory/structural</h3>
+          <ul class="checklist">
+            <li>Transact via MSO where required.</li>
+            <li>Confirm licensure, delegation protocols.</li>
+            <li>Advertising/claims compliance.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div>
+          <h2>6) Due Diligence Priorities (30–45 Days)</h2>
+          <ul class="checklist">
+            <li>
+              <strong>QoE &amp; revenue recognition</strong> — validate $688;
+              seasonality; one-offs.
+            </li>
+            <li>
+              <strong>Debt &amp; debt-like</strong> — loan/lease schedules;
+              payoff letters; gift cards/prepaids; fees/taxes; cash at close.
+            </li>
+            <li>
+              <strong>Working capital</strong> — NWC peg = LTM monthly average;
+              purchase price adjustment.
+            </li>
+            <li>
+              <strong>Provider agreements</strong> — employment terms,
+              non-competes, schedules; rollover intentions.
+            </li>
+            <li>
+              <strong>Device fleet</strong> — uptime logs; SLAs; near-term
+              capex.
+            </li>
+            <li>
+              <strong>Marketing analytics</strong> — lead sources; CPL/CPA;
+              cohort retention; membership penetration.
+            </li>
+          </ul>
+          <p class="small">
+            Each item closes a direct valuation risk: QoE → EBITDA;
+            debt-like/NWC → equity; provider/device → run-rate stability.
+          </p>
+        </div>
+        <div>
+          <h2>7) Integration &amp; Value-Creation (Day 1 → Day 100)</h2>
+          <h3>Day-1 readiness (go-live controls)</h3>
+          <ul>
+            <li>
+              Payroll &amp; comp ladder; scheduling discipline; pricing
+              governance.
+            </li>
+            <li>ROAS instrumentation; KPI baseline.</li>
+          </ul>
+          <h3>90-day goals</h3>
+          <ul>
+            <li>Provider/room utilization targets; membership attach-rate.</li>
+            <li>Downtime KPI cadence; monthly GP→EBITDA bridge review.</li>
+          </ul>
+          <h3>People &amp; incentives</h3>
+          <ul>
+            <li>Finalize provider retention/stay bonuses.</li>
+            <li>
+              Stand up equity/bonus pool tied to productivity &amp; patient
+              satisfaction.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>8) Proposed IOI Terms</h2>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td><strong>Valuation</strong></td>
+              <td>7.0× Adjusted EBITDA (base $688)</td>
+            </tr>
+            <tr>
+              <td><strong>Consideration</strong></td>
+              <td>70% Cash / 30% Roll (sized off Equity at close)</td>
+            </tr>
+            <tr>
+              <td><strong>Conditions</strong></td>
+              <td>
+                QoE confirmation; verification of debt &amp; debt-like items;
+                customary reps &amp; warranties
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Exclusivity</strong></td>
+              <td>
+                45 days for confirmatory diligence &amp; definitive
+                documentation
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Escrow</strong></td>
+              <td>TBD% to cover undisclosed liabilities</td>
+            </tr>
+            <tr>
+              <td><strong>NWC Peg</strong></td>
+              <td>LTM monthly average; purchase price adjusted at close</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <hr class="sep" />
+
+        <div class="small">
+          <strong>Valuation triangulation.</strong> EPV (steady-state after
+          maintenance capex), simple DCF, and comps/precedents collectively
+          support the 6–8× bracket and my 7× anchor.
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div style="display: flex; justify-content: space-between">
+        <div>CPP &middot; Multi-Service Medispa &middot; July 28, 2025</div>
+        <div>Page <span class="page-num"></span></div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -34,7 +34,7 @@
       "multiple": 6.5,
       "enterprise_value": 4469569,
       "equity_value_to_seller": 2521449,
-      "ev_revenue_ratio": 1.20
+      "ev_revenue_ratio": 1.2
     },
     {
       "multiple": 7.0,
@@ -158,30 +158,30 @@
     "nopat": 442423,
     "reinvestment": 0,
     "fcf": 442423,
-    "wacc": 0.10,
+    "wacc": 0.1,
     "epv_enterprise": 4424230,
     "epv_equity": 2476110,
     "epv_implied_multiple": 6.4,
     "tax_rate": 0.26,
-    "reinvestment_rate": 0.00
+    "reinvestment_rate": 0.0
   },
   "epv_sensitivity": [
     [
       {
         "wacc": 0.08,
-        "reinvestment_rate": 0.00,
+        "reinvestment_rate": 0.0,
         "epv_enterprise": 6367538,
         "epv_equity": 4419418
       },
       {
         "wacc": 0.09,
-        "reinvestment_rate": 0.00,
+        "reinvestment_rate": 0.0,
         "epv_enterprise": 5660478,
         "epv_equity": 3712358
       },
       {
-        "wacc": 0.10,
-        "reinvestment_rate": 0.00,
+        "wacc": 0.1,
+        "reinvestment_rate": 0.0,
         "epv_enterprise": 5094430,
         "epv_equity": 3146310
       }
@@ -200,7 +200,7 @@
         "epv_equity": 3599149
       },
       {
-        "wacc": 0.10,
+        "wacc": 0.1,
         "reinvestment_rate": 0.02,
         "epv_enterprise": 4992542,
         "epv_equity": 3044422
@@ -220,7 +220,7 @@
         "epv_equity": 3485940
       },
       {
-        "wacc": 0.10,
+        "wacc": 0.1,
         "reinvestment_rate": 0.04,
         "epv_enterprise": 4890654,
         "epv_equity": 2942534
@@ -235,11 +235,11 @@
     "maintenance_capex_pct": 0.018,
     "da_annual": 90000,
     "tax_rate": 0.26,
-    "reinvestment_rate": 0.00,
-    "wacc": 0.10,
+    "reinvestment_rate": 0.0,
+    "wacc": 0.1,
     "debt_pct": 0.404,
-    "debt_rate": 0.10,
+    "debt_rate": 0.1,
     "exit_multiple": 8.0,
     "revenue_growth": 0.05
   }
-} 
+}

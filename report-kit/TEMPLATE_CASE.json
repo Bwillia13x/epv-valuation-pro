@@ -1,7 +1,7 @@
 {
   "company_info": {
     "name": "Template Company LLC",
-    "location": "City, State", 
+    "location": "City, State",
     "ttm_window": "2024-Q3 → 2025-Q2",
     "sector": "Healthcare Services",
     "investment_type": "Platform"
@@ -60,7 +60,7 @@
       "multiple": 10.0,
       "enterprise_value": 22000000,
       "equity_value_to_seller": 20000000,
-      "ev_revenue_ratio": 2.20
+      "ev_revenue_ratio": 2.2
     }
   ],
   "epv_analysis": {
@@ -246,15 +246,7 @@
     },
     "results": {
       "irr_distribution": [
-        15.2,
-        18.1,
-        20.8,
-        22.5,
-        25.0,
-        27.1,
-        29.9,
-        32.2,
-        35.1
+        15.2, 18.1, 20.8, 22.5, 25.0, 27.1, 29.9, 32.2, 35.1
       ],
       "percentiles": {
         "p10": 20.5,
@@ -358,4 +350,4 @@
     "exit_multiple": 8.0,
     "fcf_sweep": 0.75
   }
-} 
+}

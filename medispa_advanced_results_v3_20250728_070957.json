@@ -19157,7 +19157,7 @@
       },
       {
         "iteration": 1741,
-        "revenue_growth": -4.771928248460677e-05,
+        "revenue_growth": -4.771928248460677e-5,
         "ebitda_margin": 0.38790642735308334,
         "ev_multiple": 4.419486916775236,
         "future_revenue": 3725567.981501563,
@@ -84196,7 +84196,7 @@
         "future_ebitda": 1388421.1177197227,
         "future_ev": 6384967.972543486,
         "final_equity": 4879967.972543486,
-        "irr": -1.0520848797379578e-05
+        "irr": -1.0520848797379578e-5
       },
       {
         "iteration": 7654,
@@ -109804,7 +109804,7 @@
         "future_ebitda": 1370209.1548989904,
         "future_ev": 6385717.313543968,
         "final_equity": 4880717.313543968,
-        "irr": 4.0660823553473335e-05
+        "irr": 4.0660823553473335e-5
       },
       {
         "iteration": 9982,
@@ -110086,10 +110086,7 @@
         "retention_probability": 0.75,
         "replacement_cost": 250000,
         "performance_rating": "HIGH",
-        "key_relationships": [
-          "Physician network",
-          "Regulatory compliance"
-        ],
+        "key_relationships": ["Physician network", "Regulatory compliance"],
         "retention_package_required": 150000
       },
       "operations_manager": {
@@ -110098,10 +110095,7 @@
         "retention_probability": 0.85,
         "replacement_cost": 120000,
         "performance_rating": "HIGH",
-        "key_relationships": [
-          "Staff management",
-          "Vendor relationships"
-        ],
+        "key_relationships": ["Staff management", "Vendor relationships"],
         "retention_package_required": 75000
       },
       "lead_aesthetician": {
@@ -110110,10 +110104,7 @@
         "retention_probability": 0.6,
         "replacement_cost": 80000,
         "performance_rating": "MEDIUM-HIGH",
-        "key_relationships": [
-          "Customer base",
-          "Training programs"
-        ],
+        "key_relationships": ["Customer base", "Training programs"],
         "retention_package_required": 45000
       },
       "business_manager": {
@@ -110122,10 +110113,7 @@
         "retention_probability": 0.7,
         "replacement_cost": 90000,
         "performance_rating": "MEDIUM",
-        "key_relationships": [
-          "Financial operations",
-          "Marketing"
-        ],
+        "key_relationships": ["Financial operations", "Marketing"],
         "retention_package_required": 35000
       }
     },

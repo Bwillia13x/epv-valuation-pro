@@ -1,11 +1,11 @@
 // Valuation Cross-Validation System
 // Implements real-time consistency checks between different valuation methods
 
-import { 
-  applySmallPracticeSafeguards, 
+import {
+  applySmallPracticeSafeguards,
   generateSmallPracticeWarnings,
   validateSmallPracticeInputs,
-  calculateSmallPracticeWACC 
+  calculateSmallPracticeWACC,
 } from './smallPracticeSafeguards';
 import { validateFinancialInputs, VALIDATION_BOUNDS } from './inputValidation';
 
@@ -44,33 +44,37 @@ export function validateEPVConsistency(
   dnaAsPercentEBITDA: number
 ): ValidationResult {
   const expectedVariance = Math.abs(capexAsPercentEBITDA - dnaAsPercentEBITDA);
-  const actualVariance = Math.abs(ownerEarningsEPV - nopatEPV) / Math.max(nopatEPV, ownerEarningsEPV);
-  
+  const actualVariance =
+    Math.abs(ownerEarningsEPV - nopatEPV) /
+    Math.max(nopatEPV, ownerEarningsEPV);
+
   if (actualVariance > 0.25) {
     return {
       isValid: false,
       severity: 'critical',
       message: `Extreme EPV variance detected: ${(actualVariance * 100).toFixed(1)}% difference between methods`,
-      suggestedAction: 'Review CapEx and D&A assumptions - variance should not exceed 25%',
+      suggestedAction:
+        'Review CapEx and D&A assumptions - variance should not exceed 25%',
       values: {
         calculated: ownerEarningsEPV,
         expected: nopatEPV,
-        variance: actualVariance
-      }
+        variance: actualVariance,
+      },
     };
   } else if (actualVariance > 0.15) {
     return {
       isValid: false,
       severity: 'high',
       message: `High EPV variance: ${(actualVariance * 100).toFixed(1)}% difference between Owner Earnings and NOPAT methods`,
-      suggestedAction: 'Verify maintenance CapEx calculations and D&A estimates',
+      suggestedAction:
+        'Verify maintenance CapEx calculations and D&A estimates',
       values: {
         calculated: ownerEarningsEPV,
         expected: nopatEPV,
-        variance: actualVariance
-      }
+        variance: actualVariance,
+      },
     };
-  } else if (actualVariance > 0.10) {
+  } else if (actualVariance > 0.1) {
     return {
       isValid: true,
       severity: 'medium',
@@ -78,11 +82,11 @@ export function validateEPVConsistency(
       values: {
         calculated: ownerEarningsEPV,
         expected: nopatEPV,
-        variance: actualVariance
-      }
+        variance: actualVariance,
+      },
     };
   }
-  
+
   return {
     isValid: true,
     severity: 'low',
@@ -90,8 +94,8 @@ export function validateEPVConsistency(
     values: {
       calculated: ownerEarningsEPV,
       expected: nopatEPV,
-      variance: actualVariance
-    }
+      variance: actualVariance,
+    },
   };
 }
 
@@ -104,19 +108,22 @@ export function validateMultipleAlignment(
 ): ValidationResult {
   const evEBITDAMultiple = enterpriseValue / adjustedEBITDA;
   const evRevenueMultiple = enterpriseValue / revenue;
-  
+
   // Industry benchmarks for medical aesthetics
   const benchmarks = {
     small: { evEBITDA: [3.5, 5.5], evRevenue: [0.8, 1.4] },
     medium: { evEBITDA: [4.5, 7.0], evRevenue: [1.0, 1.8] },
-    large: { evEBITDA: [6.0, 9.0], evRevenue: [1.2, 2.2] }
+    large: { evEBITDA: [6.0, 9.0], evRevenue: [1.2, 2.2] },
   };
-  
+
   const [minEBITDA, maxEBITDA] = benchmarks[practiceSize].evEBITDA;
   const [minRevenue, maxRevenue] = benchmarks[practiceSize].evRevenue;
-  
+
   // Check EBITDA multiple
-  if (evEBITDAMultiple < minEBITDA * 0.7 || evEBITDAMultiple > maxEBITDA * 1.3) {
+  if (
+    evEBITDAMultiple < minEBITDA * 0.7 ||
+    evEBITDAMultiple > maxEBITDA * 1.3
+  ) {
     return {
       isValid: false,
       severity: 'high',
@@ -125,26 +132,34 @@ export function validateMultipleAlignment(
       values: {
         calculated: evEBITDAMultiple,
         expected: (minEBITDA + maxEBITDA) / 2,
-        variance: Math.abs(evEBITDAMultiple - (minEBITDA + maxEBITDA) / 2) / ((minEBITDA + maxEBITDA) / 2)
-      }
+        variance:
+          Math.abs(evEBITDAMultiple - (minEBITDA + maxEBITDA) / 2) /
+          ((minEBITDA + maxEBITDA) / 2),
+      },
     };
   }
-  
+
   // Check Revenue multiple
-  if (evRevenueMultiple < minRevenue * 0.6 || evRevenueMultiple > maxRevenue * 1.4) {
+  if (
+    evRevenueMultiple < minRevenue * 0.6 ||
+    evRevenueMultiple > maxRevenue * 1.4
+  ) {
     return {
       isValid: false,
       severity: 'medium',
       message: `EV/Revenue multiple ${evRevenueMultiple.toFixed(1)}x is outside benchmark range ${minRevenue.toFixed(1)}x-${maxRevenue.toFixed(1)}x`,
-      suggestedAction: 'Consider adjusting valuation or reviewing revenue quality',
+      suggestedAction:
+        'Consider adjusting valuation or reviewing revenue quality',
       values: {
         calculated: evRevenueMultiple,
         expected: (minRevenue + maxRevenue) / 2,
-        variance: Math.abs(evRevenueMultiple - (minRevenue + maxRevenue) / 2) / ((minRevenue + maxRevenue) / 2)
-      }
+        variance:
+          Math.abs(evRevenueMultiple - (minRevenue + maxRevenue) / 2) /
+          ((minRevenue + maxRevenue) / 2),
+      },
     };
   }
-  
+
   return {
     isValid: true,
     severity: 'low',
@@ -152,8 +167,8 @@ export function validateMultipleAlignment(
     values: {
       calculated: evEBITDAMultiple,
       expected: (minEBITDA + maxEBITDA) / 2,
-      variance: 0
-    }
+      variance: 0,
+    },
   };
 }
 
@@ -166,26 +181,35 @@ export function validateMarginChecks(
 ): ValidationResult {
   const expectedEBITDARange = hasPhysician ? [0.15, 0.35] : [0.12, 0.28];
   const expectedGrossRange = [0.75, 0.92];
-  
+
   // Check EBITDA margin
-  if (ebitdaMargin < expectedEBITDARange[0] || ebitdaMargin > expectedEBITDARange[1]) {
+  if (
+    ebitdaMargin < expectedEBITDARange[0] ||
+    ebitdaMargin > expectedEBITDARange[1]
+  ) {
     return {
       isValid: false,
       severity: ebitdaMargin < 0.08 ? 'critical' : 'high',
       message: `EBITDA margin ${(ebitdaMargin * 100).toFixed(1)}% is ${ebitdaMargin < expectedEBITDARange[0] ? 'below' : 'above'} expected range ${(expectedEBITDARange[0] * 100).toFixed(0)}%-${(expectedEBITDARange[1] * 100).toFixed(0)}%`,
-      suggestedAction: ebitdaMargin < expectedEBITDARange[0] ? 
-        'Review cost structure and operational efficiency' : 
-        'Verify margin sustainability and market positioning',
+      suggestedAction:
+        ebitdaMargin < expectedEBITDARange[0]
+          ? 'Review cost structure and operational efficiency'
+          : 'Verify margin sustainability and market positioning',
       values: {
         calculated: ebitdaMargin,
         expected: (expectedEBITDARange[0] + expectedEBITDARange[1]) / 2,
-        variance: Math.abs(ebitdaMargin - (expectedEBITDARange[0] + expectedEBITDARange[1]) / 2)
-      }
+        variance: Math.abs(
+          ebitdaMargin - (expectedEBITDARange[0] + expectedEBITDARange[1]) / 2
+        ),
+      },
     };
   }
-  
+
   // Check gross margin
-  if (grossMargin < expectedGrossRange[0] || grossMargin > expectedGrossRange[1]) {
+  if (
+    grossMargin < expectedGrossRange[0] ||
+    grossMargin > expectedGrossRange[1]
+  ) {
     return {
       isValid: false,
       severity: 'medium',
@@ -194,15 +218,17 @@ export function validateMarginChecks(
       values: {
         calculated: grossMargin,
         expected: (expectedGrossRange[0] + expectedGrossRange[1]) / 2,
-        variance: Math.abs(grossMargin - (expectedGrossRange[0] + expectedGrossRange[1]) / 2)
-      }
+        variance: Math.abs(
+          grossMargin - (expectedGrossRange[0] + expectedGrossRange[1]) / 2
+        ),
+      },
     };
   }
-  
+
   return {
     isValid: true,
     severity: 'low',
-    message: `Margins are within expected ranges: ${(ebitdaMargin * 100).toFixed(1)}% EBITDA, ${(grossMargin * 100).toFixed(1)}% Gross`
+    message: `Margins are within expected ranges: ${(ebitdaMargin * 100).toFixed(1)}% EBITDA, ${(grossMargin * 100).toFixed(1)}% Gross`,
   };
 }
 
@@ -215,12 +241,15 @@ export function validateScalingConsistency(
 ): ValidationResult {
   const revenuePerLocation = totalRevenue / locations;
   const ebitdaPerLocation = totalEBITDA / locations;
-  
+
   // Expected ranges per location
   const expectedRevenueRange = [800000, 4000000]; // $800K - $4M per location
   const expectedEBITDARange = [120000, 1200000]; // $120K - $1.2M per location
-  
-  if (revenuePerLocation < expectedRevenueRange[0] || revenuePerLocation > expectedRevenueRange[1]) {
+
+  if (
+    revenuePerLocation < expectedRevenueRange[0] ||
+    revenuePerLocation > expectedRevenueRange[1]
+  ) {
     return {
       isValid: false,
       severity: 'high',
@@ -229,11 +258,16 @@ export function validateScalingConsistency(
       values: {
         calculated: revenuePerLocation,
         expected: (expectedRevenueRange[0] + expectedRevenueRange[1]) / 2,
-        variance: Math.abs(revenuePerLocation - (expectedRevenueRange[0] + expectedRevenueRange[1]) / 2) / ((expectedRevenueRange[0] + expectedRevenueRange[1]) / 2)
-      }
+        variance:
+          Math.abs(
+            revenuePerLocation -
+              (expectedRevenueRange[0] + expectedRevenueRange[1]) / 2
+          ) /
+          ((expectedRevenueRange[0] + expectedRevenueRange[1]) / 2),
+      },
     };
   }
-  
+
   // Check synergy reasonableness for multi-location
   if (locations > 1 && synergyPercentage > 0.15) {
     return {
@@ -243,16 +277,16 @@ export function validateScalingConsistency(
       suggestedAction: 'Consider more conservative synergy assumptions',
       values: {
         calculated: synergyPercentage,
-        expected: 0.10,
-        variance: Math.abs(synergyPercentage - 0.10) / 0.10
-      }
+        expected: 0.1,
+        variance: Math.abs(synergyPercentage - 0.1) / 0.1,
+      },
     };
   }
-  
+
   return {
     isValid: true,
     severity: 'low',
-    message: `Scaling assumptions are reasonable: $${(revenuePerLocation / 1000).toFixed(0)}K revenue per location`
+    message: `Scaling assumptions are reasonable: $${(revenuePerLocation / 1000).toFixed(0)}K revenue per location`,
   };
 }
 
@@ -262,45 +296,49 @@ export function validateMethodComparison(
   dcfValuation: number,
   multipleValuation: number
 ): ValidationResult {
-  const values = [epvValuation, dcfValuation, multipleValuation].filter(v => v > 0);
+  const values = [epvValuation, dcfValuation, multipleValuation].filter(
+    (v) => v > 0
+  );
   if (values.length < 2) {
     return {
       isValid: true,
       severity: 'low',
-      message: 'Insufficient methods to compare'
+      message: 'Insufficient methods to compare',
     };
   }
-  
+
   const minVal = Math.min(...values);
   const maxVal = Math.max(...values);
   const variance = (maxVal - minVal) / minVal;
-  
-  if (variance > 0.50) {
+
+  if (variance > 0.5) {
     return {
       isValid: false,
       severity: 'critical',
       message: `Extreme variance between valuation methods: ${(variance * 100).toFixed(0)}% spread`,
-      suggestedAction: 'Review fundamental assumptions - methods should not diverge by more than 50%',
+      suggestedAction:
+        'Review fundamental assumptions - methods should not diverge by more than 50%',
       values: {
         calculated: maxVal,
         expected: minVal,
-        variance: variance
-      }
+        variance: variance,
+      },
     };
-  } else if (variance > 0.30) {
+  } else if (variance > 0.3) {
     return {
       isValid: false,
       severity: 'high',
       message: `High variance between valuation methods: ${(variance * 100).toFixed(0)}% spread`,
-      suggestedAction: 'Investigate assumptions driving differences between methods',
+      suggestedAction:
+        'Investigate assumptions driving differences between methods',
       values: {
         calculated: maxVal,
         expected: minVal,
-        variance: variance
-      }
+        variance: variance,
+      },
     };
   }
-  
+
   return {
     isValid: true,
     severity: 'low',
@@ -308,8 +346,8 @@ export function validateMethodComparison(
     values: {
       calculated: maxVal,
       expected: minVal,
-      variance: variance
-    }
+      variance: variance,
+    },
   };
 }
 
@@ -321,88 +359,95 @@ export function validateSmallPracticeRisks(
   locations: number,
   hasPhysician: boolean
 ): ValidationResult {
-  
   if (revenue >= 1000000) {
     return {
       isValid: true,
       severity: 'low',
-      message: 'Not a small practice - no additional safeguards required'
+      message: 'Not a small practice - no additional safeguards required',
     };
   }
-  
-  const inputValidation = validateSmallPracticeInputs(revenue, ebitda, locations);
+
+  const inputValidation = validateSmallPracticeInputs(
+    revenue,
+    ebitda,
+    locations
+  );
   const safeguards = applySmallPracticeSafeguards(
-    revenue, 
-    ebitda, 
-    enterpriseValue, 
-    locations, 
-    hasPhysician, 
+    revenue,
+    ebitda,
+    enterpriseValue,
+    locations,
+    hasPhysician,
     true
   );
-  
+
   const evRevenue = enterpriseValue / revenue;
   const evEBITDA = ebitda > 0 ? enterpriseValue / ebitda : 0;
-  
+
   // Critical issues for small practices
   if (revenue < 250000) {
     return {
       isValid: false,
       severity: 'critical',
-      message: `Micro practice ($${(revenue/1000).toFixed(0)}K revenue) - high valuation uncertainty`,
-      suggestedAction: 'Consider asset-based valuation as primary method. DCF/EPV may not be appropriate.',
+      message: `Micro practice ($${(revenue / 1000).toFixed(0)}K revenue) - high valuation uncertainty`,
+      suggestedAction:
+        'Consider asset-based valuation as primary method. DCF/EPV may not be appropriate.',
       values: {
         calculated: enterpriseValue,
         expected: safeguards.adjustedValuation,
-        variance: safeguards.adjustmentMagnitude
-      }
+        variance: safeguards.adjustmentMagnitude,
+      },
     };
   }
-  
+
   // High risk for very small practices
   if (revenue < 500000) {
     return {
       isValid: false,
       severity: 'high',
-      message: `Very small practice ($${(revenue/1000).toFixed(0)}K revenue) - significant risk adjustments required`,
+      message: `Very small practice ($${(revenue / 1000).toFixed(0)}K revenue) - significant risk adjustments required`,
       suggestedAction: `Apply ${(safeguards.adjustmentMagnitude * 100).toFixed(0)}% discount for size, marketability, and key person risks`,
       values: {
         calculated: enterpriseValue,
         expected: safeguards.adjustedValuation,
-        variance: safeguards.adjustmentMagnitude
-      }
+        variance: safeguards.adjustmentMagnitude,
+      },
     };
   }
-  
+
   // Medium risk for small practices
   if (evRevenue > 1.5 || evEBITDA > 5.0) {
     return {
       isValid: false,
       severity: 'medium',
       message: `Small practice with elevated multiples (${evRevenue.toFixed(1)}x revenue, ${evEBITDA.toFixed(1)}x EBITDA)`,
-      suggestedAction: 'Apply small practice discounts and verify earnings sustainability',
+      suggestedAction:
+        'Apply small practice discounts and verify earnings sustainability',
       values: {
         calculated: enterpriseValue,
         expected: safeguards.adjustedValuation,
-        variance: safeguards.adjustmentMagnitude
-      }
+        variance: safeguards.adjustmentMagnitude,
+      },
     };
   }
-  
+
   // General small practice warnings
   if (safeguards.warningFlags.length > 0) {
     return {
       isValid: true,
       severity: 'medium',
       message: `Small practice risks identified: ${safeguards.warningFlags.length} warning(s)`,
-      suggestedAction: safeguards.recommendedActions[0] || 'Review small practice risk factors',
+      suggestedAction:
+        safeguards.recommendedActions[0] ||
+        'Review small practice risk factors',
       values: {
         calculated: enterpriseValue,
         expected: safeguards.adjustedValuation,
-        variance: safeguards.adjustmentMagnitude
-      }
+        variance: safeguards.adjustmentMagnitude,
+      },
     };
   }
-  
+
   return {
     isValid: true,
     severity: 'low',
@@ -410,8 +455,8 @@ export function validateSmallPracticeRisks(
     values: {
       calculated: enterpriseValue,
       expected: safeguards.adjustedValuation,
-      variance: safeguards.adjustmentMagnitude
-    }
+      variance: safeguards.adjustmentMagnitude,
+    },
   };
 }
 
@@ -425,7 +470,6 @@ export function validateInputBounds(
   riskFreeRate: number,
   marketRiskPremium: number
 ): ValidationResult {
-  
   const validationInputs = {
     totalRevenue: revenue,
     ebitdaMargin: ebitda / revenue,
@@ -433,11 +477,11 @@ export function validateInputBounds(
     grossMargin,
     beta,
     riskFreeRate,
-    marketRiskPremium
+    marketRiskPremium,
   };
-  
+
   const result = validateFinancialInputs(validationInputs);
-  
+
   if (!result.isValid) {
     return {
       isValid: false,
@@ -447,45 +491,49 @@ export function validateInputBounds(
       values: {
         calculated: 0,
         expected: 0,
-        variance: 0
-      }
+        variance: 0,
+      },
     };
   }
-  
+
   if (result.warnings.length > 0) {
-    const criticalWarnings = result.warnings.filter(w => w.severity === 'warning').length;
-    
+    const criticalWarnings = result.warnings.filter(
+      (w) => w.severity === 'warning'
+    ).length;
+
     if (criticalWarnings > 2) {
       return {
         isValid: false,
         severity: 'high',
         message: `Multiple input concerns: ${criticalWarnings} warning(s) require attention`,
-        suggestedAction: result.suggestions[0] || 'Review highlighted input parameters',
+        suggestedAction:
+          result.suggestions[0] || 'Review highlighted input parameters',
         values: {
           calculated: criticalWarnings,
           expected: 0,
-          variance: criticalWarnings / 10
-        }
+          variance: criticalWarnings / 10,
+        },
       };
     } else if (criticalWarnings > 0) {
       return {
         isValid: true,
         severity: 'medium',
         message: `Input validation passed with ${criticalWarnings} warning(s)`,
-        suggestedAction: result.suggestions[0] || 'Monitor highlighted parameters',
+        suggestedAction:
+          result.suggestions[0] || 'Monitor highlighted parameters',
         values: {
           calculated: criticalWarnings,
           expected: 0,
-          variance: criticalWarnings / 10
-        }
+          variance: criticalWarnings / 10,
+        },
       };
     }
   }
-  
+
   return {
     isValid: true,
     severity: 'low',
-    message: 'All input parameters within institutional-grade bounds'
+    message: 'All input parameters within institutional-grade bounds',
   };
 }
 
@@ -496,62 +544,61 @@ export function performCrossValidation(params: {
   ownerEarningsEPV: number;
   capexAsPercentEBITDA: number;
   dnaAsPercentEBITDA: number;
-  
+
   // Valuation inputs
   enterpriseValue: number;
   adjustedEBITDA: number;
   revenue: number;
   practiceSize: 'small' | 'medium' | 'large';
-  
+
   // Margin inputs
   ebitdaMargin: number;
   grossMargin: number;
   locations: number;
   hasPhysician: boolean;
-  
+
   // Scaling inputs
   synergyPercentage: number;
-  
+
   // Method comparison
   epvValuation: number;
   dcfValuation?: number;
   multipleValuation?: number;
 }): CrossValidationResults {
-  
   const epvConsistency = validateEPVConsistency(
     params.nopatEPV,
     params.ownerEarningsEPV,
     params.capexAsPercentEBITDA,
     params.dnaAsPercentEBITDA
   );
-  
+
   const multipleAlignment = validateMultipleAlignment(
     params.enterpriseValue,
     params.adjustedEBITDA,
     params.revenue,
     params.practiceSize
   );
-  
+
   const marginChecks = validateMarginChecks(
     params.ebitdaMargin,
     params.grossMargin,
     params.locations,
     params.hasPhysician
   );
-  
+
   const scalingConsistency = validateScalingConsistency(
     params.locations,
     params.revenue,
     params.adjustedEBITDA,
     params.synergyPercentage
   );
-  
+
   const methodComparison = validateMethodComparison(
     params.epvValuation,
     params.dcfValuation || 0,
     params.multipleValuation || 0
   );
-  
+
   const smallPracticeChecks = validateSmallPracticeRisks(
     params.revenue,
     params.adjustedEBITDA,
@@ -559,29 +606,37 @@ export function performCrossValidation(params: {
     params.locations,
     params.hasPhysician
   );
-  
+
   const inputValidation = validateInputBounds(
     params.revenue,
     params.adjustedEBITDA,
     params.locations,
     params.grossMargin,
-    1.50, // Use benchmark beta
+    1.5, // Use benchmark beta
     0.045, // Use benchmark risk-free rate
-    0.065  // Use benchmark market risk premium
+    0.065 // Use benchmark market risk premium
   );
-  
+
   // Calculate overall score
-  const checks = [epvConsistency, multipleAlignment, marginChecks, scalingConsistency, methodComparison, smallPracticeChecks, inputValidation];
-  const criticalIssues = checks.filter(c => c.severity === 'critical').length;
-  const highIssues = checks.filter(c => c.severity === 'high').length;
-  const mediumIssues = checks.filter(c => c.severity === 'medium').length;
-  
+  const checks = [
+    epvConsistency,
+    multipleAlignment,
+    marginChecks,
+    scalingConsistency,
+    methodComparison,
+    smallPracticeChecks,
+    inputValidation,
+  ];
+  const criticalIssues = checks.filter((c) => c.severity === 'critical').length;
+  const highIssues = checks.filter((c) => c.severity === 'high').length;
+  const mediumIssues = checks.filter((c) => c.severity === 'medium').length;
+
   let score = 100;
   score -= criticalIssues * 30;
   score -= highIssues * 20;
   score -= mediumIssues * 10;
   score = Math.max(0, score);
-  
+
   let status: 'PASS' | 'WARNING' | 'FAIL';
   if (criticalIssues > 0 || score < 50) {
     status = 'FAIL';
@@ -590,7 +645,7 @@ export function performCrossValidation(params: {
   } else {
     status = 'PASS';
   }
-  
+
   return {
     epvConsistency,
     multipleAlignment,
@@ -602,7 +657,7 @@ export function performCrossValidation(params: {
     overall: {
       score,
       status,
-      criticalIssues
-    }
+      criticalIssues,
+    },
   };
 }
