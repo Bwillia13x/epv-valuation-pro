@@ -1,0 +1,69 @@
+{
+  "timestamp": "2025-07-29T06:15:11.254Z",
+  "results": {
+    "suites": [
+      {
+        "name": "Mathematical Foundation",
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "successRate": "100.0",
+        "duration": 38,
+        "status": "✅ PASSED"
+      },
+      {
+        "name": "Edge Cases",
+        "passed": 24,
+        "failed": 2,
+        "total": 26,
+        "successRate": "92.3",
+        "duration": 30,
+        "status": "❌ FAILED"
+      },
+      {
+        "name": "Monte Carlo Validation",
+        "passed": 16,
+        "failed": 0,
+        "total": 16,
+        "successRate": "100.0",
+        "duration": 32,
+        "status": "✅ PASSED"
+      },
+      {
+        "name": "Valuation Models",
+        "passed": 20,
+        "failed": 0,
+        "total": 20,
+        "successRate": "100.0",
+        "duration": 20,
+        "status": "✅ PASSED"
+      },
+      {
+        "name": "Frontend Components",
+        "passed": 42,
+        "failed": 0,
+        "total": 42,
+        "successRate": "100.0",
+        "duration": 1543,
+        "status": "✅ PASSED"
+      },
+      {
+        "name": "Comprehensive Integration",
+        "passed": 33,
+        "failed": 4,
+        "total": 37,
+        "successRate": "89.2",
+        "duration": 1602,
+        "status": "❌ FAILED"
+      }
+    ],
+    "totalTests": 152,
+    "totalPassed": 146,
+    "totalFailed": 6,
+    "startTime": 1753769707988,
+    "endTime": 1753769711253
+  },
+  "overallSuccessRate": "96.1",
+  "passedSuites": 4,
+  "totalSuites": 6
+}
