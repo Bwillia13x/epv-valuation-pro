@@ -1,95 +1,107 @@
 /* EPV Valuation Pro - Enhanced Design System */
 
-/* Typography Scale - Professional Financial Software */
-.hero-number {
-  @apply text-5xl font-bold tabular-nums tracking-tight;
+/* ==================== ENHANCED VISUAL HIERARCHY ==================== */
+
+/* Financial Data Typography Scale */
+.financial-hero {
+  @apply text-6xl font-bold tabular-nums tracking-tight text-gray-900;
+  line-height: 1.1;
 }
 
-.hero-metric {
-  @apply text-4xl font-bold text-gray-900 tabular-nums;
+.financial-primary {
+  @apply text-3xl font-semibold tabular-nums text-gray-900;
+  line-height: 1.2;
 }
 
-.metric-primary {
-  @apply text-2xl font-semibold text-gray-900 tabular-nums;
+.financial-secondary {
+  @apply text-xl font-medium tabular-nums text-gray-700;
+  line-height: 1.3;
 }
 
-.metric-secondary {
-  @apply text-base font-medium text-gray-700;
+.financial-supporting {
+  @apply text-base tabular-nums text-gray-600;
+  line-height: 1.4;
 }
 
-.metric-supporting {
-  @apply text-sm text-gray-500;
+.financial-caption {
+  @apply text-sm tabular-nums text-gray-500 uppercase tracking-wide font-medium;
+  letter-spacing: 0.05em;
 }
 
-.metric-label {
-  @apply text-xs font-medium text-gray-400 uppercase tracking-wide;
+/* Enhanced Content Hierarchy */
+.content-hero {
+  @apply text-4xl font-bold text-gray-900 tracking-tight mb-6;
+  line-height: 1.1;
 }
 
-/* Professional Financial Color System */
-.text-financial-positive {
-  @apply text-green-600;
+.content-section-title {
+  @apply text-2xl font-semibold text-gray-900 mb-4;
+  line-height: 1.2;
 }
 
-.text-financial-negative {
-  @apply text-red-600;
+.content-subsection-title {
+  @apply text-xl font-medium text-gray-800 mb-3;
+  line-height: 1.3;
 }
 
-.text-financial-neutral {
-  @apply text-gray-600;
+.content-body {
+  @apply text-base text-gray-600 leading-relaxed mb-4;
+  line-height: 1.6;
 }
 
-.text-financial-highlight {
-  @apply text-blue-600;
+/* ==================== ENHANCED SPACING SYSTEM ==================== */
+
+/* Consistent spacing tokens */
+.space-section {
+  @apply mb-12;
 }
 
-.bg-financial-positive {
-  @apply bg-green-50 text-green-800;
+.space-subsection {
+  @apply mb-8;
 }
 
-.bg-financial-negative {
-  @apply bg-red-50 text-red-800;
+.space-component {
+  @apply mb-6;
 }
 
-.bg-financial-neutral {
-  @apply bg-gray-50 text-gray-800;
+.space-element {
+  @apply mb-4;
 }
 
-.bg-financial-highlight {
-  @apply bg-blue-50 text-blue-800;
+.space-tight {
+  @apply mb-2;
 }
 
-/* Enhanced Button System */
-.btn-primary {
-  @apply bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md;
+/* ==================== PROFESSIONAL CARD SYSTEM ==================== */
+
+/* Executive Dashboard Cards */
+.card-executive {
+  @apply bg-white rounded-2xl border border-gray-100 p-8 shadow-sm hover:shadow-lg transition-all duration-300;
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
 }
 
-.btn-secondary {
-  @apply bg-gray-100 text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-all duration-200;
+.card-financial-highlight {
+  @apply bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-100 p-6 shadow-sm;
 }
 
-.btn-outline {
-  @apply border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200;
+.card-metric-primary {
+  @apply bg-white rounded-xl border border-gray-200 p-6 hover:border-blue-200 transition-all duration-200;
 }
 
-.btn-success {
-  @apply bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-all duration-200;
+.card-metric-secondary {
+  @apply bg-gray-50 rounded-xl border border-gray-100 p-4;
 }
 
-.btn-danger {
-  @apply bg-red-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-red-700 transition-all duration-200;
+.card-status-positive {
+  @apply bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 text-green-800;
 }
 
-/* Card System */
-.card-primary {
-  @apply bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-all duration-200;
+.card-status-warning {
+  @apply bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-200 text-amber-800;
 }
 
-.card-hero {
-  @apply bg-white rounded-2xl border border-gray-200 p-8 shadow-sm;
-}
-
-.card-metric {
-  @apply bg-gray-50 rounded-xl p-6 border border-gray-100;
+.card-status-critical {
+  @apply bg-gradient-to-br from-red-50 to-rose-50 border-red-200 text-red-800;
 }
 
 /* Status Indicators */
@@ -417,4 +429,222 @@
 
 .focus-ring {
   @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-shadow duration-200;
+}
+
+/* ==================== ENHANCED FINANCIAL COLOR SYSTEM ==================== */
+
+/* Financial Status Colors with Better Semantics */
+.text-financial-positive {
+  @apply text-emerald-600;
+}
+
+.text-financial-negative {
+  @apply text-red-600;
+}
+
+.text-financial-neutral {
+  @apply text-slate-600;
+}
+
+.text-financial-highlight {
+  @apply text-blue-600;
+}
+
+.text-financial-premium {
+  @apply text-purple-600;
+}
+
+.bg-financial-positive {
+  @apply bg-emerald-50 text-emerald-800 border-emerald-200;
+}
+
+.bg-financial-negative {
+  @apply bg-red-50 text-red-800 border-red-200;
+}
+
+.bg-financial-neutral {
+  @apply bg-slate-50 text-slate-800 border-slate-200;
+}
+
+.bg-financial-highlight {
+  @apply bg-blue-50 text-blue-800 border-blue-200;
+}
+
+/* ==================== MODERN BUTTON SYSTEM ==================== */
+
+/* Primary Action Buttons */
+.btn-primary {
+  @apply bg-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 shadow-sm hover:shadow-md focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.btn-primary-large {
+  @apply bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 active:bg-blue-800 transition-all duration-200 shadow-md hover:shadow-lg focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-lg;
+}
+
+/* Secondary Buttons */
+.btn-secondary {
+  @apply bg-slate-100 text-slate-900 px-6 py-3 rounded-xl font-medium hover:bg-slate-200 active:bg-slate-300 transition-all duration-200 border border-slate-200 hover:border-slate-300;
+}
+
+.btn-outline {
+  @apply border-2 border-slate-300 text-slate-700 px-6 py-3 rounded-xl font-medium hover:bg-slate-50 hover:border-slate-400 active:bg-slate-100 transition-all duration-200 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2;
+}
+
+/* Financial Action Buttons */
+.btn-financial-calculate {
+  @apply bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-financial-export {
+  @apply bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl font-medium hover:from-green-700 hover:to-emerald-700 transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+.btn-financial-analysis {
+  @apply bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+/* Danger/Warning Buttons */
+.btn-danger {
+  @apply bg-red-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-red-700 active:bg-red-800 transition-all duration-200 shadow-sm hover:shadow-md focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
+}
+
+.btn-warning {
+  @apply bg-amber-500 text-white px-6 py-3 rounded-xl font-medium hover:bg-amber-600 active:bg-amber-700 transition-all duration-200 shadow-sm hover:shadow-md focus:ring-2 focus:ring-amber-500 focus:ring-offset-2;
+}
+
+/* ==================== ENHANCED INPUT SYSTEM ==================== */
+
+/* Form Input Components */
+.input-primary {
+  @apply w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white placeholder-slate-400;
+}
+
+.input-financial {
+  @apply w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white font-mono text-right tabular-nums placeholder-slate-400;
+}
+
+.input-error {
+  @apply w-full px-4 py-3 border-2 border-red-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors duration-200 bg-red-50 placeholder-red-400;
+}
+
+.input-success {
+  @apply w-full px-4 py-3 border-2 border-green-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 bg-green-50 placeholder-green-400;
+}
+
+/* Select Components */
+.select-primary {
+  @apply w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white appearance-none cursor-pointer;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 3rem;
+}
+
+/* ==================== MICRO-INTERACTIONS & FEEDBACK ==================== */
+
+/* Loading States */
+.loading-shimmer {
+  @apply bg-gradient-to-r from-slate-200 via-slate-300 to-slate-200 animate-pulse;
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Hover States */
+.hover-lift {
+  @apply transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg;
+}
+
+.hover-glow {
+  @apply transition-shadow duration-300 hover:shadow-2xl hover:shadow-blue-500/25;
+}
+
+/* Focus States */
+.focus-ring-primary {
+  @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.focus-ring-financial {
+  @apply focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
+}
+
+/* ==================== STATUS INDICATORS ==================== */
+
+/* Enhanced Status Badges */
+.status-badge-positive {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200;
+}
+
+.status-badge-negative {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 border border-red-200;
+}
+
+.status-badge-neutral {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-800 border border-slate-200;
+}
+
+.status-badge-premium {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200;
+}
+
+/* Progress Indicators */
+.progress-bar {
+  @apply w-full bg-slate-200 rounded-full h-3 overflow-hidden;
+}
+
+.progress-fill {
+  @apply h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 ease-out;
+}
+
+.progress-fill-success {
+  @apply h-full bg-gradient-to-r from-emerald-500 to-emerald-600 transition-all duration-500 ease-out;
+}
+
+.progress-fill-warning {
+  @apply h-full bg-gradient-to-r from-amber-500 to-amber-600 transition-all duration-500 ease-out;
+}
+
+/* ==================== DATA VISUALIZATION ENHANCEMENTS ==================== */
+
+/* Chart Containers */
+.chart-container {
+  @apply bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300;
+}
+
+.chart-header {
+  @apply flex items-center justify-between mb-4 pb-4 border-b border-slate-100;
+}
+
+.chart-title {
+  @apply text-xl font-semibold text-slate-900;
+}
+
+.chart-subtitle {
+  @apply text-sm text-slate-600 mt-1;
+}
+
+/* Table Enhancements */
+.table-financial {
+  @apply w-full divide-y divide-slate-200;
+}
+
+.table-header {
+  @apply bg-slate-50;
+}
+
+.table-cell {
+  @apply px-6 py-4 text-sm text-slate-900;
+}
+
+.table-cell-financial {
+  @apply px-6 py-4 text-sm font-mono tabular-nums text-slate-900 text-right;
+}
+
+.table-row-hover {
+  @apply hover:bg-slate-50 transition-colors duration-150;
 }

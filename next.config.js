@@ -2,6 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   
+  // Disable static optimization temporarily to resolve Html import issues
+  output: 'standalone',
+  trailingSlash: false,
+  
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
@@ -30,27 +34,11 @@ const nextConfig = {
       );
     }
     
-    // Optimize for large JSON files
-    config.module.rules.push({
-      test: /\.json$/,
-      type: 'json',
-      parser: {
-        parse: (input) => {
-          // Compress large JSON files
-          if (input.length > 100000) { // 100KB threshold
-            return JSON.parse(input);
-          }
-          return JSON.parse(input);
-        }
-      }
-    });
-    
     return config;
   },
   
-  // Experimental features for performance
+  // Experimental features for performance - temporarily disabled for stable deployment
   experimental: {
-    optimizeCss: true,
     scrollRestoration: true,
   },
 }
