@@ -221,7 +221,7 @@ export default function EPVGrailIntegration({ enableNeptune = true }: EPVGrailIn
         {/* Header with mode toggle */}
         <div className="bg-gray-900 text-white p-2 flex justify-between items-center">
           <div className="text-sm">
-            <span className="text-green-400">VALOR-IVX</span> // GUI Mode
+            <span className="text-green-400">VALOR-IVX</span> {/* GUI Mode */}
           </div>
           <button
             onClick={() => setMode('terminal')}

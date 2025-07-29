@@ -103,20 +103,6 @@ export default function GrailTerminal({
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Welcome message
-    addMessage('system', 'VALOR-IVX GRAIL Terminal - v2.1.0');
-    addMessage('system', 'Mode: Public Markets Analysis');
-    addMessage('info', 'Type "help" for a list of commands.');
-    if (enableNeptune) {
-      addMessage('info', 'Neptune mode available - enhanced AI analysis.');
-    }
-  }, []);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
   const addMessage = useCallback((type: CliMessage['type'], content: string) => {
     const message: CliMessage = {
       id: Math.random().toString(36).substr(2, 9),
@@ -126,6 +112,20 @@ export default function GrailTerminal({
     };
     setMessages(prev => [...prev, message]);
   }, []);
+
+  useEffect(() => {
+    // Welcome message
+    addMessage('system', 'VALOR-IVX GRAIL Terminal - v2.1.0');
+    addMessage('system', 'Mode: Public Markets Analysis');
+    addMessage('info', 'Type "help" for a list of commands.');
+    if (enableNeptune) {
+      addMessage('info', 'Neptune mode available - enhanced AI analysis.');
+    }
+  }, [addMessage, enableNeptune]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const parseCommand = (input: string): { command: string; args: string[] } => {
     const trimmed = input.trim();
@@ -322,7 +322,7 @@ export default function GrailTerminal({
       <div className="flex items-center justify-between p-4 border-b border-current">
         <div className="flex items-center space-x-4">
           <h1 className="text-xl font-bold">VALOR-IVX</h1>
-          <span className="text-xs opacity-70">// GRAIL TERMINAL</span>
+          <span className="text-xs opacity-70">{/* GRAIL TERMINAL */} GRAIL TERMINAL</span>
         </div>
         <div className="flex items-center space-x-2">
           {enableNeptune && (
