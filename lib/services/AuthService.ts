@@ -93,7 +93,7 @@ export class AuthService {
       });
 
       // Remove password hash from response
-      const { passwordHash, ...userWithoutPassword } = user;
+      const { passwordHash: userPasswordHash, ...userWithoutPassword } = user;
 
       return {
         success: true,
@@ -282,7 +282,7 @@ export class AuthService {
       expiresIn: this.JWT_EXPIRES_IN,
       issuer: 'epv-valuation-pro',
       audience: 'epv-users',
-    });
+    } as jwt.SignOptions);
   }
 
   /**

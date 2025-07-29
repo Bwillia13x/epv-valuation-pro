@@ -383,4 +383,7 @@
       },
       "expected_return": 0.037128721636006286,
       "volatility": 0.005419428132773939,
-      "optimization_success": 
+      "optimization_success": true
+    }
+  }
+} 

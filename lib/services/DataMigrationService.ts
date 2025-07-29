@@ -79,7 +79,7 @@ export class DataMigrationService {
             });
           } catch (error) {
             result.errors.push(
-              `Failed to migrate case ${localCase.name}: ${error.message}`
+              `Failed to migrate case ${localCase.name}: ${(error as Error).message}`
             );
           }
         }
@@ -94,7 +94,7 @@ export class DataMigrationService {
         `✅ Successfully migrated ${result.migratedCases} cases for user ${email}`
       );
     } catch (error) {
-      result.errors.push(`Migration failed: ${error.message}`);
+      result.errors.push(`Migration failed: ${(error as Error).message}`);
       console.error('❌ Migration error:', error);
     }
 
@@ -274,7 +274,7 @@ export class DataMigrationService {
 
   private extractIndustry(financialData: FinancialDatasetV1): string {
     // Try to extract industry from financial data or default to Healthcare Services
-    return financialData.metadata?.industry || 'Healthcare Services';
+    return (financialData as any).metadata?.industry || 'Healthcare Services';
   }
 
   private sanitizeFinancialData(data: FinancialDatasetV1): any {
@@ -310,7 +310,7 @@ export class DataMigrationService {
           action: 'BACKUP',
           entity: 'LocalStorage',
           entityId: 'localStorage-backup',
-          oldValues: localData,
+          oldValues: localData as any,
           metadata: {
             backupTimestamp: new Date(),
             purpose: 'pre-migration-backup',

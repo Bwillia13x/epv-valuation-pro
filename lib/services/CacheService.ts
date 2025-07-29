@@ -21,24 +21,11 @@ export class CacheService {
       const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
       this.instance = new Redis(redisUrl, {
-        retryDelayOnFailover: 100,
         enableReadyCheck: false,
         maxRetriesPerRequest: null,
         lazyConnect: true,
         keepAlive: 30000,
         keyPrefix: this.DEFAULT_PREFIX,
-      });
-
-      this.instance.on('error', (error) => {
-        console.error('Redis connection error:', error);
-      });
-
-      this.instance.on('connect', () => {
-        console.log('✅ Connected to Redis');
-      });
-
-      this.instance.on('disconnect', () => {
-        console.log('❌ Disconnected from Redis');
       });
     }
 

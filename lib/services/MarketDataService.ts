@@ -299,7 +299,7 @@ export class MarketDataService {
           allDataPoints.push(...alphaData);
           if (alphaData.length > 0) sources.push('Alpha Vantage');
         } catch (error) {
-          errors.push(`Alpha Vantage: ${error.message}`);
+          errors.push(`Alpha Vantage: ${(error as Error).message}`);
         }
       }
 
@@ -310,7 +310,7 @@ export class MarketDataService {
           allDataPoints.push(...finnhubData);
           if (finnhubData.length > 0) sources.push('Finnhub');
         } catch (error) {
-          errors.push(`Finnhub: ${error.message}`);
+          errors.push(`Finnhub: ${(error as Error).message}`);
         }
       }
 
